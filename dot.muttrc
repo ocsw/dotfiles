@@ -1,0 +1,38 @@
+set realname="Danielle Malament"
+#set alternates=""
+
+#set alias_file="~/.mutt_aliases"
+#set attribution=""
+set noconfirmappend
+set confirmcreate
+set copy
+set editor="/usr/bin/nano -z"
+set fcc_attach
+set nofcc_clear
+#set nohelp
+set ispell="/usr/local/bin/ispell"
+set nomarkers
+set mbox="~/Mail/received"
+set move=no
+set postponed="~/Mail/postponed"
+set record="~/Mail/sent"
+set noreply_self
+#set reverse_alias
+set nosave_empty
+set smart_wrap
+set sort=reverse-date-sent
+set nouse_domain
+set nouser_agent
+
+bind index x noop
+bind index \ex exit
+bind index <tab> next-unread
+
+macro generic \eh "!less /usr/local/share/doc/mutt/manual.txt\n" "Show Mutt documentation"
+macro index   \eh "!less /usr/local/share/doc/mutt/manual.txt\n" "Show Mutt documentation"
+macro pager   \eh "!less /usr/local/share/doc/mutt/manual.txt\n" "Show Mutt documentation"
+
+#savehooks
+#colors
+
+#source ~/.mutt_aliases
