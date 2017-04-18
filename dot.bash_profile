@@ -1,9 +1,14 @@
-# --- overrides to /etc/profile ---
+# --- global environment settings ---
 
+umask 077
+
+if ! printf "%s" "$PATH" | grep "^${HOME}/bin:" > /dev/null 2>&1; then
+  export PATH="${HOME}/bin:${PATH}"
+fi
+
+export EDITOR='vim'
+export VISUAL='vim'
 export PAGER='less -E'
-
-
-# --- additions ---
 
 # see also $DIRPAGER and more and lessx aliases in .bashrc
 # note: use of '?a .' gets around %t being broken
@@ -14,6 +19,10 @@ export MANPAGER='less -F'
 # note: \% and \: from original prompt don't need extra \ in bash
 export MANOPT='-r ?m(%i/%m).?a\ .Manual\ page\ \$MAN_PN?e?a\ .(END):?pB?a\ .%pB\%..?c?a\ .[Col\ %c].?e?x\ -\ Next\:\ %x.%t'
 
+if [[ -n "$PS1" ]]; then
+  export MAIL="/var/mail/$USER"
+  [[ -t 0 ]] && mesg n
+fi
 
 # --- source .bashrc ---
 [[ -e ~/.bashrc ]] && . ~/.bashrc
