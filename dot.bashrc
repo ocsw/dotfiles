@@ -13,10 +13,10 @@ OS_UNAME="$(uname)"
 unset PROMPT_COMMAND
 
 
-# --- subfiles ---
+# --- pre-rc files ---
 
 if [[ -d ~/.bashrc.d ]]; then
-  for i in ~/.bashrc.d/*.rc; do
+  for i in ~/.bashrc.d/*.pre; do
     . $i
   done
 fi
@@ -398,6 +398,15 @@ gc() {
     echo "${list[*]}" | sort -u
   fi
 }
+
+
+# --- post-rc files ---
+
+if [[ -d ~/.bashrc.d ]]; then
+  for i in ~/.bashrc.d/*.post; do
+    . $i
+  done
+fi
 
 
 # --- machine-specific settings, overrides, aliases, etc. ---
