@@ -93,18 +93,22 @@ jobs_flag() {
   [[ -n "`jobs -p`" ]] && echo '.'
 }
 
-# prompt color
+# prompt colors
 #
-# can change this later or from the shell, takes effect immediately
+# can change colors later or from the shell; takes effect immediately
 # see list below for possible values
 #
-if [[ "$LIGHT_BG" -eq 1 ]]; then
-  PS1_COLOR=${PS1_COLOR:-34}    # blue
+if [[ -n "$LIGHT_BG" ]]; then
+  #PS1_COLOR=${PS1_COLOR:-34}    # blue
+  #
+  # red, yellow, green, cyan, blue, magenta
+  PS1_COLORS=('31' '33' '32' '36' '34' '35')
 else
-  PS1_COLOR=${PS1_COLOR:-1;36}  # bright cyan
+  #PS1_COLOR=${PS1_COLOR:-1;36}  # bright cyan
+  #
+  # bright red, yellow, green, cyan, blue, magenta
+  PS1_COLORS=('1;31' '1;33' '1;32' '1;36' '1;34' '1;35')
 fi
-# bright red, yellow, green, cyan, blue, magenta
-PS1_COLORS=('1;31' '1;33' '1;32' '1;36' '1;34' '1;35')
 
 # set the prompt
 #PS1='\[\e[${PS1_COLOR}m\]\! $PWD @ \h$(jobs_flag)$PS1_MARKS\[\e[0m\] '
