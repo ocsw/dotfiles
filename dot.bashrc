@@ -13,6 +13,15 @@ OS_UNAME="$(uname)"
 unset PROMPT_COMMAND
 
 
+# --- subfiles ---
+
+if [[ -d ~/.bashrc.d ]]; then
+  for i in ~/.bashrc.d/*.rc; do
+    . $i
+  done
+fi
+
+
 # --- shell options ---
 
 # history settings
