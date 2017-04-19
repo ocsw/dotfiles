@@ -13,7 +13,7 @@ OS_UNAME="$(uname)"
 unset PROMPT_COMMAND
 
 
-# --- pre-rc files ---
+# --- pre-rc sub-scripts ---
 
 if [[ -d ~/.bashrc.d ]]; then
   for i in ~/.bashrc.d/*.pre; do
@@ -404,7 +404,7 @@ gc() {
 }
 
 
-# --- post-rc files ---
+# --- post-rc sub-scripts ---
 
 if [[ -d ~/.bashrc.d ]]; then
   for i in ~/.bashrc.d/*.post; do
