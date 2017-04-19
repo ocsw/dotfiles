@@ -103,9 +103,20 @@ if [[ "$LIGHT_BG" -eq 1 ]]; then
 else
   PS1_COLOR=${PS1_COLOR:-1;36}  # bright cyan
 fi
+# bright red, yellow, green, cyan, blue, magenta
+PS1_COLORS=('1;31' '1;33' '1;32' '1;36' '1;34' '1;35')
 
 # set the prompt
-PS1='\[\e[${PS1_COLOR}m\]\! $PWD @ \h$(jobs_flag)$PS1_MARKS\[\e[0m\] '
+#PS1='\[\e[${PS1_COLOR}m\]\! $PWD @ \h$(jobs_flag)$PS1_MARKS\[\e[0m\] '
+#PS1='\[\e[${PS1_COLOR}m\]$(_errorcode_prompt)\! \u@\h $PWD$(_prompt_scm_info)$(jobs_flag)$PS1_MARKS\[\e[0m\] '
+PS1_PARTS=(
+  '\[\e[${PS1_COLORS[0]}m\][ ${PIPESTATUS[*]} ]\[\e[0m\]'
+  '\[\e[${PS1_COLORS[1]}m\]\!\[\e[0m\]'
+  '\[\e[${PS1_COLORS[2]}m\]\u@\h\[\e[0m\]'
+  '\[\e[${PS1_COLORS[3]}m\]${PWD}\[\e[0m\]\[\e[${PS1_COLORS[4]}m\]$(_prompt_scm_info " %s")\[\e[0m\]'
+  '\[\e[${PS1_COLORS[5]}m\]$(jobs_flag)$PS1_MARKS\[\e[0m\]'
+)
+eval 'PS1="${PS1_PARTS[*]} "'
 typeset +x PS1  # this is exported on Cygwin for some reason
 
 # -- notes on prompt strings --
