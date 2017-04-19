@@ -29,22 +29,28 @@ shopt -s histappend histverify
 
 # completion settings
 shopt -s no_empty_cmd_completion
-bind 'set mark-symlinked-directories on'
-bind 'set page-completions off'
-bind 'set show-all-if-unmodified on'
-#bind 'set completion-query-items 1000'
-#bind 'set match-hidden-files off'
-#bind 'set show-all-if-ambiguous on'
+if [[ -t 0 ]]; then
+  bind 'set mark-symlinked-directories on'
+  bind 'set page-completions off'
+  bind 'set show-all-if-unmodified on'
+  #bind 'set completion-query-items 1000'
+  #bind 'set match-hidden-files off'
+  #bind 'set show-all-if-ambiguous on'
+fi
 
 # key bindings
-bind '"\C-d": delete-char-or-list'
-# see also .inputrc
+if [[ -t 0 ]]; then
+  bind '"\C-d": delete-char-or-list'
+  # see also .inputrc
+fi
 
 # misc settings
 TMPDIR="$HOME"  # for bash, don't export
 set -o noclobber
 shopt -s checkwinsize
-bind 'set bell-style none'
+if [[ -t 0 ]]; then
+  bind 'set bell-style none'
+fi
 
 
 # --- prompt ---
