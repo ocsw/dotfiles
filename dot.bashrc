@@ -15,18 +15,11 @@ unset PROMPT_COMMAND
 
 # --- pre-rc sub-scripts ---
 
-have_pre=""
-if [[ -d ~/.bashrc.d ]]; then
-  for i in ~/.bashrc.d/*.pre; do
-    if [[ -z "$have_pre" ]] && \
-       printf "%s" "$i" | grep '/\*\.pre$' > /dev/null 2>&1; then
-      break
-    fi
-    have_pre="yes"
-    . $i
+if compgen -G "${HOME}/.bashrc.d/*.pre" > /dev/null 2>&1; then
+  for i in ${HOME}/.bashrc.d/*.pre; do
+    . "$i"
   done
 fi
-unset have_pre
 
 
 # --- shell options ---
@@ -414,18 +407,11 @@ gc() {
 
 # --- post-rc sub-scripts ---
 
-have_post=""
-if [[ -d ~/.bashrc.d ]]; then
-  for i in ~/.bashrc.d/*.post; do
-    if [[ -z "$have_post" ]] && \
-       printf "%s" "$i" | grep '/\*\.post$' > /dev/null 2>&1; then
-      break
-    fi
-    have_post="yes"
-    . $i
+if compgen -G "${HOME}/.bashrc.d/*.post" > /dev/null 2>&1; then
+  for i in ${HOME}/.bashrc.d/*.post; do
+    . "$i"
   done
 fi
-unset have_post
 
 
 # --- machine-specific settings, overrides, aliases, etc. ---
