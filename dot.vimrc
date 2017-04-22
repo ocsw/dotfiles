@@ -142,7 +142,7 @@ let g:CommandTFileScanner='watchman'
 " *** sub-scripts ***
 " *******************
 
-let s:vimrc_extra = $HOME . "/.dotfiles/vim"
+let s:vimrc_extra = $HOME . "/.vimrc.d"
 let file_list = split(globpath(s:vimrc_extra, "*.vim"), "\n")
 for file in file_list
   execute "source " . fnameescape(file)
