@@ -3,9 +3,9 @@ _errorcode_prompt() {
     if [[ "$i" -gt 128 ]]; then
       signame=$(builtin kill -l $(($i - 128)) 2>/dev/null)
       signame="${signame:3}"
-      PIPESTATUS_SIG[${#PIPESTATUS[*]}]="$i ($signame)"
+      PIPESTATUS_SIG[${#PIPESTATUS_SIG[*]}]="$i ($signame)"
     else
-      PIPESTATUS_SIG[${#PIPESTATUS[*]}]="$i"
+      PIPESTATUS_SIG[${#PIPESTATUS_SIG[*]}]="$i"
     fi
   done
   printf "%s" "${PIPESTATUS_SIG[*]}"

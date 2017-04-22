@@ -114,7 +114,6 @@ fi
 #PS1='\[\e[${PS1_COLOR}m\]\! $PWD @ \h$(jobs_flag)$PS1_MARKS\[\e[0m\] '
 #PS1='\[\e[${PS1_COLOR}m\]$(_errorcode_prompt)\! \u@\h $PWD$(_prompt_scm_info)$(jobs_flag)$PS1_MARKS\[\e[0m\] '
 PS1_PARTS=(
-  #'\[\e[${PS1_COLORS[0]}m\][ ${PIPESTATUS[*]} ]\[\e[0m\]'
   '\[\e[${PS1_COLORS[0]}m\][ $(_errorcode_prompt) ]\[\e[0m\]'
   '\[\e[${PS1_COLORS[1]}m\]\!\[\e[0m\]'
   '\[\e[${PS1_COLORS[2]}m\]\u@\h\[\e[0m\]'
