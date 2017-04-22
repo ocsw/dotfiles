@@ -72,14 +72,17 @@ else
 fi
 
 # string of marks, 1 for each level of shell nesting
+SELF_PPID=$(ps -eo pid,ppid | grep "^$$ " | cut -d' ' -f2)
+SELF_PARENT=$(ps -eo pid,comm | grep "^${SELF_PPID} " | cut -d' ' -f2)
+if [[ "$SELF_PARENT" == "mosh-server" ]] || \
+   [[ "$SELF_PARENT" == "screen" ]] || \
+   [[ "$SELF_PARENT" == "tmux" ]]; then
+  export SHLVL=$((SHLVL - 1))
+fi
 PS1_MARKS=''
-for ((PS1_DEPTH=SHLVL; PS1_DEPTH > 0; PS1_DEPTH--)); do
+for ((i=SHLVL; i > 0; i--)); do
   PS1_MARKS="$PS1_MK$PS1_MARKS"
 done
-
-# clean up
-unset PS1_MK
-unset PS1_DEPTH
 
 # if there are jobs (stopped or running), add a symbol to the prompt
 jobs_flag() {
