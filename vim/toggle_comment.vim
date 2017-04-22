@@ -1,4 +1,4 @@
-" [from the Facebook dotfile collection]
+" [from the Facebook dotfile collection, with tweaks]
 
 " A little function (and associated binding) for toggling commenting.
 " To use it, put 'source /path/to/toggle_comment.vim' in your .vimrc,
@@ -61,7 +61,7 @@ endfunction
 autocmd BufReadPost *.thrift let b:comment_prefix = "//"
 autocmd BufReadPost *.phpt   let b:comment_prefix = "//"
 autocmd BufReadPost *.php    let b:comment_prefix = "//"
-autocmd BufReadPost *.py     let b:comment_prefix = "#"
+autocmd BufReadPost *.py     let b:comment_prefix = "# "
 autocmd BufReadPost *.cpp    let b:comment_prefix = "//"
 autocmd BufReadPost *.cc     let b:comment_prefix = "//"
 autocmd BufReadPost *.c      let b:comment_prefix = "//"

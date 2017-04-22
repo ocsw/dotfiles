@@ -131,12 +131,22 @@ let g:CommandTFileScanner='watchman'
 " *** WIP ***
 " ***********
 
-" comment command
 " whitespace on save
 
 " paste mode
 "set pastetoggle=<leader>p
 "set cursorline
+
+
+" *******************
+" *** sub-scripts ***
+" *******************
+
+let s:vimrc_extra = $HOME . "/.dotfiles/vim"
+let file_list = split(globpath(s:vimrc_extra, "*.vim"), "\n")
+for file in file_list
+  execute "source " . fnameescape(file)
+endfor
 
 
 " *************
@@ -145,5 +155,5 @@ let g:CommandTFileScanner='watchman'
 
 let s:vimrc_local = $HOME . "/.vimrc.local"
 if filereadable(s:vimrc_local)
-  execute "source " . s:vimrc_local
+  execute "source " . fnameescape(s:vimrc_local)
 endif
