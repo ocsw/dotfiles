@@ -30,6 +30,7 @@ set shiftwidth=2    " spaces per indent
 set tabstop=2       " spaces per tab when displaying
 set softtabstop=2   " spaces per tab when inserting
 set expandtab       " substitute spaces for tabs
+set smarttab        " tab inserts indents instead of tabs at begining of line
 
 
 " ****************************
@@ -40,8 +41,11 @@ set expandtab       " substitute spaces for tabs
 set autoindent      " carry indent over to new lines
 set backspace=indent,eol,start  " backspace over everything
 
-" cleanup whitespace
-nnoremap <leader>W :%s/\s\+$//<CR>:let @/=''<CR>
+" cleanup whitespace at end of line
+nnoremap <leader>w :%s/\s\+$//<CR>:let @/=''<CR>
+
+" paste mode
+set pastetoggle=<F2>
 
 " insert-mode tab completion
 set completeopt=longest,menu,preview  " longest match, menu, extra info
@@ -133,9 +137,18 @@ let g:CommandTFileScanner='watchman'
 
 " whitespace on save
 
-" paste mode
-"set pastetoggle=<leader>p
 "set cursorline
+
+"if has("autocmd")
+"  augroup redhat
+"  autocmd!
+"  " When editing a file, always jump to the last cursor position
+"  autocmd BufReadPost *
+"  \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+"  \   exe "normal! g'\"" |
+"  \ endif
+"  augroup END
+"endif
 
 
 " *******************
