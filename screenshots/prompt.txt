@@ -25,3 +25,6 @@ My prompt has many cool and useful features:
 
 - ***RAINBOWS*** (ahem)  The screenshot is from iTerm2 on OSX, with the Tango
   Dark colorset.
+
+Source is in dot.bashrc (prompt section) and
+dot.bashrc.d/{errorcode_prompt.pre,scm-prompt.pre}.
