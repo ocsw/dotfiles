@@ -1,0 +1,27 @@
+My prompt has many cool and useful features:
+
+- The return value of the last command.  If the value indicates a signal, the
+  signal's short name is appended in parentheses.  If the last command was a
+  pipeline, each return value is listed separately (including signals).
+
+- The command number, for use with (e.g.) !1234 and as a subliminal cue to which
+  session you're in.
+
+- The username and short hostname.
+
+- The full path, in case (for example) you're in a deeply-nested source tree
+  and need to run a command on a parent directory.
+
+- If the current directory is in a source-control repo, the name of the current
+  branch/bookmark is included.
+
+- If a command is currently running in the background, a dot is prepended to
+  the ending mark(s).  (If there are multiple backgrounded commands, there's
+  still only one dot.)
+
+- Nested shells increase the number of ending marks.
+
+- The ending mark is $ for a non-root user, # for root.
+
+- ***RAINBOWS*** (ahem)
+
