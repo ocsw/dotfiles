@@ -23,5 +23,5 @@ My prompt has many cool and useful features:
 
 - The ending mark is $ for a non-root user, # for root.
 
-- ***RAINBOWS*** (ahem)
-
+- ***RAINBOWS*** (ahem)  The screenshot is from iTerm2 on OSX, with the Tango
+  Dark colorset.
