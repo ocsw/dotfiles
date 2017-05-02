@@ -19,6 +19,9 @@ My prompt has many cool and useful features:
   the ending mark(s).  (If there are multiple backgrounded commands, there's
   still only one dot.)
 
+- If running under mosh, tmux, and/or screen, 'M', 'T', and/or 'S' is/are
+  prepended to the ending marks.  (Not shown in the screenshot.)
+
 - Nested shells increase the number of ending marks.
 
 - The ending mark is $ for a non-root user, # for root.
