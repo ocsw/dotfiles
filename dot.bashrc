@@ -71,18 +71,30 @@ else
   PS1_MK='$'
 fi
 
-# string of marks, 1 for each level of shell nesting
-SELF_PPID=$(ps -eo pid,ppid | grep "^$$ " | cut -d' ' -f2)
-SELF_PARENT=$(ps -eo pid,comm | grep "^${SELF_PPID} " | cut -d' ' -f2)
-if [[ "$SELF_PARENT" == "mosh-server" ]] || \
-   [[ "$SELF_PARENT" == "screen" ]] || \
-   [[ "$SELF_PARENT" == "tmux" ]]; then
-  export SHLVL=$((SHLVL - 1))
-fi
+# are we in mosh, tmux, and/or screen?
+SELF_PPID=$(ps -eo pid,ppid | grep "^[ 	]*$$[ 	]*" | awk '{print $2}')
+SELF_PARENT=$(
+  ps -eo pid,comm | grep "^[ 	]*${SELF_PPID}[ 	]*" | \
+  sed "s/^[ »]*${SELF_PPID}[ »·]*//"
+)
+[[ "$SELF_PARENT" == "mosh-server" ]] && export _IN_MOSH="yes"
+[[ -n "$TMUX" ]] && export _IN_TMUX="yes"
+[[ -z "$TMUX" ]] && [[ "$TERM" == "screen" ]] && export _IN_SCREEN="yes"
+
+# string of marks, 1 for each level of shell nesting, with corrections
+MARKLVL="$SHLVL"
+for i in $_IN_MOSH $_IN_TMUX $_IN_SCREEN; do  # no quotes
+  MARKLVL=$((MARKLVL - 1))
+done
 PS1_MARKS=''
-for ((i=SHLVL; i > 0; i--)); do
+for ((i=MARKLVL; i > 0; i--)); do
   PS1_MARKS="$PS1_MK$PS1_MARKS"
 done
+
+# add mosh/tmux/screen markers, in order
+[[ -n "$_IN_SCREEN" ]] && PS1_MARKS="S$PS1_MARKS"
+[[ -n "$_IN_TMUX" ]] && PS1_MARKS="T$PS1_MARKS"
+[[ -n "$_IN_MOSH" ]] && PS1_MARKS="M$PS1_MARKS"
 
 # if there are jobs (stopped or running), add a symbol to the prompt
 jobs_flag() {
