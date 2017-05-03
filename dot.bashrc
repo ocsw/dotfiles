@@ -216,7 +216,6 @@ if [[ "$OS_UNAME" == CYGWIN* ]]; then
 else
   alias trg='traceroute -n 74.125.47.100'
 fi
-alias hg="PAGER=more hg"  # hg doesn't like less
 
 # directory listing shortcuts
 #
