@@ -97,7 +97,7 @@ done
 [[ -n "$_IN_MOSH" ]] && PS1_MARKS="M$PS1_MARKS"
 
 # if there are jobs (stopped or running), add a symbol to the prompt
-jobs_flag() {
+jobs_flag () {
   # bash 4.0 has a bug that prevents the prompt from being printed at all
   # if there's a $() in anything run from PROMPT_COMMAND or PS1;
   # but $() in PS1 itself works, and so does ``
@@ -190,7 +190,7 @@ typeset +x PS1  # this is exported on Cygwin for some reason
 # --- aliases & functions ---
 
 # check for command in path
-in_path() {
+in_path () {
   hash "$@" > /dev/null 2>&1
   return $?
 }
@@ -208,7 +208,7 @@ in_path nano && alias pico=nano
 in_path less && alias more='less -E'
 alias lessx='less -+X'
 if [[ "$OS_UNAME" == CYGWIN* ]]; then
-  explorer() { command explorer ${1:+$(cygpath -wl $1)}; }
+  explorer () { command explorer ${1:+$(cygpath -wl $1)}; }
   alias mintty='run mintty -t bash -e env SHLVL=0 bash -l'
   alias brmintty='run mintty -c ~/.minttyrc.bigrev -t bash -e env LIGHT_BG=1 SHLVL=0 bash -l'
   alias traceroute='echo; echo "[Windows tracert]"; tracert'
@@ -232,39 +232,39 @@ fi
 #
 DIRPAGER=${DIRPAGER:-less -E}  # don't use with quotes
 alias l='ls -alF'  # from OpenBSD defaults
-d() { ls -l   ${1+"$@"} 2>&1 | $DIRPAGER; }
-s() { ls -laR ${1+"$@"} 2>&1 | $DIRPAGER; }
-a() { ls -la  ${1+"$@"} 2>&1 | $DIRPAGER; }
+d () { ls -l   ${1+"$@"} 2>&1 | $DIRPAGER; }
+s () { ls -laR ${1+"$@"} 2>&1 | $DIRPAGER; }
+a () { ls -la  ${1+"$@"} 2>&1 | $DIRPAGER; }
 case "$OS_UNAME" in
   CYGWIN*)
     # note: /a is for ASCII; no way to exclude dotfiles
     # dirs,  incl. dots
-    t() {
+    t () {
       tree.com /a    ${1+"$(cygpath -ml "$1" | sed 's|/$||')"} | \
         sed -e '1,2d' -e 's/^[A-Z]:\.$/./' | $DIRPAGER
     }
     # files, incl. dots
-    tf() {
+    tf () {
       tree.com /a /f ${1+"$(cygpath -ml "$1" | sed 's|/$||')"} | \
         sed -e '1,2d' -e 's/^[A-Z]:\.$/./' | $DIRPAGER
     }
     ;;
   OpenBSD)
-    t()   { tree -s -d    ${1+"$@"} 2>&1 | $DIRPAGER; }  # dirs,  no dots
-    tf()  { tree -s       ${1+"$@"} 2>&1 | $DIRPAGER; }  # files, no dots
-    ta()  { tree -s -d -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # dirs,  incl. dots
-    tfa() { tree -s    -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # files, incl. dots
+    t ()   { tree -s -d    ${1+"$@"} 2>&1 | $DIRPAGER; }  # dirs,  no dots
+    tf ()  { tree -s       ${1+"$@"} 2>&1 | $DIRPAGER; }  # files, no dots
+    ta ()  { tree -s -d -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # dirs,  incl. dots
+    tfa () { tree -s    -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # files, incl. dots
     ;;
   *)
-    t()   { tree --noreport -d    ${1+"$@"} 2>&1 | $DIRPAGER; }  # d, no .
-    tf()  { tree --noreport       ${1+"$@"} 2>&1 | $DIRPAGER; }  # f, no .
-    ta()  { tree --noreport -d -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # d, incl. .
-    tfa() { tree --noreport    -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # f, incl. .
+    t ()   { tree --noreport -d    ${1+"$@"} 2>&1 | $DIRPAGER; }  # d, no .
+    tf ()  { tree --noreport       ${1+"$@"} 2>&1 | $DIRPAGER; }  # f, no .
+    ta ()  { tree --noreport -d -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # d, incl. .
+    tfa () { tree --noreport    -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # f, incl. .
     ;;
 esac
 
 # misc shortcuts
-wintitle() {
+wintitle () {
   # use eval to keep 'set' list from messing up the title
   # (also makes arg substitution/quoting cleaner)
   eval echo "$'\e]0;$*\a'"
@@ -286,7 +286,7 @@ alias j='jobs -l'
 # 7) leaves global HISTTIMEFORMAT unchanged (even with -/+t)
 # 8) any non- -/+t arguments are passed to the history builtin
 #
-h() {
+h () {
   local h_args=''
   local htf
   local i
@@ -314,7 +314,7 @@ h() {
 }
 
 # make cd not print the target directory for 'cd -'
-cd() {
+cd () {
   if [[ "$*" == '-' ]]; then
     builtin cd - > /dev/null
   else
@@ -323,14 +323,14 @@ cd() {
 }
 
 # make bg and fg accept a bare number instead of %num
-bg() {
+bg () {
   if [[ -n "$1" ]]; then
     builtin bg "%$1"
   else
     builtin bg
   fi
 }
-fg() {
+fg () {
   if [[ -n "$1" ]]; then
     builtin fg "%$1"
   else
@@ -348,7 +348,7 @@ fg() {
 #
 # note: uses $OS_UNAME and requires in_path(), find, sed, and sort
 #
-gc() {
+gc () {
   # note: bash seems to be inconsistent about whether local declarations 
   # with no initializer create unset or null variables
   local cygflag  # starts out unset/null, not 0
