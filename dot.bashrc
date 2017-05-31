@@ -322,6 +322,11 @@ cd () {
   fi
 }
 
+# move up the directory tree; from Simon Elmir
+up () {
+  cd "$(printf '../%.0s' $(seq 1 $1))"
+}
+
 # make bg and fg accept a bare number instead of %num
 bg () {
   if [[ -n "$1" ]]; then
