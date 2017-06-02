@@ -26,9 +26,9 @@ set wildmode=list:longest,list:full   " with list, longest then cycle
 set encoding=utf-8  " default
 
 " tabs
-set shiftwidth=2    " spaces per indent
-set tabstop=2       " spaces per tab when displaying
-set softtabstop=2   " spaces per tab when inserting
+set shiftwidth=4    " spaces per indent
+set tabstop=4       " spaces per tab when displaying
+set softtabstop=4   " spaces per tab when inserting
 set expandtab       " substitute spaces for tabs
 set smarttab        " tab inserts indents instead of tabs at begining of line
 
