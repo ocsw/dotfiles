@@ -322,9 +322,14 @@ cd () {
   fi
 }
 
-# move up the directory tree; from Simon Elmir
+# move up the directory tree; partly from Simon Elmir
 up () {
-  cd "$(printf '../%.0s' $(seq 1 $1))"
+  local updir=$(printf '../%.0s' $(seq 1 $1))
+  if [[ -t 1 ]]; then
+    cd "$updir"
+  else
+    printf "%s\n" "$updir"
+  fi
 }
 
 # make bg and fg accept a bare number instead of %num
