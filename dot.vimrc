@@ -42,7 +42,7 @@ set autoindent      " carry indent over to new lines
 set backspace=indent,eol,start  " backspace over everything
 
 " cleanup whitespace at end of line
-nnoremap <leader>w :%s/\s\+$//<CR>:let @/=''<CR>
+noremap <Leader>w :%s/\s\+$//<CR>:let @/=''<CR>
 
 " paste mode
 set pastetoggle=<F2>
@@ -99,21 +99,41 @@ set t_Co=256        " 256 colors
 
 " highlighting
 if (&t_Co > 2 || has("gui_running"))
-  syntax on         " syntax highlighting
-  set hlsearch      " persist search highlighting
-  " Press space to turn off highlighting and clear any message already
-  " displayed.
-  :nnoremap <leader> <leader> :nohlsearch<Bar>:echo<CR>
+  " syntax highlighting
+  syntax on
+
+  " persist search highlighting
+  set hlsearch
+  " clear current highlighting
+  nnoremap <Leader><Space> :nohlsearch<Bar>:echo<CR>
+
+  " 80-column marking
+  highlight OverLength ctermbg=Red ctermfg=White guibg=Red
+  match OverLength /\%81v.\+/
+  """set colorcolumn=81
+
+  " cursor-line highlighting
+  if (&t_Co >= 256)
+    " see http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
+    highlight CursorLine cterm=NONE ctermbg=236 guibg=#303030
+  else
+    highlight CursorLine cterm=NONE ctermbg=DarkGray guibg=#303030
+  endif
+  set cursorline
+  " toggle
+  nnoremap <Leader>h :set cursorline!<CR>
+  " for current window only
+  " (see http://vim.wikia.com/wiki/Highlight_current_line)
+  """ augroup CursorLine
+  """   au!
+  """   au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+  """   au WinLeave * setlocal nocursorline
+  """ augroup END
+
 else
   syntax off        " no syntax highlighting
   set nohlsearch    " don't persist search highlighting
-endif
-
-" 80-column marking
-if (&t_Co > 2 || has("gui_running"))
-  highlight OverLength ctermbg=red ctermfg=white guibg=#592929
-  match OverLength /\%81v.\+/
-  """set colorcolumn=81
+  set nocursorline  " no cursor-line highlighting
 endif
 
 
