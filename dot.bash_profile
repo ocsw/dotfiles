@@ -1,8 +1,18 @@
+# --- pre-profile sub-scripts ---
+
+if compgen -G "${HOME}/.bash_profile.d/*.pre" > /dev/null 2>&1; then
+  for i in ${HOME}/.bash_profile.d/*.pre; do
+    . "$i"
+  done
+fi
+
+
 # --- global environment settings ---
 
 umask 077
 
-if ! printf "%s" "$PATH" | grep "^${HOME}/bin:" > /dev/null 2>&1; then
+if [[ ! "$PATH" =~ (^|:)${HOME}/bin(:|$) ]]; then  # no quotes around regex
+  # should probably be at the end, but...
   export PATH="${HOME}/bin:${PATH}"
 fi
 
@@ -23,6 +33,16 @@ if [[ -n "$PS1" ]]; then
   export MAIL="/var/mail/$USER"
   [[ -t 0 ]] && mesg n
 fi
+
+
+# --- post-profile sub-scripts ---
+
+if compgen -G "${HOME}/.bash_profile.d/*.post" > /dev/null 2>&1; then
+  for i in ${HOME}/.bash_profile.d/*.post; do
+    . "$i"
+  done
+fi
+
 
 # --- source .bashrc ---
 [[ -e ~/.bashrc ]] && . ~/.bashrc
