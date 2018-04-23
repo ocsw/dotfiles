@@ -1,6 +1,65 @@
+if which pip > /dev/null 2>&1 ||
+        which pip2 > /dev/null 2>&1 ||
+        which pip3 > /dev/null 2>&1; then
+    # pip bash completion start
+    _pip_completion() {
+        COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
+                       COMP_CWORD=$COMP_CWORD \
+                       PIP_AUTO_COMPLETE=1 $1 ) )
+    }
+    complete -o default -F _pip_completion pip
+    # pip bash completion end
+fi
+
 if which pyenv > /dev/null 2>&1; then
     eval "$(pyenv init - | grep -v PATH)"
 fi
 if which pyenv-virtualenv-init > /dev/null 2>&1; then
     eval "$(pyenv virtualenv-init - | grep -v PATH)"
+fi
+
+if which pyenv > /dev/null 2>&1 &&
+        which pyenv-virtualenv-init > /dev/null 2>&1; then
+    pyinst () {
+        if [[ -z "$1" ]]; then
+            echo "ERROR: No package given."
+            return
+        fi
+        if [[ -z "$2" ]]; then
+            echo "ERROR: No version given."
+            return
+        fi
+        package="$1"
+        version="$2"
+        pkgpath="$3"
+        prev_wd="$PWD"
+        prev_venv=$(pyenv version | sed 's/ (.*)$//')
+        pyenv virtualenv "$version" "${package}-${version}"
+        pyenv activate "${package}-${version}"
+        if [[ -z "$pkgpath" ]]; then
+            pip3 install "$package"
+        else
+            pip3 install "$pkgpath"
+        fi
+        cd "${HOME}/bin"
+        ln -s "../.pyenv/versions/${package}-${version}/bin/${package}" .
+        cat <<EOF
+
+To symlink other executables:
+    cd "${HOME}/bin"
+    ln -s "../.pyenv/versions/${package}-${version}/bin/EXECUTABLE" .
+
+EOF
+        cd "$prev_wd"
+        if [[ "$prev_venv" != "system" ]]; then
+            pyenv activate "$prev_venv"
+        else
+            pyenv deactivate
+        fi
+    }
+
+    ### To remove:
+    # rm ~/bin/EXECUTABLE
+    # pyenv uninstall $package-$version
+    ###
 fi
