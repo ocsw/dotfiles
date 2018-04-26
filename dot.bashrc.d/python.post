@@ -36,10 +36,15 @@ if which pyenv > /dev/null 2>&1 &&
         prev_venv=$(pyenv version | sed 's/ (.*)$//')
         pyenv virtualenv "$version" "${package}-${version}"
         pyenv activate "${package}-${version}"
-        if [[ -z "$pkgpath" ]]; then
-            pip3 install "$package"
+        if [[ "$version" =~ ^2 ]]; then
+            PIP=pip2
         else
-            pip3 install "$pkgpath"
+            PIP=pip3
+        fi
+        if [[ -z "$pkgpath" ]]; then
+            "$PIP" install "$package"
+        else
+            "$PIP" install "$pkgpath"
         fi
         cd "${HOME}/bin"
         ln -s "../.pyenv/versions/${package}-${version}/bin/${package}" .
