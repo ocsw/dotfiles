@@ -54,7 +54,6 @@ if [[ -t 0 ]]; then
 fi
 
 # misc settings
-TMPDIR="$HOME"  # for bash, don't export
 set -o noclobber
 shopt -s checkwinsize
 if [[ -t 0 ]]; then
