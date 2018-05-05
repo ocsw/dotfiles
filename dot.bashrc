@@ -191,7 +191,6 @@ typeset +x PS1  # this is exported on Cygwin for some reason
 # check for command in path
 in_path () {
   hash "$@" > /dev/null 2>&1
-  return $?
 }
 
 # program control aliases (and related shortcuts)
@@ -436,7 +435,7 @@ _tmux-auto () {
   [[ -n "$1" ]] && cc="$1"
   [[ -n "$2" ]] && sess="$2"
 
-  if which tmux >/dev/null 2>&1 && [[ -z "$TMUX" ]]; then
+  if in_path tmux && [[ -z "$TMUX" ]]; then
     if tmux has-session -t "$sess" >/dev/null 2>&1; then
       tmux "-2${cc}" attach-session -t "$sess"
     else

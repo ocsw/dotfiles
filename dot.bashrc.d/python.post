@@ -1,6 +1,6 @@
-if which pip > /dev/null 2>&1 ||
-        which pip2 > /dev/null 2>&1 ||
-        which pip3 > /dev/null 2>&1; then
+if hash pip > /dev/null 2>&1 ||
+        hash pip2 > /dev/null 2>&1 ||
+        hash pip3 > /dev/null 2>&1; then
     # pip bash completion start
     _pip_completion() {
         COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
@@ -11,15 +11,15 @@ if which pip > /dev/null 2>&1 ||
     # pip bash completion end
 fi
 
-if which pyenv > /dev/null 2>&1; then
+if hash pyenv > /dev/null 2>&1; then
     eval "$(pyenv init - | grep -v PATH)"
 fi
-if which pyenv-virtualenv-init > /dev/null 2>&1; then
+if hash pyenv-virtualenv-init > /dev/null 2>&1; then
     eval "$(pyenv virtualenv-init - | grep -v PATH)"
 fi
 
-if which pyenv > /dev/null 2>&1 &&
-        which pyenv-virtualenv-init > /dev/null 2>&1; then
+if hash pyenv > /dev/null 2>&1 &&
+        hash pyenv-virtualenv-init > /dev/null 2>&1; then
     pyinst () {
         if [[ -z "$1" ]]; then
             echo "ERROR: No package given."
