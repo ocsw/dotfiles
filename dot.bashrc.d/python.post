@@ -1,25 +1,23 @@
-if hash pip > /dev/null 2>&1 ||
-        hash pip2 > /dev/null 2>&1 ||
-        hash pip3 > /dev/null 2>&1; then
-    # pip bash completion start
+if in_path pip ||
+        in_path pip2 ||
+        in_path pip3; then
     _pip_completion() {
         COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
                        COMP_CWORD=$COMP_CWORD \
                        PIP_AUTO_COMPLETE=1 $1 ) )
     }
-    complete -o default -F _pip_completion pip
-    # pip bash completion end
+    in_path pip && complete -o default -F _pip_completion pip
+    in_path pip2 && complete -o default -F _pip_completion pip2
+    in_path pip3 && complete -o default -F _pip_completion pip3
 fi
 
-if hash pyenv > /dev/null 2>&1; then
+if in_path pyenv; then
     eval "$(pyenv init - | grep -v PATH)"
 fi
-if hash pyenv-virtualenv-init > /dev/null 2>&1; then
+if in_path pyenv-virtualenv-init; then
     eval "$(pyenv virtualenv-init - | grep -v PATH)"
 fi
-
-if hash pyenv > /dev/null 2>&1 &&
-        hash pyenv-virtualenv-init > /dev/null 2>&1; then
+if in_path pyenv && in_path pyenv-virtualenv-init; then
     pyinst () {
         if [[ -z "$1" ]]; then
             echo "ERROR: No package given."
