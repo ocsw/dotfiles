@@ -127,6 +127,7 @@ fi
 # set the prompt
 #PS1='\[\e[${PS1_COLOR}m\]\! $PWD @ \h$(jobs_flag)$PS1_MARKS\[\e[0m\] '
 #PS1='\[\e[${PS1_COLOR}m\]$(_errorcode_prompt)\! \u@\h $PWD$(_prompt_scm_info)$(jobs_flag)$PS1_MARKS\[\e[0m\] '
+# 3 and 4 are in one string to avoid having an extra space
 PS1_PARTS=(
   '\[\e[${PS1_COLORS[0]}m\][ $(_errorcode_prompt) ]\[\e[0m\]'
   '\[\e[${PS1_COLORS[1]}m\]\!\[\e[0m\]'
@@ -210,9 +211,9 @@ if [[ "$OS_UNAME" == CYGWIN* ]]; then
   alias mintty='run mintty -t bash -e env SHLVL=0 bash -l'
   alias brmintty='run mintty -c ~/.minttyrc.bigrev -t bash -e env LIGHT_BG=1 SHLVL=0 bash -l'
   alias traceroute='echo; echo "[Windows tracert]"; tracert'
-  alias trg='traceroute -d 74.125.47.100'  # one of the IPs for google.com
+  alias trg='traceroute -d 8.8.8.8'
 else
-  alias trg='traceroute -n 74.125.47.100'
+  alias trg='traceroute -n 8.8.8.8'
 fi
 
 # directory listing shortcuts
