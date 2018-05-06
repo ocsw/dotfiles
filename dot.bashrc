@@ -25,15 +25,14 @@ fi
 # --- shell options ---
 
 # history settings
+HISTFILESIZE=""  # unlimited
+HISTSIZE=""  # unlimited
 HISTCONTROL=ignoredups
 HISTIGNORE='bg:bg *:fg:fg *'
 # see h(), below
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }h -a -t"
 shopt -s cmdhist lithist  # and use C-xC-e to edit
 shopt -s histappend histverify
-#unset HISTFILE
-#HISTFILESIZE=100
-#HISTSIZE=100
 #shopt -s histreedit
 
 # completion settings
