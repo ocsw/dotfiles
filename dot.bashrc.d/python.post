@@ -27,17 +27,17 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
             echo "ERROR: No version given."
             return
         fi
-        package="$1"
-        version="$2"
-        pkgpath="$3"
-        prev_wd="$PWD"
-        prev_venv=$(pyenv version | sed 's/ (.*)$//')
+        local package="$1"
+        local version="$2"
+        local pkgpath="$3"
+        local prev_wd="$PWD"
+        local prev_venv=$(pyenv version | sed 's/ (.*)$//')
         pyenv virtualenv "$version" "${package}-${version}"
         pyenv activate "${package}-${version}"
         if [[ "$version" =~ ^2 ]]; then
-            PIP=pip2
+            local PIP=pip2
         else
-            PIP=pip3
+            local PIP=pip3
         fi
         if [[ -z "$pkgpath" ]]; then
             "$PIP" install "$package"

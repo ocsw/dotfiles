@@ -239,27 +239,27 @@ case "$OS_UNAME" in
   CYGWIN*)
     # note: /a is for ASCII; no way to exclude dotfiles
     # dirs,  incl. dots
-    function t () {
+    t () {
       tree.com /a    ${1+"$(cygpath -ml "$1" | sed 's|/$||')"} | \
         sed -e '1,2d' -e 's/^[A-Z]:\.$/./' | $DIRPAGER
     }
     # files, incl. dots
-    function tf () {
+    tf () {
       tree.com /a /f ${1+"$(cygpath -ml "$1" | sed 's|/$||')"} | \
         sed -e '1,2d' -e 's/^[A-Z]:\.$/./' | $DIRPAGER
     }
     ;;
   OpenBSD)
-    function t ()   { tree -s -d    ${1+"$@"} 2>&1 | $DIRPAGER; }  # dirs,  no dots
-    function tf ()  { tree -s       ${1+"$@"} 2>&1 | $DIRPAGER; }  # files, no dots
-    function ta ()  { tree -s -d -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # dirs,  incl. dots
-    function tfa () { tree -s    -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # files, incl. dots
+    t ()   { tree -s -d    ${1+"$@"} 2>&1 | $DIRPAGER; }  # dirs,  no dots
+    tf ()  { tree -s       ${1+"$@"} 2>&1 | $DIRPAGER; }  # files, no dots
+    ta ()  { tree -s -d -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # dirs,  incl. dots
+    tfa () { tree -s    -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # files, incl. dots
     ;;
   *)
-    function t ()   { tree --noreport -d    ${1+"$@"} 2>&1 | $DIRPAGER; }  # d, no .
-    function tf ()  { tree --noreport       ${1+"$@"} 2>&1 | $DIRPAGER; }  # f, no .
-    function ta ()  { tree --noreport -d -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # d, incl. .
-    function tfa () { tree --noreport    -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # f, incl. .
+    t ()   { tree --noreport -d    ${1+"$@"} 2>&1 | $DIRPAGER; }  # d, no .
+    tf ()  { tree --noreport       ${1+"$@"} 2>&1 | $DIRPAGER; }  # f, no .
+    ta ()  { tree --noreport -d -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # d, incl. .
+    tfa () { tree --noreport    -a ${1+"$@"} 2>&1 | $DIRPAGER; }  # f, incl. .
     ;;
 esac
 
