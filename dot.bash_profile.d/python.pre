@@ -13,7 +13,9 @@ if hash pyenv > /dev/null 2>&1; then
         export PATH="$PYENV_ROOT/shims:$PATH"
     fi
 fi
-if hash pyenv-virtualenv-init > /dev/null 2>&1 &&
-        [[ ! "$PATH" =~ "/pyenv-virtualenv/" ]]; then
-    eval "$(pyenv virtualenv-init - | grep PATH)"
+if hash pyenv-virtualenv-init > /dev/null 2>&1; then
+    if [[ ! "$PATH" =~ "/pyenv-virtualenv/" ]]; then
+        eval "$(pyenv virtualenv-init - | grep PATH)"
+    fi
+    export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 fi
