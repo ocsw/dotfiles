@@ -1,4 +1,4 @@
-# [from the Facebook dotfile collection, modified to add __git_ps1]
+# [from the Facebook dotfile collection]
 
 # Determines the "branch" of the current repo and emits it.
 # For use in generating the prompt.
@@ -23,13 +23,6 @@
 # NOTE! You *EITHER* need to single-quote the whole thing *OR* back-slash
 # the $(...) (as above), but not both. Which one you use depends on if
 # you need the rest of your PS1 to interpolate variables.
-
-export GIT_PS1_STATESEPARATOR=" "
-export GIT_PS1_SHOWDIRTYSTATE=1
-export GIT_PS1_SHOWSTASHSTATE=1
-export GIT_PS1_SHOWUNTRACKEDFILES=1
-# verbose = with counts, auto = without
-export GIT_PS1_SHOWUPSTREAM=auto
 
 _prompt_scm_info()
 {
@@ -113,37 +106,33 @@ _prompt_scm_info()
     fi
     br="$br$extra"
   elif test -n "$git" ; then
-    if hash __git_ps1 > /dev/null 2>&1; then
-      __git_ps1 "$fmt"
-    else
-      if test -f "$git/.git/HEAD" ; then
-        read br < "$git/.git/HEAD"
-        case $br in
-          ref:\ refs/heads/*) br=${br#ref: refs/heads/} ;;
-          *) br=$(echo $br | cut -c 1-7) ;;
-        esac
-        if [ -f "$git/.git/rebase-merge/interactive" ]; then
-          b="$(cat "$git/.git/rebase-merge/head-name")"
-          b=${b#refs/heads/}
-          br="$br|REBASE-i|$b"
-        elif [ -d "$git/.git/rebase-merge" ]; then
-          b="$(cat "$git/.git/rebase-merge/head-name")"
-          b=${b#refs/heads/}
-          br="$br|REBASE-m|$b"
-        else
-          if [ -d "$git/.git/rebase-apply" ]; then
-            if [ -f "$git/.git/rebase-apply/rebasing" ]; then
-              br="$br|REBASE"
-            elif [ -f "$git/.git/rebase-apply/applying" ]; then
-              br="$br|AM"
-            else
-              br="$br|AM/REBASE"
-            fi
-          elif [ -f "$git/.git/MERGE_HEAD" ]; then
-            br="$br|MERGE"
-          elif [ -f "$git/.git/BISECT_LOG" ]; then
-            br="$br|BISECT"
+    if test -f "$git/.git/HEAD" ; then
+      read br < "$git/.git/HEAD"
+      case $br in
+        ref:\ refs/heads/*) br=${br#ref: refs/heads/} ;;
+        *) br=$(echo $br | cut -c 1-7) ;;
+      esac
+      if [ -f "$git/.git/rebase-merge/interactive" ]; then
+        b="$(cat "$git/.git/rebase-merge/head-name")"
+        b=${b#refs/heads/}
+        br="$br|REBASE-i|$b"
+      elif [ -d "$git/.git/rebase-merge" ]; then
+        b="$(cat "$git/.git/rebase-merge/head-name")"
+        b=${b#refs/heads/}
+        br="$br|REBASE-m|$b"
+      else
+        if [ -d "$git/.git/rebase-apply" ]; then
+          if [ -f "$git/.git/rebase-apply/rebasing" ]; then
+            br="$br|REBASE"
+          elif [ -f "$git/.git/rebase-apply/applying" ]; then
+            br="$br|AM"
+          else
+            br="$br|AM/REBASE"
           fi
+        elif [ -f "$git/.git/MERGE_HEAD" ]; then
+          br="$br|MERGE"
+        elif [ -f "$git/.git/BISECT_LOG" ]; then
+          br="$br|BISECT"
         fi
       fi
     fi
