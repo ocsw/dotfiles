@@ -24,13 +24,6 @@
 # the $(...) (as above), but not both. Which one you use depends on if
 # you need the rest of your PS1 to interpolate variables.
 
-export GIT_PS1_STATESEPARATOR=" "
-export GIT_PS1_SHOWDIRTYSTATE=1
-export GIT_PS1_SHOWSTASHSTATE=1
-export GIT_PS1_SHOWUNTRACKEDFILES=1
-# verbose = with counts, auto = without
-export GIT_PS1_SHOWUPSTREAM=auto
-
 _prompt_scm_info()
 {
   # find out if we're in a git or hg repo by looking for the control dir
