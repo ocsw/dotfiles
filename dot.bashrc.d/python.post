@@ -1,7 +1,7 @@
 if in_path pip ||
         in_path pip2 ||
         in_path pip3; then
-    _pip_completion() {
+    _pip_completion () {
         COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
                        COMP_CWORD=$COMP_CWORD \
                        PIP_AUTO_COMPLETE=1 $1 ) )
@@ -32,12 +32,13 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
         local pkgpath="$3"
         local prev_wd="$PWD"
         local prev_venv=$(pyenv version | sed 's/ (.*)$//')
+        local PIP
         pyenv virtualenv "$version" "${package}-${version}"
         pyenv activate "${package}-${version}"
         if [[ "$version" =~ ^2 ]]; then
-            local PIP=pip2
+            PIP=pip2
         else
-            local PIP=pip3
+            PIP=pip3
         fi
         if [[ -z "$pkgpath" ]]; then
             "$PIP" install "$package"

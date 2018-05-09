@@ -1,4 +1,5 @@
-_errorcode_prompt() {
+_errorcode_prompt () {
+  local i signame PIPESTATUS_SIG
   for i in "${PIPESTATUS[@]}"; do
     if [[ "$i" -gt 128 ]]; then
       signame=$(builtin kill -l $(($i - 128)) 2>/dev/null)
