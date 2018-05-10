@@ -128,6 +128,9 @@ fi
 #PS1='\[\e[${PS1_COLOR}m\]\! $PWD @ \h$(jobs_flag)$PS1_MARKS\[\e[0m\] '
 #PS1='\[\e[${PS1_COLOR}m\]$(_errorcode_prompt)\! \u@\h $PWD$(_prompt_scm_info)$(jobs_flag)$PS1_MARKS\[\e[0m\] '
 #
+# NOTE: prompt requires _python_venv_prompt, _errorcode_prompt, and
+# _prompt_scm_info to be defined later
+#
 # 0 and 1 and 4 and 5 are in single strings to avoid having an extra space if a
 # component is empty
 PS1_PARTS=(

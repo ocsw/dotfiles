@@ -1,3 +1,9 @@
+_python_venv_prompt () {
+    if [[ -n "$PYENV_VERSION" ]]; then
+        printf "%s " "$PYENV_VERSION"
+    fi
+}
+
 if in_path pip ||
         in_path pip2 ||
         in_path pip3; then
