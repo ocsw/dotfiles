@@ -12,6 +12,9 @@ OS_UNAME="$(uname)"
 # also prevents duplication if we re-source the file
 unset PROMPT_COMMAND
 
+# tools needed for both main body and sub-scripts
+. "${HOME}/.bashrc.d/common.sh"
+
 
 # --- pre-rc sub-scripts ---
 
@@ -193,11 +196,6 @@ typeset +x PS1  # this is exported on Cygwin for some reason
 
 
 # --- aliases & functions ---
-
-# check for command in path
-in_path () {
-  hash "$@" > /dev/null 2>&1
-}
 
 # program control aliases (and related shortcuts)
 alias nano='nano -z'

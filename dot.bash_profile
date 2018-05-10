@@ -1,3 +1,8 @@
+# --- tools needed for both main body and sub-scripts ---
+
+. "${HOME}/.bashrc.d/common.sh"
+
+
 # --- pre-profile sub-scripts ---
 
 if compgen -G "${HOME}/.bash_profile.d/*.pre.sh" > /dev/null 2>&1; then
@@ -11,7 +16,7 @@ fi
 
 umask 077
 
-if [[ ! "$PATH" =~ (^|:)${HOME}/bin(:|$) ]]; then  # no quotes around regex
+if ! is_path_component "${HOME}/bin"; then
   # should probably be at the end, but...
   export PATH="${HOME}/bin:${PATH}"
 fi
