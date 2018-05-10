@@ -15,8 +15,8 @@ unset PROMPT_COMMAND
 
 # --- pre-rc sub-scripts ---
 
-if compgen -G "${HOME}/.bashrc.d/*.pre" > /dev/null 2>&1; then
-  for i in ${HOME}/.bashrc.d/*.pre; do
+if compgen -G "${HOME}/.bashrc.d/*.pre.sh" > /dev/null 2>&1; then
+  for i in ${HOME}/.bashrc.d/*.pre.sh; do
     . "$i"
   done
 fi
@@ -437,8 +437,8 @@ gc () {
 
 # --- post-rc sub-scripts ---
 
-if compgen -G "${HOME}/.bashrc.d/*.post" > /dev/null 2>&1; then
-  for i in ${HOME}/.bashrc.d/*.post; do
+if compgen -G "${HOME}/.bashrc.d/*.post.sh" > /dev/null 2>&1; then
+  for i in ${HOME}/.bashrc.d/*.post.sh; do
     . "$i"
   done
 fi

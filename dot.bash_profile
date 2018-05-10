@@ -1,7 +1,7 @@
 # --- pre-profile sub-scripts ---
 
-if compgen -G "${HOME}/.bash_profile.d/*.pre" > /dev/null 2>&1; then
-  for i in ${HOME}/.bash_profile.d/*.pre; do
+if compgen -G "${HOME}/.bash_profile.d/*.pre.sh" > /dev/null 2>&1; then
+  for i in ${HOME}/.bash_profile.d/*.pre.sh; do
     . "$i"
   done
 fi
@@ -37,8 +37,8 @@ fi
 
 # --- post-profile sub-scripts ---
 
-if compgen -G "${HOME}/.bash_profile.d/*.post" > /dev/null 2>&1; then
-  for i in ${HOME}/.bash_profile.d/*.post; do
+if compgen -G "${HOME}/.bash_profile.d/*.post.sh" > /dev/null 2>&1; then
+  for i in ${HOME}/.bash_profile.d/*.post.sh; do
     . "$i"
   done
 fi
