@@ -1,0 +1,5 @@
+bash:
+
+- variables don't need to be quoted on the right side of an assignment
+  or in [[]]
+- $() / `` strip trailing \n
