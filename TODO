@@ -1,4 +1,4 @@
-move errorcode_prompt?  :-1
+move errorcode_prompt?
 rename all 4+ prompt funcs?
 more modularization?
 check old locals

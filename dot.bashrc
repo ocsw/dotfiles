@@ -357,7 +357,8 @@ fg () {
 
 # glob expansion for commands
 #
-# takes the place of the missing functionality from tcsh's ^Xg
+# takes the place of the missing functionality from tcsh's ^Xg;
+# argument will probably need to be quoted
 #
 # on Cygwin:
 # -looks for both pattern and pattern.exe
