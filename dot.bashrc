@@ -104,7 +104,7 @@ jobs_flag () {
   # but $() in PS1 itself works, and so does ``
   #
   # terminal \n is stripped by the substitution in PS1, so we don't need
-  # to use echo -n (and the output is cleaner if run from the command line)
+  # to use echo -n or printf
   #
   [[ -n "`jobs -p`" ]] && echo '.'
 }
@@ -162,6 +162,7 @@ typeset +x PS1  # this is exported on Cygwin for some reason
 #
 # to enter control codes manually, use $' quoting:
 # echo $'codes'
+# (or ideally printf "%s\n" $'codes')
 #
 #
 # ANSI color codes (partial list):
@@ -272,9 +273,14 @@ esac
 
 # misc shortcuts
 wintitle () {
-  # use eval to keep 'set' list from messing up the title
+  # use eval to keep 'set' list from messing up the title;
   # (also makes arg substitution/quoting cleaner)
-  eval echo "$'\e]0;$*\a'"
+  # of course it's also dangerous...
+  #eval printf "%s" "$'\e]0;$*\a'"
+
+  # in bash 4 there's a better way
+  local title="\e]0;$*\a"
+  printf "%s" "${title@E}"
 }
 alias m=mutt  # mailreader; if mutt isn't installed, override in .bashrc.local
 alias p=clear
@@ -383,7 +389,7 @@ gc () {
   unset list
 
   if [[ -z "$1" ]]; then
-    echo "Usage: gc 'pattern'"
+    echo "Usage: gc 'PATTERN'"
     return
   fi
 
@@ -432,7 +438,7 @@ gc () {
   # but the join will produce "" if there were no results at all, so:
   if [[ -n "${list[*]}" ]]; then
     IFS=$'\n'
-    echo "${list[*]}" | sort -u
+    printf "%s\n" "${list[*]}" | sort -u
   fi
 }
 
