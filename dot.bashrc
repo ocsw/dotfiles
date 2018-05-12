@@ -218,6 +218,9 @@ if [[ "$OS_UNAME" == CYGWIN* ]]; then
 else
   alias trg='traceroute -n 8.8.8.8'
 fi
+if [[ "$OS_UNAME" == "Darwin" ]]; then
+  alias ls='ls -G'
+fi
 
 # directory listing shortcuts
 #
