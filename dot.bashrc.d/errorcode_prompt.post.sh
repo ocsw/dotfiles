@@ -4,9 +4,9 @@ _errorcode_prompt () {
   local pipestatus_num=("${PIPESTATUS[@]}")
 
   local stat_num signame pipestatus_sig
-  # without this, and with local, the array gets a null element 0;
-  # order doesn't matter
-  typeset -a pipestatus_sig
+  # local (at least on bash 3) sets pipstatus_sig[0] (to null), so we need to
+  # unset it; the local attribute will remain
+  unset pipestatus_sig
 
   for stat_num in "${pipestatus_num[@]}"; do
     if [[ "$stat_num" -gt 128 ]]; then
