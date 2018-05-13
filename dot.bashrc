@@ -273,14 +273,7 @@ esac
 
 # misc shortcuts
 wintitle () {
-  # use eval to keep 'set' list from messing up the title;
-  # (also makes arg substitution/quoting cleaner)
-  # of course it's also dangerous...
-  #eval printf "%s" "$'\e]0;$*\a'"
-
-  # in bash 4 there's a better way
-  local title="\e]0;$*\a"
-  printf "%s" "${title@E}"
+  printf "\033]0;%s\a" "$*"
 }
 alias m=mutt  # mailreader; if mutt isn't installed, override in .bashrc.local
 alias p=clear
