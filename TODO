@@ -2,11 +2,10 @@ move errorcode_prompt?
 rename all 4+ prompt funcs?
 more modularization?
 check old locals
--O2, $ver
-pyrecreate
-pycopy
-activate/deactivate
-venv path
+base upgrade
+pyrecreate w/diff ver/name
+pycopy w/diff ver/name
 completion for py*
 automatic on cd?
 umask
+[[]] vs []
