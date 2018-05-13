@@ -48,12 +48,12 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
         if [[ -n $majorver ]] && [[ $majorver != "2" ]] && \
                 [[ $majorver != "3" ]]; then
             cat <<EOF
-Usage: pylatest [MAJOR_VERSION] [INSTALLED_ONLY]
-MAJOR_VERSION defaults to 3.
+Usage: pylatest [MAJOR_PYVERSION] [INSTALLED_ONLY]
+MAJOR_PYVERSION defaults to 3.
 If INSTALLED_ONLY is given, only installed pyenv base versions will be
 examined.
 
-ERROR: If given, MAJOR_VERSION must be 2 or 3.
+ERROR: If given, MAJOR_PYVERSION must be 2 or 3.
 EOF
             return 1
         fi
@@ -96,8 +96,8 @@ EOF
 
         if [[ -z "$version" ]]; then
             cat <<EOF
-Usage: pybase VERSION [PYENV_INSTALL_ARGS]
-If VERSION is 2 or 3, the latest available Python release with that major
+Usage: pybase PYVERSION [PYENV_INSTALL_ARGS]
+If PYVERSION is 2 or 3, the latest available Python release with that major
 version will be used.
 
 ERROR: No version given.
@@ -147,8 +147,13 @@ EOF
         # create a pyenv-virtualenv virtualenv with a bunch of tweaks and
         # installs
         if [[ -z "$1" ]]; then
-            echo "Usage: pyvirt SHORTNAME PYVERSION [PROJ_PATH]"
-            echo "ERROR: No shortname given."
+            cat <<EOF
+Usage: pyvirt SHORTNAME PYVERSION [PROJ_PATH]
+If PYVERSION is 2 or 3, the latest installed Python release with that major
+version will be used.
+
+ERROR: No shortname given.
+EOF
             return 1
         fi
         if [[ -z "$2" ]]; then
@@ -166,8 +171,13 @@ EOF
         local shortname="$1"
         local version="$2"
         local projpath="$3"
-        local fullname="${shortname}-${version}"
+        local fullname
         local i
+
+        if [[ "$version" = "2" ]] || [[ "$version" = "3" ]]; then
+            version=$(pylatest "$version" "installed_only")
+        fi
+        fullname="${shortname}-${version}"
 
         if ! pyenv virtualenv "$version" "$fullname"; then
             echo "ERROR: can't create virtualenv.  Stopping."
@@ -212,8 +222,13 @@ EOF
         #pyenv uninstall $package-$version
         
         if [[ -z "$1" ]]; then
-            echo "Usage: pyinst PACKAGE PYVERSION [PKG_PATH]"
-            echo "ERROR: No package given."
+            cat <<EOF
+Usage: pyinst PACKAGE PYVERSION [PKG_PATH]
+If PYVERSION is 2 or 3, the latest installed Python release with that major
+version will be used.
+
+ERROR: No package given.
+EOF
             return 1
         fi
         if [[ -z "$2" ]]; then
@@ -227,7 +242,12 @@ EOF
         local package="$1"
         local version="$2"
         local pkgpath="$3"
-        local fullname="${package}-${version}"
+        local fullname
+
+        if [[ "$version" = "2" ]] || [[ "$version" = "3" ]]; then
+            version=$(pylatest "$version" "installed_only")
+        fi
+        fullname="${package}-${version}"
 
         if ! pyvirt "$package" "$version"; then
             # error will already have been printed
@@ -261,6 +281,7 @@ EOF
         # install a project's requirements in a pyenv-virtualenv virtualenv
         if [[ -z "$1" ]]; then
             echo "Usage: pyreqs VIRTUALENV PROJ_PATH"
+            echo
             echo "ERROR: No virtualenv given."
             return 1
         fi
