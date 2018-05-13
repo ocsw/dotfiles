@@ -3,3 +3,6 @@ bash:
 - variables don't need to be quoted on the right side of an assignment
   or in [[]]
 - $() / `` strip trailing \n
+- http://wiki.bash-hackers.org/scripting/bashchanges
+- https://wiki.ubuntu.com/DashAsBinSh
+- https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.69/html_node/Portable-Shell.html#Portable-Shell
