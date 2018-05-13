@@ -24,6 +24,95 @@ if in_path pyenv-virtualenv-init; then
     eval "$(pyenv virtualenv-init - | grep -v PATH)"
 fi
 if in_path pyenv && in_path pyenv-virtualenv-init; then
+    py_cur_venv () {
+        printf "%s\n" "$(pyenv version | sed 's/ (.*)$//')"
+    }
+
+    pyact () {
+        venv="$1"
+        if [[ -n $venv ]]; then
+            pyenv activate "$venv"
+        else
+            pyenv deactivate
+        fi
+    }
+
+
+   pylatest () {
+        # get the latest available (or latest locally installed) version of
+        # Python for a specified major version in pyenv
+        local majorver="$1"
+        local installed_only="$2"
+        local versions ver
+
+        if [[ -n $majorver ]] && [[ $majorver != "2" ]] && \
+                [[ $majorver != "3" ]]; then
+            cat <<EOF
+Usage: pylatest [MAJOR_VERSION] [INSTALLED_ONLY]
+MAJOR_VERSION defaults to 3.
+If INSTALLED_ONLY is given, only installed pyenv base versions will be
+examined.
+
+ERROR: If given, MAJOR_VERSION must be 2 or 3.
+EOF
+            return 1
+        fi
+        [[ -z $majorver ]] && majorver=3
+
+        # see:
+        # https://stackoverflow.com/questions/742466/how-can-i-reverse-the-order-of-lines-in-a-file
+        # https://web.archive.org/web/20090208232311/http://student.northpark.edu/pemente/awk/awk1line.txt
+        versions=$(pyenv install --list | tail -n +2 | sed 's/^..//' |
+            grep "^${majorver}\.[0-9]" | grep -vi '[a-z]' |
+            awk '{a[i++]=$0} END {for (j=i-1; j>=0;) print a[j--]}'
+        )
+
+        if [[ -z "$installed_only" ]]; then
+            printf "%s\n" "$versions" | head -n 1
+            return 0
+        fi
+        for ver in $versions; do
+            if [[ -d "${HOME}/.pyenv/versions/$ver" ]]; then
+                printf "%s\n" "$ver"
+                return 0
+            fi
+        done
+
+        return 1
+    }
+
+    # don't use aliases so no other args will be passed
+    py3latest () { pylatest 3; }
+    py2latest () { pylatest 2; }
+    pylatest_local () { pylatest "$1" "installed_only"; }
+    py3latest_local () { pylatest_local 3; }
+    py2latest_local () { pylatest_local 2; }
+
+
+    pybase () {
+        # install a version of Python in pyenv
+        local cflags_add="-O2"
+        local version="$1"
+
+        if [[ -z "$version" ]]; then
+            cat <<EOF
+Usage: pybase VERSION [PYENV_INSTALL_ARGS]
+If VERSION is 2 or 3, the latest available Python release with that major
+version will be used.
+
+ERROR: No version given.
+EOF
+            return 1
+        fi
+        if [[ "$version" = "2" ]] || [[ "$version" = "3" ]]; then
+            version=$(pylatest "$version")
+        fi
+        shift        
+
+        CFLAGS="$cflags_add $CFLAGS" pyenv install "$@" "$version"
+    }
+
+
     pyutil_wrapper () {
         # clean up after the python helpers, below
         if [[ -z "$1" ]]; then
@@ -35,14 +124,13 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
         local wrapped="$1"
         shift
         local prev_wd="$PWD"
-        local prev_venv=$(pyenv version | sed 's/ (.*)$//')
+        local prev_venv=$(py_cur_venv)
 
         "$wrapped" "$@"
         retval="$?"
 
         cd "$prev_wd"
-        cur_venv=$(pyenv version | sed 's/ (.*)$//')
-        if [[ "$cur_venv" != "$prev_venv" ]]; then
+        if [[ "$(py_cur_venv)" != "$prev_venv" ]]; then
             global_env=$(pyenv global)
             if [[ "$prev_venv" != "$global_env" ]]; then
                 pyenv activate "$prev_venv"
@@ -56,7 +144,8 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
 
 
     pyvirt () {
-        # create a virtualenv with a bunch of tweaks and installs
+        # create a pyenv-virtualenv virtualenv with a bunch of tweaks and
+        # installs
         if [[ -z "$1" ]]; then
             echo "Usage: pyvirt SHORTNAME PYVERSION [PROJ_PATH]"
             echo "ERROR: No shortname given."
@@ -115,8 +204,8 @@ EOF
 
 
     pyinst () {
-        # replacement for pipsi; creates a virtualenv specifically for a 
-        # python-based utility
+        # replacement for pipsi; creates a pyenv-virtualenv virtualenv
+        # specifically for a python-based utility
 
         # to remove the virtualenv:
         #rm ~/bin/EXECUTABLE
@@ -169,7 +258,7 @@ EOF
 
 
     pyreqs () {
-        # install a project's requirements in a virtualenv
+        # install a project's requirements in a pyenv-virtualenv virtualenv
         if [[ -z "$1" ]]; then
             echo "Usage: pyreqs VIRTUALENV PROJ_PATH"
             echo "ERROR: No virtualenv given."
