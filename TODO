@@ -2,10 +2,18 @@ move errorcode_prompt?
 rename all 4+ prompt funcs?
 more modularization?
 check old locals
+umask
+[[]] vs []
+
 base upgrade
 pyrecreate w/diff ver/name
 pycopy w/diff ver/name
+pylast
+move tests into wrapped functions
+pyfix
+move to .sh, sep repo - but Sp?
 completion for py*
+
+running pytest?
+pip timeout
 automatic on cd?
-umask
-[[]] vs []
