@@ -1,4 +1,4 @@
-# [from the Facebook dotfile collection, modified to add __git_ps1]
+# [from the Facebook dotfile collection, tweaked and modified to add __git_ps1]
 
 # Determines the "branch" of the current repo and emits it.
 # For use in generating the prompt.
@@ -28,8 +28,8 @@ _prompt_scm_info()
 {
   # find out if we're in a git or hg repo by looking for the control dir
   local d git hg fmt
-  fmt=$1
-  if [[ -z "$fmt" ]]; then
+  fmt="$1"
+  if [ -z "$fmt" ]; then
     if [ -n "$WANT_OLD_SCM_PROMPT" ]; then
       fmt="%s"
     else
@@ -40,21 +40,21 @@ _prompt_scm_info()
       fmt=" (%s)"
     fi
   fi
-  d=$PWD
+  d="$PWD"
   while : ; do
-    if test -d "$d/.git" ; then
-      git=$d
+    if [ -d "$d/.git" ]; then
+      git="$d"
       break
-    elif test -d "$d/.hg" ; then
-      hg=$d
+    elif [ -d "$d/.hg" ]; then
+      hg="$d"
       break
     fi
-    test "$d" = / && break
-    d=$(cd -P "$d/.." && echo "$PWD")
+    [ "$d" = "/" ] && break
+    d=$(cd -P "$d/.." && printf "%s" "$PWD")
   done
 
   local br
-  if test -n "$hg" ; then
+  if [ -n "$hg" ]; then
     local extra
     if [ -f "$hg/.hg/bisect.state" ]; then
       extra="|BISECT"
@@ -69,59 +69,59 @@ _prompt_scm_info()
     elif [ -d "$hg/.hg/merge" ]; then
       extra="|MERGE"
     fi
-    local dirstate=$(test -f $hg/.hg/dirstate && \
-      hexdump -vn 20 -e '1/1 "%02x"' $hg/.hg/dirstate || \
+    local dirstate=$(test -f "$hg/.hg/dirstate" && \
+      hexdump -vn 20 -e '1/1 "%02x"' "$hg/.hg/dirstate" || \
       echo "empty")
     local current="$hg/.hg/bookmarks.current"
-    if  [[ -f "$current" ]]; then
+    if  [ -f "$current" ]; then
       br=$(cat "$current")
       # check to see if active bookmark needs update
       local marks="$hg/.hg/bookmarks"
       if [ -f "$hg/.hg/sharedpath" ]; then
-          marks="`cat $hg/.hg/sharedpath`/bookmarks"
+          marks="$(cat "$hg/.hg/sharedpath")/bookmarks"
       fi
-      if [[ -z "$extra" ]] && [[ -f "$marks" ]]; then
+      if [ -z "$extra" ] && [ -f "$marks" ]; then
         local markstate=$(grep --color=never " $br$" "$marks" | cut -f 1 -d ' ')
-        if [[ $markstate != $dirstate ]]; then
+        if [ "$markstate" != "$dirstate" ]; then
           extra="|UPDATE_NEEDED"
         fi
       fi
     else
-      br=$(echo $dirstate | cut -c 1-7)
+      br=$(printf "%s\n" "$dirstate" | cut -c 1-7)
     fi
     local remote="$hg/.hg/remotenames"
-    if [[ -f "$remote" ]]; then
+    if [ -f "$remote" ]; then
       local marks=$(grep --color=never "^$dirstate bookmarks" "$remote" | \
         cut -f 3 -d ' ' | tr '\n' '|' | sed 's/.$//')
-      if [[ -n "$marks" ]]; then
+      if [ -n "$marks" ]; then
         br="$br|$marks"
       fi
     fi
     local branch
-    if [[ -f $hg/.hg/branch ]]; then
-      branch=$(cat $hg/.hg/branch)
-      if [[ $branch != "default" ]]; then
+    if [ -f "$hg/.hg/branch"] ; then
+      branch=$(cat "$hg/.hg/branch")
+      if [ "$branch" != "default" ]; then
         br="$br|$branch"
       fi
     fi
     br="$br$extra"
-  elif test -n "$git" ; then
+  elif [ -n "$git" ]; then
     if in_path __git_ps1; then
       __git_ps1 "$fmt"
     else
-      if test -f "$git/.git/HEAD" ; then
+      if [ -f "$git/.git/HEAD" ]; then
         read br < "$git/.git/HEAD"
-        case $br in
-          ref:\ refs/heads/*) br=${br#ref: refs/heads/} ;;
-          *) br=$(echo $br | cut -c 1-7) ;;
+        case "$br" in
+          ref:\ refs/heads/*) br="${br#ref: refs/heads/}" ;;
+          *) br=$(printf "%s\n" "$br" | cut -c 1-7) ;;
         esac
         if [ -f "$git/.git/rebase-merge/interactive" ]; then
-          b="$(cat "$git/.git/rebase-merge/head-name")"
-          b=${b#refs/heads/}
+          b=$(cat "$git/.git/rebase-merge/head-name")
+          b="${b#refs/heads/}"
           br="$br|REBASE-i|$b"
         elif [ -d "$git/.git/rebase-merge" ]; then
-          b="$(cat "$git/.git/rebase-merge/head-name")"
-          b=${b#refs/heads/}
+          b=$(cat "$git/.git/rebase-merge/head-name")
+          b="${b#refs/heads/}"
           br="$br|REBASE-m|$b"
         else
           if [ -d "$git/.git/rebase-apply" ]; then
