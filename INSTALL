@@ -1,0 +1,44 @@
+DF=".dotfiles"
+cd
+git clone git@github.com:ocsw/dotfiles.git "$DF"
+ln_dotfile () {
+    ln -s "${DF}/dot${1}" "$1"
+}
+cp_dotfile () {
+    if ! [ -e "$1" ]; then  # -e isn't technically portable
+        cp "${DF}/dot${1}" "$1"
+    fi
+}
+#
+ln_dotfile .bash_profile
+ln_dotfile .bash_profile.d
+ln_dotfile .bashrc
+ln_dotfile .bashrc.d
+ln_dotfile .inputrc
+cp_dotfile .bashrc.local
+#ln_dotfile .bash_logout  # maybe
+#
+ln_dotfile .vimrc
+ln_dotfile .vimrc.d
+cp_dotfile .vimrc.local
+#
+#ln_dotfile .muttrc  # maybe
+
+TBU=".to_back_up"
+cd
+mkdir "$TBU"
+ln_tbu () {
+    if ! [ -e "${TBU}/${1}" ]; then  # -e isn't technically portable
+        mv "$1" "$TBU"
+        ln -s "${TBU}/${1}" .
+    fi
+}
+#
+ln_tbu .bash_history
+ln_tbu .bashrc.local
+ln_tbu .vimrc.local
+#
+ln_tbu .ipython
+ln_tbu .python_history
+#
+ln_tbu .vscode
