@@ -3,7 +3,7 @@ rename all 4+ prompt funcs?
 more modularization?
 check old locals
 umask
-[[]] vs []
+${1+"$@"} stuff???
 
 base upgrade
 pyrecreate w/diff ver/name

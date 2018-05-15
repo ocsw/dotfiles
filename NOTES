@@ -6,3 +6,20 @@ bash:
 - http://wiki.bash-hackers.org/scripting/bashchanges
 - https://wiki.ubuntu.com/DashAsBinSh
 - https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.69/html_node/Portable-Shell.html#Portable-Shell
+- I'm going to use [] and = unless specifically using bash features (and
+  quote variables)
+- I'm going to quote all variables including in assignments to build the habit
+  of quoting for when it's necessary
+- I'm going to leave quotes off foo=$() because it's not as necessary for habit
+  reasons and it tends to make lines hard to read, since $() frequently contains
+  quotes
+- I'm going to use "" unless strings contain $ or "
+  ---
+  Enclosing characters in double quotes preserves the literal value of all 
+  characters within the quotes, with the exception of $, `, \, and, when
+  history expansion is enabled, !.
+  The backslash retains its special meaning only when followed by one of the
+  following characters: $, `, ", \, or <newline>.
+- if multiple arguments to a program would otherwise have different quoting, I
+  will make them consistent
+  

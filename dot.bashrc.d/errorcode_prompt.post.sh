@@ -9,7 +9,7 @@ _errorcode_prompt () {
   unset pipestatus_sig
 
   for stat_num in "${pipestatus_num[@]}"; do
-    if [[ "$stat_num" -gt 128 ]]; then
+    if [ "$stat_num" -gt 128 ]; then
       signame=$(builtin kill -l $(($stat_num - 128)) 2>/dev/null)
       signame="${signame:3}"
       pipestatus_sig=("${pipestatus_sig[@]}" "$stat_num ($signame)")

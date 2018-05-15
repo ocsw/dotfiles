@@ -1,5 +1,5 @@
 _python_venv_prompt () {
-    if [[ -n "$PYENV_VERSION" ]]; then
+    if [ -n "$PYENV_VERSION" ]; then
         printf "%s " "$PYENV_VERSION"
     fi
 }
@@ -30,7 +30,7 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
 
     pyact () {
         venv="$1"
-        if [[ -n $venv ]]; then
+        if [ -n $venv ]; then
             pyenv activate "$venv"
         else
             pyenv deactivate
@@ -45,8 +45,8 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
         local installed_only="$2"
         local versions ver
 
-        if [[ -n $majorver ]] && [[ $majorver != "2" ]] && \
-                [[ $majorver != "3" ]]; then
+        if [ -n "$majorver" ] && [ "$majorver" != "2" ] && \
+                [ "$majorver" != "3" ]; then
             cat <<EOF
 Usage: pylatest [MAJOR_PYVERSION] [INSTALLED_ONLY]
 MAJOR_PYVERSION defaults to 3.
@@ -57,22 +57,22 @@ ERROR: If given, MAJOR_PYVERSION must be 2 or 3.
 EOF
             return 1
         fi
-        [[ -z $majorver ]] && majorver=3
+        [ -z "$majorver" ] && majorver="3"
 
         # see:
         # https://stackoverflow.com/questions/742466/how-can-i-reverse-the-order-of-lines-in-a-file
         # https://web.archive.org/web/20090208232311/http://student.northpark.edu/pemente/awk/awk1line.txt
-        versions=$(pyenv install --list | tail -n +2 | sed 's/^..//' |
-            grep "^${majorver}\.[0-9]" | grep -vi '[a-z]' |
+        versions=$(pyenv install --list | tail -n +2 | sed "s/^..//" |
+            grep "^${majorver}\.[0-9]" | grep -vi "[a-z]" |
             awk '{a[i++]=$0} END {for (j=i-1; j>=0;) print a[j--]}'
         )
 
-        if [[ -z "$installed_only" ]]; then
+        if [ -z "$installed_only" ]; then
             printf "%s\n" "$versions" | head -n 1
             return 0
         fi
         for ver in $versions; do
-            if [[ -d "${HOME}/.pyenv/versions/$ver" ]]; then
+            if [ -d "${HOME}/.pyenv/versions/$ver" ]; then
                 printf "%s\n" "$ver"
                 return 0
             fi
@@ -94,7 +94,7 @@ EOF
         local cflags_add="-O2"
         local version="$1"
 
-        if [[ -z "$version" ]]; then
+        if [ -z "$version" ]; then
             cat <<EOF
 Usage: pybase PYVERSION [PYENV_INSTALL_ARGS]
 If PYVERSION is 2 or 3, the latest available Python release with that major
@@ -104,7 +104,7 @@ ERROR: No version given.
 EOF
             return 1
         fi
-        if [[ "$version" = "2" ]] || [[ "$version" = "3" ]]; then
+        if [ "$version" = "2" ] || [ "$version" = "3" ]; then
             version=$(pylatest "$version")
         fi
         shift        
@@ -115,7 +115,7 @@ EOF
 
     pyutil_wrapper () {
         # clean up after the python helpers, below
-        if [[ -z "$1" ]]; then
+        if [ -z "$1" ]; then
             echo "Usage: pyutil_wrapper COMMAND [ARGS]"
             echo "ERROR: No command given."
             return 1
@@ -130,9 +130,9 @@ EOF
         retval="$?"
 
         cd "$prev_wd"
-        if [[ "$(py_cur_venv)" != "$prev_venv" ]]; then
+        if [ "$(py_cur_venv)" != "$prev_venv" ]; then
             global_env=$(pyenv global)
-            if [[ "$prev_venv" != "$global_env" ]]; then
+            if [ "$prev_venv" != "$global_env" ]; then
                 pyenv activate "$prev_venv"
             else
                 pyenv deactivate
@@ -146,7 +146,7 @@ EOF
     pyvirt () {
         # create a pyenv-virtualenv virtualenv with a bunch of tweaks and
         # installs
-        if [[ -z "$1" ]]; then
+        if [ -z "$1" ]; then
             cat <<EOF
 Usage: pyvirt SHORTNAME PYVERSION [PROJ_PATH]
 If PYVERSION is 2 or 3, the latest installed Python release with that major
@@ -156,11 +156,11 @@ ERROR: No shortname given.
 EOF
             return 1
         fi
-        if [[ -z "$2" ]]; then
+        if [ -z "$2" ]; then
             echo "ERROR: No Python version given."
             return 1
         fi
-        if [[ -n "$3" ]] && [[ ! -d "$3" ]]; then
+        if [ -n "$3" ] && [ ! -d "$3" ]; then
             echo "ERROR: Bad project path."
             return 1
         fi
@@ -174,7 +174,7 @@ EOF
         local fullname
         local i
 
-        if [[ "$version" = "2" ]] || [[ "$version" = "3" ]]; then
+        if [ "$version" = "2" ] || [ "$version" = "3" ]; then
             version=$(pylatest "$version" "installed_only")
         fi
         fullname="${shortname}-${version}"
@@ -196,7 +196,7 @@ EOF
 
         pyenv activate "$fullname"
         pip install --upgrade pip
-        if [[ -n "$projpath" ]]; then
+        if [ -n "$projpath" ]; then
             cd "$projpath"
             for i in *req*; do
                 pip install -r "$i"
@@ -221,7 +221,7 @@ EOF
         #rm ~/bin/EXECUTABLE
         #pyenv uninstall $package-$version
         
-        if [[ -z "$1" ]]; then
+        if [ -z "$1" ]; then
             cat <<EOF
 Usage: pyinst PACKAGE PYVERSION [PKG_PATH]
 If PYVERSION is 2 or 3, the latest installed Python release with that major
@@ -231,7 +231,7 @@ ERROR: No package given.
 EOF
             return 1
         fi
-        if [[ -z "$2" ]]; then
+        if [ -z "$2" ]; then
             echo "ERROR: No Python version given."
             return 1
         fi
@@ -244,7 +244,7 @@ EOF
         local pkgpath="$3"
         local fullname
 
-        if [[ "$version" = "2" ]] || [[ "$version" = "3" ]]; then
+        if [ "$version" = "2" ] || [ "$version" = "3" ]; then
             version=$(pylatest "$version" "installed_only")
         fi
         fullname="${package}-${version}"
@@ -254,12 +254,12 @@ EOF
             return 1
         fi
         pyenv activate "$fullname"
-        if [[ -z "$pkgpath" ]]; then
+        if [ -z "$pkgpath" ]; then
             pip install "$package"
         else
             pip install "$pkgpath"
         fi
-        if [[ $? != "0" ]]; then
+        if [ $? != "0" ]; then
             echo "ERROR: installation failed.  Stopping."
             return 1
         fi
@@ -279,17 +279,17 @@ EOF
 
     pyreqs () {
         # install a project's requirements in a pyenv-virtualenv virtualenv
-        if [[ -z "$1" ]]; then
+        if [ -z "$1" ]; then
             echo "Usage: pyreqs VIRTUALENV PROJ_PATH"
             echo
             echo "ERROR: No virtualenv given."
             return 1
         fi
-        if [[ -z "$2" ]]; then
+        if [ -z "$2" ]; then
             echo "ERROR: No project path given."
             return 1
         fi
-        if [[ ! -d "$2" ]]; then
+        if [ ! -d "$2" ]; then
             echo "ERROR: Bad project path."
             return 1
         fi

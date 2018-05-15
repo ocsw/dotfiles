@@ -2,11 +2,11 @@
 
 # stop if shell is non-interactive
 # (note: bash 4 reads .bashrc even if non-interactive)
-[[ -z "$PS1" ]] && return
+[ -z "$PS1" ] && return
 
 # what OS are we on?
-OS_UNAME="$(uname)"
-[[ -z "$OS_UNAME" ]] && OS_UNAME=unknown
+OS_UNAME=$(uname)
+[ -z "$OS_UNAME" ] && OS_UNAME="unknown"
 
 # start P_C from scratch
 # also prevents duplication if we re-source the file
@@ -19,7 +19,7 @@ unset PROMPT_COMMAND
 # --- pre-rc sub-scripts ---
 
 if compgen -G "${HOME}/.bashrc.d/*.pre.sh" > /dev/null 2>&1; then
-  for i in ${HOME}/.bashrc.d/*.pre.sh; do
+  for i in "${HOME}"/.bashrc.d/*.pre.sh; do
     . "$i"
   done
 fi
@@ -30,8 +30,8 @@ fi
 # history settings
 HISTFILESIZE=""  # unlimited
 HISTSIZE=""  # unlimited
-HISTCONTROL=ignoredups
-HISTIGNORE='bg:bg *:fg:fg *'
+HISTCONTROL="ignoredups"
+HISTIGNORE="bg:bg *:fg:fg *"
 # see h(), below
 PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }h -a -t"
 shopt -s cmdhist lithist  # and use C-xC-e to edit
@@ -40,17 +40,17 @@ shopt -s histappend histverify
 
 # completion settings
 shopt -s no_empty_cmd_completion
-if [[ -t 0 ]]; then
-  bind 'set mark-symlinked-directories on'
-  bind 'set page-completions off'
-  bind 'set show-all-if-unmodified on'
-  #bind 'set completion-query-items 1000'
-  #bind 'set match-hidden-files off'
-  #bind 'set show-all-if-ambiguous on'
+if [ -t 0 ]; then
+  bind "set mark-symlinked-directories on"
+  bind "set page-completions off"
+  bind "set show-all-if-unmodified on"
+  #bind "set completion-query-items 1000"
+  #bind "set match-hidden-files off"
+  #bind "set show-all-if-ambiguous on"
 fi
 
 # key bindings
-if [[ -t 0 ]]; then
+if [ -t 0 ]; then
   bind '"\C-d": delete-char-or-list'
   # see also .inputrc
 fi
@@ -58,16 +58,16 @@ fi
 # misc settings
 set -o noclobber
 shopt -s checkwinsize
-if [[ -t 0 ]]; then
-  bind 'set bell-style none'
+if [ -t 0 ]; then
+  bind "set bell-style none"
 fi
 
 
 # --- prompt ---
 
 # mark at the end of the prompt
-if [[ "$EUID" -eq 0 ]]; then
-  PS1_MK='#'
+if [ "$EUID" -eq 0 ]; then
+  PS1_MK="#"
 else
   PS1_MK='$'
 fi
@@ -76,26 +76,26 @@ fi
 SELF_PPID=$(ps -eo pid,ppid | grep "^[ 	]*$$[ 	]*" | awk '{print $2}')
 SELF_PARENT=$(
   ps -eo pid,comm | grep "^[ 	]*${SELF_PPID}[ 	]*" | \
-  sed "s/^[ »]*${SELF_PPID}[ »·]*//"
+  sed "s/^[ 	]*${SELF_PPID}[ 	]*//"
 )
-[[ "$SELF_PARENT" == "mosh-server" ]] && export _IN_MOSH="yes"
-[[ -n "$TMUX" ]] && export _IN_TMUX="yes"
-[[ -z "$TMUX" ]] && [[ "$TERM" == "screen" ]] && export _IN_SCREEN="yes"
+[ "$SELF_PARENT" = "mosh-server" ] && export _IN_MOSH="yes"
+[ -n "$TMUX" ] && export _IN_TMUX="yes"
+[ -z "$TMUX" ] && [ "$TERM" = "screen" ] && export _IN_SCREEN="yes"
 
 # string of marks, 1 for each level of shell nesting, with corrections
 MARKLVL="$SHLVL"
 for i in $_IN_MOSH $_IN_TMUX $_IN_SCREEN; do  # no quotes
   MARKLVL=$((MARKLVL - 1))
 done
-PS1_MARKS=''
+PS1_MARKS=""
 for ((i=MARKLVL; i > 0; i--)); do
   PS1_MARKS="$PS1_MK$PS1_MARKS"
 done
 
 # add mosh/tmux/screen markers, in order
-[[ -n "$_IN_SCREEN" ]] && PS1_MARKS="S$PS1_MARKS"
-[[ -n "$_IN_TMUX" ]] && PS1_MARKS="T$PS1_MARKS"
-[[ -n "$_IN_MOSH" ]] && PS1_MARKS="M$PS1_MARKS"
+[ -n "$_IN_SCREEN" ] && PS1_MARKS="S$PS1_MARKS"
+[ -n "$_IN_TMUX" ] && PS1_MARKS="T$PS1_MARKS"
+[ -n "$_IN_MOSH" ] && PS1_MARKS="M$PS1_MARKS"
 
 # if there are jobs (stopped or running), add a symbol to the prompt
 jobs_flag () {
@@ -106,7 +106,7 @@ jobs_flag () {
   # terminal \n is stripped by the substitution in PS1, so we don't need
   # to use echo -n or printf
   #
-  [[ -n "`jobs -p`" ]] && echo '.'
+  [ -n "`jobs -p`" ] && echo "."
 }
 
 # prompt colors
@@ -114,16 +114,16 @@ jobs_flag () {
 # can change colors later or from the shell; takes effect immediately
 # see list below for possible values
 #
-if [[ -n "$LIGHT_BG" ]]; then
+if [ -n "$LIGHT_BG" ]; then
   #PS1_COLOR=${PS1_COLOR:-34}    # blue
   #
   # white, red, yellow, green, cyan, blue, magenta
-  PS1_COLORS=('37' '31' '33' '32' '36' '34' '35')
+  PS1_COLORS=("37" "31" "33" "32" "36" "34" "35")
 else
   #PS1_COLOR=${PS1_COLOR:-1;36}  # bright cyan
   #
   # white, bright {red, yellow, green, cyan, blue, magenta}
-  PS1_COLORS=('37' '1;31' '1;33' '1;32' '1;36' '1;34' '1;35')
+  PS1_COLORS=("37" "1;31" "1;33" "1;32" "1;36" "1;34" "1;35")
 fi
 
 # set the prompt
@@ -199,8 +199,8 @@ typeset +x PS1  # this is exported on Cygwin for some reason
 # --- aliases & functions ---
 
 # program control aliases (and related shortcuts)
-alias nano='nano -z'
-alias pico='pico -z'
+alias nano="nano -z"
+alias pico="pico -z"
 #
 # note: check here to avoid stepping on pico and more, but in general,
 # leave aliases in place even if the commands aren't installed;
@@ -208,19 +208,19 @@ alias pico='pico -z'
 # aliases will be in place if the user installs the relevant command
 #
 in_path nano && alias pico=nano
-in_path less && alias more='less -E'
-alias lessx='less -+X'
+in_path less && alias more="less -E"
+alias lessx="less -+X"
 if [[ "$OS_UNAME" == CYGWIN* ]]; then
   explorer () { command explorer ${1:+$(cygpath -wl $1)}; }
-  alias mintty='run mintty -t bash -e env SHLVL=0 bash -l'
-  alias brmintty='run mintty -c ~/.minttyrc.bigrev -t bash -e env LIGHT_BG=1 SHLVL=0 bash -l'
-  alias traceroute='echo; echo "[Windows tracert]"; tracert'
-  alias trg='traceroute -d 8.8.8.8'
+  alias mintty="run mintty -t bash -e env SHLVL=0 bash -l"
+  alias brmintty="run mintty -c ~/.minttyrc.bigrev -t bash -e env LIGHT_BG=1 SHLVL=0 bash -l"
+  alias traceroute="echo; echo '[Windows tracert]'; tracert"
+  alias trg="traceroute -d 8.8.8.8"
 else
-  alias trg='traceroute -n 8.8.8.8'
+  alias trg="traceroute -n 8.8.8.8"
 fi
-if [[ "$OS_UNAME" == "Darwin" ]]; then
-  alias ls='ls -G'
+if [ "$OS_UNAME" = "Darwin" ]; then
+  alias ls="ls -G"
 fi
 
 # directory listing shortcuts
@@ -236,8 +236,8 @@ fi
 # ${1+"$@"} isn't really necessary in bash, but it's the portable usage;
 # some shells will convert "$@" to "" if there are no arguments
 #
-DIRPAGER=${DIRPAGER:-less -E}  # don't use with quotes
-alias l='ls -alF'  # from OpenBSD defaults
+DIRPAGER="${DIRPAGER:-less -E}"  # don't use with quotes
+alias l="ls -alF"  # from OpenBSD defaults
 d () { ls -l   ${1+"$@"} 2>&1 | $DIRPAGER; }
 s () { ls -laR ${1+"$@"} 2>&1 | $DIRPAGER; }
 a () { ls -la  ${1+"$@"} 2>&1 | $DIRPAGER; }
@@ -277,7 +277,7 @@ wintitle () {
 }
 alias m=mutt  # mailreader; if mutt isn't installed, override in .bashrc.local
 alias p=clear
-alias j='jobs -l'
+alias j="jobs -l"
 
 # history list shortcut, with additions
 # 
@@ -293,12 +293,12 @@ alias j='jobs -l'
 # 8) any non- -/+t arguments are passed to the history builtin
 #
 h () {
-  local h_args=''
+  local h_args=""
   local htf
   local i
 
   # local copy of HTF, including set/unset/null status
-  if [[ -n "${HISTTIMEFORMAT+x}" ]]; then
+  if [ -n "${HISTTIMEFORMAT+x}" ]; then
     local HISTTIMEFORMAT="$HISTTIMEFORMAT"
   else
     local HISTTIMEFORMAT
@@ -306,10 +306,10 @@ h () {
   fi
 
   for i in "$@"; do
-    if [[ "${i:0:2}" == '-t' ]]; then
+    if [ "${i:0:2}" = "-t" ]; then
       htf="${i:2}"
       HISTTIMEFORMAT="${htf:-%R  }"
-    elif [[ "${i:0:2}" == '+t' ]]; then
+    elif [ "${i:0:2}" = "+t" ]; then
       unset HISTTIMEFORMAT
     else
       h_args="$h_args $i"  # unnecessary space at the beginning (shrug)
@@ -319,9 +319,9 @@ h () {
   builtin history ${h_args:-20}  # no quotes
 }
 
-# make cd not print the target directory for 'cd -'
+# make cd not print the target directory for "cd -"
 cd () {
-  if [[ "$*" == '-' ]]; then
+  if [ "$*" = "-" ]; then
     builtin cd - > /dev/null
   else
     builtin cd "$@"
@@ -330,8 +330,8 @@ cd () {
 
 # move up the directory tree; partly from Simon Elmir
 up () {
-  local updir=$(printf '../%.0s' $(seq 1 $1))
-  if [[ -t 1 ]]; then
+  local updir=$(printf "../%.0s" $(seq 1 $1))  # no quotes
+  if [ -t 1 ]; then
     cd "$updir"
   else
     printf "%s\n" "$updir"
@@ -340,14 +340,14 @@ up () {
 
 # make bg and fg accept a bare number instead of %num
 bg () {
-  if [[ -n "$1" ]]; then
+  if [ -n "$1" ]; then
     builtin bg "%$1"
   else
     builtin bg
   fi
 }
 fg () {
-  if [[ -n "$1" ]]; then
+  if [ -n "$1" ]; then
     builtin fg "%$1"
   else
     builtin fg
@@ -381,7 +381,7 @@ gc () {
   # when we actually use it
   unset list
 
-  if [[ -z "$1" ]]; then
+  if [ -z "$1" ]; then
     echo "Usage: gc 'PATTERN'"
     return
   fi
@@ -400,9 +400,9 @@ gc () {
   [[ "$path" == *: ]] && path="$path:"
 
   i=0
-  IFS=':'
+  IFS=":"
   for d in $path; do  # no quotes
-    [[ -z "$d" ]] && d='.'  # :: or leading : in $path
+    [ -z "$d" ] && d="."  # :: or leading : in $path
 
     # have to reset IFS around this command so ${} results will be split 
     # into multiple words
@@ -416,12 +416,12 @@ gc () {
     # use : as delimiter in sed because it's guaranteed not to be in $d
     # (or else $d would have been split)
     #
-    IFS=' '
-    f="$(find -H "$d" -maxdepth 1 -mindepth 1 \
-          \( -name "$1" ${cygflag:+-o -name "$1.exe"} \) 2>/dev/null | \
-          sed -e "s:^$d::" -e 's:^/::' ${cygflag:+-e '/\.dll$/d'})"
-    IFS=':'
-    [[ -n "$f" ]] && list["$i"]="$f"
+    IFS=" "
+    f=$(find -H "$d" -maxdepth 1 -mindepth 1 \
+      \( -name "$1" ${cygflag:+-o -name "$1.exe"} \) 2>/dev/null | \
+      sed -e "s:^$d::" -e 's:^/::' ${cygflag:+-e '/\.dll$/d'})
+    IFS=":"
+    [ -n "$f" ] && list["$i"]="$f"
 
     : $(( i++ ))
   done
@@ -429,7 +429,7 @@ gc () {
   # any member of $list that was actually set won't be null,
   # so there won't be blank lines from (e.g.) directories with no results;
   # but the join will produce "" if there were no results at all, so:
-  if [[ -n "${list[*]}" ]]; then
+  if [ -n "${list[*]}" ]; then
     IFS=$'\n'
     printf "%s\n" "${list[*]}" | sort -u
   fi
@@ -439,7 +439,7 @@ gc () {
 # --- post-rc sub-scripts ---
 
 if compgen -G "${HOME}/.bashrc.d/*.post.sh" > /dev/null 2>&1; then
-  for i in ${HOME}/.bashrc.d/*.post.sh; do
+  for i in "${HOME}"/.bashrc.d/*.post.sh; do
     . "$i"
   done
 fi
@@ -447,4 +447,4 @@ fi
 
 # --- machine-specific settings, overrides, aliases, etc. ---
 
-[[ -e ~/.bashrc.local ]] && . ~/.bashrc.local
+[ -e ~/.bashrc.local ] && . ~/.bashrc.local
