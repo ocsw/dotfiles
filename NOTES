@@ -22,4 +22,3 @@ bash:
   following characters: $, `, ", \, or <newline>.
 - if multiple arguments to a program would otherwise have different quoting, I
   will make them consistent
-  
