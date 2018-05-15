@@ -5,4 +5,12 @@
 
 # --- additions ---
 
-# none
+gc_r="${HOME}/spotify/gh/gordon"
+gg_r="${HOME}/spotify/gh/gordon-gcp"
+gci_r="${HOME}/spotify/ghe/gordon-core-internal"
+gcs_r="${HOME}/spotify/ghe/gordon-core-service"
+gj_r="${HOME}/spotify/gh/gordon-janitor"
+gjg_r="${HOME}/spotify/gh/gordon-janitor-gcp"
+gji_r="${HOME}/spotify/ghe/gordon-janitor-internal"
+gjs_r="${HOME}/spotify/ghe/gordon-janitor"
+
