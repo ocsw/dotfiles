@@ -9,7 +9,6 @@ base upgrade
 pyrecreate w/diff ver/name
 pycopy w/diff ver/name
 pylast
-move tests into wrapped functions
 pyfix
 move to .sh, sep repo - but Sp?
 completion for py*

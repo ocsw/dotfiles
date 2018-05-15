@@ -115,13 +115,13 @@ EOF
 
     pyutil_wrapper () {
         # clean up after the python helpers, below
-        if [ -z "$1" ]; then
+        local wrapped="$1"
+        if [ -z "$wrapped" ]; then
             echo "Usage: pyutil_wrapper COMMAND [ARGS]"
             echo "ERROR: No command given."
             return 1
         fi
 
-        local wrapped="$1"
         shift
         local prev_wd="$PWD"
         local prev_venv=$(py_cur_venv)
@@ -146,24 +146,6 @@ EOF
     pyvirt () {
         # create a pyenv-virtualenv virtualenv with a bunch of tweaks and
         # installs
-        if [ -z "$1" ]; then
-            cat <<EOF
-Usage: pyvirt SHORTNAME PYVERSION [PROJ_PATH]
-If PYVERSION is 2 or 3, the latest installed Python release with that major
-version will be used.
-
-ERROR: No shortname given.
-EOF
-            return 1
-        fi
-        if [ -z "$2" ]; then
-            echo "ERROR: No Python version given."
-            return 1
-        fi
-        if [ -n "$3" ] && [ ! -d "$3" ]; then
-            echo "ERROR: Bad project path."
-            return 1
-        fi
         pyutil_wrapper _pyvirt "$@"
     }
 
@@ -173,6 +155,25 @@ EOF
         local projpath="$3"
         local fullname
         local i
+
+        if [ -z "$shortname" ]; then
+            cat <<EOF
+Usage: pyvirt SHORTNAME PYVERSION [PROJ_PATH]
+If PYVERSION is 2 or 3, the latest installed Python release with that major
+version will be used.
+
+ERROR: No shortname given.
+EOF
+            return 1
+        fi
+        if [ -z "$version" ]; then
+            echo "ERROR: No Python version given."
+            return 1
+        fi
+        if [ -n "$projpath" ] && [ ! -d "$projpath" ]; then
+            echo "ERROR: Bad project path."
+            return 1
+        fi
 
         if [ "$version" = "2" ] || [ "$version" = "3" ]; then
             version=$(pylatest "$version" "installed_only")
@@ -220,8 +221,17 @@ EOF
         # to remove the virtualenv:
         #rm ~/bin/EXECUTABLE
         #pyenv uninstall $package-$version
-        
-        if [ -z "$1" ]; then
+
+        pyutil_wrapper _pyinst "$@"
+    }
+
+    _pyinst () {
+        local package="$1"
+        local version="$2"
+        local pkgpath="$3"
+        local fullname
+
+        if [ -z "$package" ]; then
             cat <<EOF
 Usage: pyinst PACKAGE PYVERSION [PKG_PATH]
 If PYVERSION is 2 or 3, the latest installed Python release with that major
@@ -231,18 +241,10 @@ ERROR: No package given.
 EOF
             return 1
         fi
-        if [ -z "$2" ]; then
+        if [ -z "$version" ]; then
             echo "ERROR: No Python version given."
             return 1
         fi
-        pyutil_wrapper _pyinst "$@"
-    }
-
-    _pyinst () {
-        local package="$1"
-        local version="$2"
-        local pkgpath="$3"
-        local fullname
 
         if [ "$version" = "2" ] || [ "$version" = "3" ]; then
             version=$(pylatest "$version" "installed_only")
@@ -279,20 +281,6 @@ EOF
 
     pyreqs () {
         # install a project's requirements in a pyenv-virtualenv virtualenv
-        if [ -z "$1" ]; then
-            echo "Usage: pyreqs VIRTUALENV PROJ_PATH"
-            echo
-            echo "ERROR: No virtualenv given."
-            return 1
-        fi
-        if [ -z "$2" ]; then
-            echo "ERROR: No project path given."
-            return 1
-        fi
-        if [ ! -d "$2" ]; then
-            echo "ERROR: Bad project path."
-            return 1
-        fi
         pyutil_wrapper _pyreqs "$@"
     }
 
@@ -300,6 +288,21 @@ EOF
         local venv="$1"
         local projpath="$2"
         local i
+
+        if [ -z "$venv" ]; then
+            echo "Usage: pyreqs VIRTUALENV PROJ_PATH"
+            echo
+            echo "ERROR: No virtualenv given."
+            return 1
+        fi
+        if [ -z "$projpath" ]; then
+            echo "ERROR: No project path given."
+            return 1
+        fi
+        if [ ! -d "$projpath" ]; then
+            echo "ERROR: Bad project path."
+            return 1
+        fi
 
         if ! pyenv activate "$venv"; then
             echo "ERROR: can't activate virtualenv.  Stopping."
