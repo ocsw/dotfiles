@@ -1,6 +1,8 @@
 _python_venv_prompt () {
     if [ -n "$PYENV_VERSION" ]; then
         printf "%s " "$PYENV_VERSION"
+    elif [ -n "$PYENV_VIRTUAL_ENV" ]; then
+        printf "%s " "${PYENV_VIRTUAL_ENV##*/}"
     fi
 }
 
