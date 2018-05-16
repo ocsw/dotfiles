@@ -169,7 +169,7 @@ EOF
 
 
     pyutil_wrapper () {
-        # clean up after the python helpers, below
+        # clean up after the Python helpers, below
         local wrapped="$1"
         if [ -z "$wrapped" ]; then
             echo "Usage: pyutil_wrapper COMMAND [ARGS]"
@@ -260,7 +260,7 @@ EOF
         fi
         cat <<EOF
 
-New python path:
+New Python path:
     ${PYENV_ROOT}/versions/${fullname}/bin/python
 
 EOF
@@ -278,7 +278,7 @@ EOF
 
     pyinst () {
         # replacement for pipsi; creates a pyenv-virtualenv virtualenv
-        # specifically for a python-based utility
+        # specifically for a Python-based utility
 
         # to remove the virtualenv:
         #rm ~/bin/EXECUTABLE
