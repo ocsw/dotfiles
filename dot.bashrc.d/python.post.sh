@@ -30,9 +30,42 @@ if in_path pyenv-virtualenv-init; then
     eval "$(pyenv virtualenv-init - | grep -v PATH)"
 fi
 if in_path pyenv && in_path pyenv-virtualenv-init; then
-    py_cur_venv () {
-        printf "%s\n" "$(pyenv version | sed 's/ (.*)$//')"
+    pycur () {
+        printf "%s\n" "$(pyenv version | sed 's/ (.*$//')"
     }
+
+    pybases_available () {
+        pyenv install --list | tail -n +2 | sed 's/^..//'
+    }
+
+    pybases_installed () {
+        :
+    }
+
+    pyvenvs () {
+        pyenv virtualenvs | sed -e 's/^..//' -e 's/ (.*$//' | \
+            grep -v "/envs/" 
+    }
+
+
+    _py_base_complete () {
+        local ver_func="$1"
+        local cur_word="${COMP_WORDS[$COMP_CWORD]}"
+        COMPREPLY=( $("$ver_func" | grep "^${cur_word}") )
+        if [ -z "$cur_word" ]; then
+            COMPREPLY+=( 2 3 )
+        elif [ "$cur_word" = "2" ]; then
+            COMPREPLY+=( 2 )
+        elif [ "$cur_word" = "3" ]; then
+            COMPREPLY+=( 3 )
+        fi
+    }
+
+    _py_venv_complete () {
+        local cur_word="${COMP_WORDS[$COMP_CWORD]}"
+        COMPREPLY=( $(pyvenvs | grep "^${cur_word}") )
+    }
+
 
     pyact () {
         venv="$1"
@@ -43,8 +76,15 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
         fi
     }
 
+    _pyact_complete () {
+        if [ $COMP_CWORD -eq 1 ]; then
+            _py_venv_complete
+        fi
+    }
+    complete -o default -F _pyact_complete pyact
 
-   pylatest () {
+
+    pylatest () {
         # get the latest available (or latest locally installed) version of
         # Python for a specified major version in pyenv
         local majorver="$1"
@@ -68,7 +108,7 @@ EOF
         # see:
         # https://stackoverflow.com/questions/742466/how-can-i-reverse-the-order-of-lines-in-a-file
         # https://web.archive.org/web/20090208232311/http://student.northpark.edu/pemente/awk/awk1line.txt
-        versions=$(pyenv install --list | tail -n +2 | sed "s/^..//" |
+        versions=$(pyenv install --list | tail -n +2 | sed 's/^..//' |
             grep "^${majorver}\.[0-9]" | grep -vi "[a-z]" |
             awk '{a[i++]=$0} END {for (j=i-1; j>=0;) print a[j--]}'
         )
@@ -118,6 +158,13 @@ EOF
         CFLAGS="$cflags_add $CFLAGS" pyenv install "$@" "$version"
     }
 
+    _pybase_complete () {
+        if [ $COMP_CWORD -eq 1 ]; then
+            _py_version_complete pybases_available
+        fi
+    }
+    complete -o default -F _pybase_complete pybase
+
 
     pyutil_wrapper () {
         # clean up after the python helpers, below
@@ -130,13 +177,13 @@ EOF
 
         shift
         local prev_wd="$PWD"
-        local prev_venv=$(py_cur_venv)
+        local prev_venv=$(pycur)
 
         "$wrapped" "$@"
         retval="$?"
 
         cd "$prev_wd"
-        if [ "$(py_cur_venv)" != "$prev_venv" ]; then
+        if [ "$(pycur)" != "$prev_venv" ]; then
             global_env=$(pyenv global)
             if [ "$prev_venv" != "$global_env" ]; then
                 pyenv activate "$prev_venv"
@@ -149,13 +196,13 @@ EOF
     }
 
 
-    pyvirt () {
+    pyvenv () {
         # create a pyenv-virtualenv virtualenv with a bunch of tweaks and
         # installs
-        pyutil_wrapper _pyvirt "$@"
+        pyutil_wrapper _pyvenv "$@"
     }
 
-    _pyvirt () {
+    _pyvenv () {
         local shortname="$1"
         local version="$2"
         local projpath="$3"
@@ -164,7 +211,7 @@ EOF
 
         if [ -z "$shortname" ]; then
             cat <<EOF
-Usage: pyvirt SHORTNAME PYVERSION [PROJ_PATH]
+Usage: pyvenv SHORTNAME PYVERSION [PROJ_PATH]
 If PYVERSION is 2 or 3, the latest installed Python release with that major
 version will be used.
 
@@ -219,6 +266,13 @@ EOF
         return 0
     }
 
+    _pyvenv_complete () {
+        if [ $COMP_CWORD -eq 2 ]; then
+            _py_version_complete pybases_installed
+        fi
+    }
+    complete -o default -F _pyvenv_complete pyvenv
+
 
     pyinst () {
         # replacement for pipsi; creates a pyenv-virtualenv virtualenv
@@ -257,7 +311,7 @@ EOF
         fi
         fullname="${package}-${version}"
 
-        if ! pyvirt "$package" "$version"; then
+        if ! pyvenv "$package" "$version"; then
             # error will already have been printed
             return 1
         fi
@@ -283,6 +337,13 @@ EOF
 
         return 0
     }
+
+    _pyinst_complete () {
+        if [ $COMP_CWORD -eq 2 ]; then
+            _py_version_complete pybases_installed
+        fi
+    }
+    complete -o default -F _pyinst_complete pyinst
 
 
     pyreqs () {
@@ -321,4 +382,11 @@ EOF
 
         return 0
     }
+
+    _pyreqs_complete () {
+        if [ $COMP_CWORD -eq 1 ]; then
+            _py_venv_complete
+        fi
+    }
+    complete -o default -F _pyreqs_complete pyreqs
 fi  # end test for pyenv and pyenv-virtualenv
