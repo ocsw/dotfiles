@@ -70,7 +70,7 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
 
 
     pyact () {
-        venv="$1"
+        local venv="$1"
         if [ -n $venv ]; then
             pyenv activate "$venv"
         else
