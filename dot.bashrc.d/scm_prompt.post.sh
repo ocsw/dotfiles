@@ -81,7 +81,7 @@ _prompt_scm_info()
           marks="$(cat "$hg/.hg/sharedpath")/bookmarks"
       fi
       if [ -z "$extra" ] && [ -f "$marks" ]; then
-        local markstate=$(grep --color=never " $br$" "$marks" | cut -f 1 -d " ")
+        local markstate=$(grep --color=never " $br$" "$marks" | cut -f 1 -d ' ')
         if [ "$markstate" != "$dirstate" ]; then
           extra="|UPDATE_NEEDED"
         fi
@@ -92,7 +92,7 @@ _prompt_scm_info()
     local remote="$hg/.hg/remotenames"
     if [ -f "$remote" ]; then
       local marks=$(grep --color=never "^$dirstate bookmarks" "$remote" | \
-        cut -f 3 -d " " | tr "\n" "|" | sed 's/.$//')
+        cut -f 3 -d ' ' | tr '\n' '|' | sed 's/.$//')
       if [ -n "$marks" ]; then
         br="$br|$marks"
       fi
