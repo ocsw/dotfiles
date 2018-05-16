@@ -10,6 +10,7 @@ bash:
   quote variables)
 - I'm going to quote all variables including in assignments to build the habit
   of quoting for when it's necessary
+- I'm also going to quote text strings for clarity and syntax highlighting
 - I'm going to leave quotes off foo=$() because it's not as necessary for habit
   reasons and it tends to make lines hard to read, since $() frequently contains
   quotes
