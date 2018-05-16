@@ -221,6 +221,14 @@ else
 fi
 if [ "$OS_UNAME" = "Darwin" ]; then
   alias ls="ls -G"
+  if in_path gcp brew && \
+      [ "$(command -v gcp)" = "$(brew --prefix)/bin/gcp" ]; then
+    alias cp="gcp"
+  fi
+  if in_path gmv brew && \
+      [ "$(command -v gmv)" = "$(brew --prefix)/bin/gmv" ]; then
+    alias mv="gmv"
+  fi
 fi
 
 # directory listing shortcuts
