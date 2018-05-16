@@ -118,7 +118,7 @@ EOF
             return 0
         fi
         for ver in $versions; do
-            if [ -d "${HOME}/.pyenv/versions/$ver" ]; then
+            if [ -d "${PYENV_ROOT}/versions/$ver" ]; then
                 printf "%s\n" "$ver"
                 return 0
             fi
@@ -245,7 +245,7 @@ EOF
         majorminor=$(printf "%s\n" "$version" |
             sed 's/^\([0-9]\.[0-9]\)\.[0-9]$/\1/'
         )
-        cd "${HOME}/.pyenv/versions/${fullname}/bin"
+        cd "${PYENV_ROOT}/versions/${fullname}/bin"
         ln -s "python$major" "python$majorminor"
 
         pyenv activate "$fullname"
@@ -259,7 +259,7 @@ EOF
         cat <<EOF
 
 New python path:
-    ${HOME}/.pyenv/versions/${fullname}/bin/python
+    ${PYENV_ROOT}/versions/${fullname}/bin/python
 
 EOF
 
@@ -326,12 +326,12 @@ EOF
             return 1
         fi
         cd "${HOME}/bin"
-        ln -s "../.pyenv/versions/${fullname}/bin/${package}" .
+        ln -s "${PYENV_ROOT}/versions/${fullname}/bin/${package}" .
         cat <<EOF
 
 To symlink other executables:
     cd "${HOME}/bin"
-    ln -s "../.pyenv/versions/${fullname}/bin/EXECUTABLE" .
+    ln -s "${PYENV_ROOT}/versions/${fullname}/bin/EXECUTABLE" .
 
 EOF
 
