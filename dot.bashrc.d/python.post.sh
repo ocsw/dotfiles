@@ -39,7 +39,9 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
     }
 
     pybases_installed () {
-        :
+        # see https://unix.stackexchange.com/questions/275637/limit-posix-find-to-specific-depth
+        find "${PYENV_ROOT}/versions/." ! -name . -prune -type d | \
+            sed "s|^${PYENV_ROOT}/versions/\./||"
     }
 
     pyvenvs () {

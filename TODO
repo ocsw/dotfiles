@@ -12,7 +12,6 @@ pylast
 pyfix
 move to .sh, sep repo - but Sp?
 .python_version in pyvirt, pyact
-bases_installed completions (2)
 
 running pytest?
 pip timeout
