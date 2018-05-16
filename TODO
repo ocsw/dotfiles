@@ -11,8 +11,8 @@ pycopy w/diff ver/name
 pylast
 pyfix
 move to .sh, sep repo - but Sp?
-completion for py*
-.python_version in pyvirt?
+.python_version in pyvirt, pyact
+bases_installed completions (2)
 
 running pytest?
 pip timeout
