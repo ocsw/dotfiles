@@ -71,7 +71,7 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
 
     pyact () {
         local venv="$1"
-        if [ -n $venv ]; then
+        if [ -n "$venv" ]; then
             pyenv activate "$venv"
         else
             pyenv deactivate
@@ -79,7 +79,7 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
     }
 
     _pyact_complete () {
-        if [ $COMP_CWORD -eq 1 ]; then
+        if [ "$COMP_CWORD" = "1" ]; then
             _py_venv_complete
         fi
     }
@@ -161,7 +161,7 @@ EOF
     }
 
     _pybase_complete () {
-        if [ $COMP_CWORD -eq 1 ]; then
+        if [ "$COMP_CWORD" = "1" ]; then
             _py_version_complete pybases_available
         fi
     }
@@ -269,7 +269,7 @@ EOF
     }
 
     _pyvenv_complete () {
-        if [ $COMP_CWORD -eq 2 ]; then
+        if [ "$COMP_CWORD" = "2" ]; then
             _py_version_complete pybases_installed
         fi
     }
@@ -341,7 +341,7 @@ EOF
     }
 
     _pyinst_complete () {
-        if [ $COMP_CWORD -eq 2 ]; then
+        if [ "$COMP_CWORD" = "2" ]; then
             _py_version_complete pybases_installed
         fi
     }
@@ -386,7 +386,7 @@ EOF
     }
 
     _pyreqs_complete () {
-        if [ $COMP_CWORD -eq 1 ]; then
+        if [ "$COMP_CWORD" = "1" ]; then
             _py_venv_complete
         fi
     }
