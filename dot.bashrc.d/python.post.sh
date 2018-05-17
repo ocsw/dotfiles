@@ -162,7 +162,7 @@ EOF
 
     _pybase_complete () {
         if [ "$COMP_CWORD" = "1" ]; then
-            _py_version_complete pybases_available
+            _py_base_complete pybases_available
         fi
     }
     complete -o default -F _pybase_complete pybase
@@ -270,7 +270,7 @@ EOF
 
     _pyvenv_complete () {
         if [ "$COMP_CWORD" = "2" ]; then
-            _py_version_complete pybases_installed
+            _py_base_complete pybases_installed
         fi
     }
     complete -o default -F _pyvenv_complete pyvenv
@@ -342,7 +342,7 @@ EOF
 
     _pyinst_complete () {
         if [ "$COMP_CWORD" = "2" ]; then
-            _py_version_complete pybases_installed
+            _py_base_complete pybases_installed
         fi
     }
     complete -o default -F _pyinst_complete pyinst
