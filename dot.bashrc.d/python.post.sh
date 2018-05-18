@@ -180,6 +180,8 @@ EOF
         shift
         local prev_wd="$PWD"
         local prev_venv=$(pycur)
+        local global_env
+        local retval
 
         "$wrapped" "$@"
         retval="$?"
@@ -209,6 +211,8 @@ EOF
         local py_version="$2"
         local proj_path="$3"
         local full_name
+        local major
+        local major_minor
         local i
 
         if [ -z "$short_name" ]; then
@@ -244,11 +248,11 @@ EOF
         major=$(printf "%s\n" "$py_version" |
             sed 's/^\([0-9]\)\.[0-9]\.[0-9]$/\1/'
         )
-        majorminor=$(printf "%s\n" "$py_version" |
+        major_minor=$(printf "%s\n" "$py_version" |
             sed 's/^\([0-9]\.[0-9]\)\.[0-9]$/\1/'
         )
         cd "${PYENV_ROOT}/versions/${full_name}/bin"
-        ln -s "python$major" "python$majorminor"
+        ln -s "python$major" "python$major_minor"
 
         pyenv activate "$full_name"
         pip install --upgrade pip
