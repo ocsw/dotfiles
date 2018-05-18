@@ -89,29 +89,29 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
     pylatest () {
         # get the latest available (or latest locally installed) version of
         # Python for a specified major version in pyenv
-        local majorver="$1"
+        local major_version="$1"
         local installed_only="$2"
         local versions ver
 
-        if [ -n "$majorver" ] && [ "$majorver" != "2" ] && \
-                [ "$majorver" != "3" ]; then
+        if [ -n "$major_version" ] && [ "$major_version" != "2" ] && \
+                [ "$major_version" != "3" ]; then
             cat <<EOF
-Usage: pylatest [MAJOR_PYVERSION] [INSTALLED_ONLY]
-MAJOR_PYVERSION defaults to 3.
+Usage: pylatest [MAJOR_PY_VERSION] [INSTALLED_ONLY]
+MAJOR_PY_VERSION defaults to 3.
 If INSTALLED_ONLY is given, only installed pyenv base versions will be
 examined.
 
-ERROR: If given, MAJOR_PYVERSION must be 2 or 3.
+ERROR: If given, MAJOR_PY_VERSION must be 2 or 3.
 EOF
             return 1
         fi
-        [ -z "$majorver" ] && majorver="3"
+        [ -z "$major_version" ] && major_version="3"
 
         # see:
         # https://stackoverflow.com/questions/742466/how-can-i-reverse-the-order-of-lines-in-a-file
         # https://web.archive.org/web/20090208232311/http://student.northpark.edu/pemente/awk/awk1line.txt
         versions=$(pyenv install --list | tail -n +2 | sed 's/^..//' |
-            grep "^${majorver}\.[0-9]" | grep -vi "[a-z]" |
+            grep "^${major_version}\.[0-9]" | grep -vi "[a-z]" |
             awk '{a[i++]=$0} END {for (j=i-1; j>=0;) print a[j--]}'
         )
 
@@ -140,24 +140,24 @@ EOF
     pybase () {
         # install a version of Python in pyenv
         local cflags_add="-O2"
-        local version="$1"
+        local py_version="$1"
 
-        if [ -z "$version" ]; then
+        if [ -z "$py_version" ]; then
             cat <<EOF
-Usage: pybase PYVERSION [PYENV_INSTALL_ARGS]
-If PYVERSION is 2 or 3, the latest available Python release with that major
+Usage: pybase PY_VERSION [PYENV_INSTALL_ARGS]
+If PY_VERSION is 2 or 3, the latest available Python release with that major
 version will be used.
 
-ERROR: No version given.
+ERROR: No Python version given.
 EOF
             return 1
         fi
-        if [ "$version" = "2" ] || [ "$version" = "3" ]; then
-            version=$(pylatest "$version")
+        if [ "$py_version" = "2" ] || [ "$py_version" = "3" ]; then
+            py_version=$(pylatest "$py_version")
         fi
         shift        
 
-        CFLAGS="$cflags_add $CFLAGS" pyenv install "$@" "$version"
+        CFLAGS="$cflags_add $CFLAGS" pyenv install "$@" "$py_version"
     }
 
     _pybase_complete () {
@@ -205,55 +205,55 @@ EOF
     }
 
     _pyvenv () {
-        local shortname="$1"
-        local version="$2"
-        local projpath="$3"
-        local fullname
+        local short_name="$1"
+        local py_version="$2"
+        local proj_path="$3"
+        local full_name
         local i
 
-        if [ -z "$shortname" ]; then
+        if [ -z "$short_name" ]; then
             cat <<EOF
-Usage: pyvenv SHORTNAME PYVERSION [PROJ_PATH]
-If PYVERSION is 2 or 3, the latest installed Python release with that major
+Usage: pyvenv SHORT_NAME PY_VERSION [PROJ_PATH]
+If PY_VERSION is 2 or 3, the latest installed Python release with that major
 version will be used.
 
-ERROR: No shortname given.
+ERROR: No short name given.
 EOF
             return 1
         fi
-        if [ -z "$version" ]; then
+        if [ -z "$py_version" ]; then
             echo "ERROR: No Python version given."
             return 1
         fi
-        if [ -n "$projpath" ] && [ ! -d "$projpath" ]; then
+        if [ -n "$proj_path" ] && [ ! -d "$proj_path" ]; then
             echo "ERROR: Bad project path."
             return 1
         fi
 
-        if [ "$version" = "2" ] || [ "$version" = "3" ]; then
-            version=$(pylatest "$version" "installed_only")
+        if [ "$py_version" = "2" ] || [ "$py_version" = "3" ]; then
+            py_version=$(pylatest "$py_version" "installed_only")
         fi
-        fullname="${shortname}-${version}"
+        full_name="${short_name}-${py_version}"
 
-        if ! pyenv virtualenv "$version" "$fullname"; then
+        if ! pyenv virtualenv "$py_version" "$full_name"; then
             echo "ERROR: can't create virtualenv.  Stopping."
             return 1
         fi
 
         # symlink, mainly for Tox
-        major=$(printf "%s\n" "$version" |
+        major=$(printf "%s\n" "$py_version" |
             sed 's/^\([0-9]\)\.[0-9]\.[0-9]$/\1/'
         )
-        majorminor=$(printf "%s\n" "$version" |
+        majorminor=$(printf "%s\n" "$py_version" |
             sed 's/^\([0-9]\.[0-9]\)\.[0-9]$/\1/'
         )
-        cd "${PYENV_ROOT}/versions/${fullname}/bin"
+        cd "${PYENV_ROOT}/versions/${full_name}/bin"
         ln -s "python$major" "python$majorminor"
 
-        pyenv activate "$fullname"
+        pyenv activate "$full_name"
         pip install --upgrade pip
-        if [ -n "$projpath" ]; then
-            cd "$projpath"
+        if [ -n "$proj_path" ]; then
+            cd "$proj_path"
             for i in *req*; do
                 pip install -r "$i"
             done
@@ -261,7 +261,7 @@ EOF
         cat <<EOF
 
 New Python path:
-    ${PYENV_ROOT}/versions/${fullname}/bin/python
+    ${PYENV_ROOT}/versions/${full_name}/bin/python
 
 EOF
 
@@ -282,58 +282,58 @@ EOF
 
         # to remove the virtualenv:
         #rm ~/bin/EXECUTABLE
-        #pyenv uninstall $package-$version
+        #pyenv uninstall $package-$py_version
 
         pyutil_wrapper _pyinst "$@"
     }
 
     _pyinst () {
         local package="$1"
-        local version="$2"
-        local pkgpath="$3"
-        local fullname
+        local py_version="$2"
+        local pkg_path="$3"
+        local full_name
 
         if [ -z "$package" ]; then
             cat <<EOF
-Usage: pyinst PACKAGE PYVERSION [PKG_PATH]
-If PYVERSION is 2 or 3, the latest installed Python release with that major
+Usage: pyinst PACKAGE PY_VERSION [PKG_PATH]
+If PY_VERSION is 2 or 3, the latest installed Python release with that major
 version will be used.
 
 ERROR: No package given.
 EOF
             return 1
         fi
-        if [ -z "$version" ]; then
+        if [ -z "$py_version" ]; then
             echo "ERROR: No Python version given."
             return 1
         fi
 
-        if [ "$version" = "2" ] || [ "$version" = "3" ]; then
-            version=$(pylatest "$version" "installed_only")
+        if [ "$py_version" = "2" ] || [ "$py_version" = "3" ]; then
+            py_version=$(pylatest "$py_version" "installed_only")
         fi
-        fullname="${package}-${version}"
+        full_name="${package}-${py_version}"
 
-        if ! pyvenv "$package" "$version"; then
+        if ! pyvenv "$package" "$py_version"; then
             # error will already have been printed
             return 1
         fi
-        pyenv activate "$fullname"
-        if [ -z "$pkgpath" ]; then
+        pyenv activate "$full_name"
+        if [ -z "$pkg_path" ]; then
             pip install "$package"
         else
-            pip install "$pkgpath"
+            pip install "$pkg_path"
         fi
         if [ $? != "0" ]; then
             echo "ERROR: installation failed.  Stopping."
             return 1
         fi
         cd "${HOME}/bin"
-        ln -s "${PYENV_ROOT}/versions/${fullname}/bin/${package}" .
+        ln -s "${PYENV_ROOT}/versions/${full_name}/bin/${package}" .
         cat <<EOF
 
 To symlink other executables:
     cd "${HOME}/bin"
-    ln -s "${PYENV_ROOT}/versions/${fullname}/bin/EXECUTABLE" .
+    ln -s "${PYENV_ROOT}/versions/${full_name}/bin/EXECUTABLE" .
 
 EOF
 
@@ -355,7 +355,7 @@ EOF
 
     _pyreqs () {
         local venv="$1"
-        local projpath="$2"
+        local proj_path="$2"
         local i
 
         if [ -z "$venv" ]; then
@@ -364,11 +364,11 @@ EOF
             echo "ERROR: No virtualenv given."
             return 1
         fi
-        if [ -z "$projpath" ]; then
+        if [ -z "$proj_path" ]; then
             echo "ERROR: No project path given."
             return 1
         fi
-        if [ ! -d "$projpath" ]; then
+        if [ ! -d "$proj_path" ]; then
             echo "ERROR: Bad project path."
             return 1
         fi
@@ -377,7 +377,7 @@ EOF
             echo "ERROR: can't activate virtualenv.  Stopping."
             return 1
         fi
-        cd "$projpath"
+        cd "$proj_path"
         for i in *req*; do
             pip install -r "$i"
         done
