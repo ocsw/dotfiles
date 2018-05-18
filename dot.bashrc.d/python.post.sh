@@ -280,6 +280,79 @@ EOF
     complete -o default -F _pyvenv_complete pyvenv
 
 
+    pybin_dir () {
+        local venv="$1"
+        if [ -z "$venv" ]; then
+            echo "Usage: pybin_dir VIRTUALENV"
+            echo
+            echo "ERROR: no virtualenv given."
+            return 1
+        fi
+        printf "%s\n" "${PYENV_ROOT}/versions/${venv}/bin"
+    }
+
+    _pybin_dir_complete () {
+        if [ "$COMP_CWORD" = "1" ]; then
+            _py_venv_complete
+        fi
+    }
+    complete -o default -F _pybin_dir_complete pybin_dir
+
+    pybin_ls () {
+        local venv="$1"
+        if [ -z "$venv" ]; then
+            echo "Usage: pybin_ls VIRTUALENV [LS_ARGS]"
+            echo
+            echo "ERROR: no virtualenv given."
+            return 1
+        fi
+        shift
+        ls "$@" "${PYENV_ROOT}/versions/${venv}/bin"
+    }
+
+    _pybin_ls_complete () {
+        if [ "$COMP_CWORD" = "1" ]; then
+            _py_venv_complete
+        fi
+    }
+    complete -o default -F _pybin_ls_complete pybin_ls
+
+    pyln () {
+        local venv="$1"
+        local exec_name="$2"
+        local target_dir="$3"
+
+        if [ -z "$venv" ]; then
+            cat <<EOF
+Usage: pyln VIRTUALENV EXECUTABLE TARGET_DIR
+If TARGET_DIR is omitted, it defaults to ${HOME}/bin.
+
+ERROR: No virtualenv given.
+EOF
+            return 1
+        fi
+        if [ -z "$exec_name" ]; then
+            echo "ERROR: No executable name given."
+            return 1
+        fi
+        if [ -z "$target_dir" ]; then
+            target_dir="${HOME}/bin"
+        fi
+
+        ln -s "${PYENV_ROOT}/versions/${venv}/bin/${exec_name}" "$target_dir"
+    }
+
+    _pyln_complete () {
+        if [ "$COMP_CWORD" = "1" ]; then
+            _py_venv_complete
+        elif [ "$COMP_CWORD" = "2" ]; then
+            COMPREPLY=( $(pybin_ls "${COMP_WORDS[1]}" 2>/dev/null |
+                grep "^${COMP_WORDS[2]}") )
+        fi
+    }
+    complete -o default -F _pyln_complete pyln
+
+
     pyinst () {
         # replacement for pipsi; creates a pyenv-virtualenv virtualenv
         # specifically for a Python-based utility
