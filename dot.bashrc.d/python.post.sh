@@ -328,11 +328,14 @@ EOF
         local venv="$1"
         local exec_name="$2"
         local target_dir="$3"
+        local source_path
+        local target_path
 
         if [ -z "$venv" ]; then
             cat <<EOF
 Usage: pyln VIRTUALENV EXECUTABLE TARGET_DIR
-If TARGET_DIR is omitted, it defaults to ${HOME}/bin.
+If TARGET_DIR is omitted, it defaults to the value of the PYLN_DIR environment
+variable; if that is unset, it defaults to ${HOME}/bin.
 
 ERROR: No virtualenv given.
 EOF
@@ -343,10 +346,36 @@ EOF
             return 1
         fi
         if [ -z "$target_dir" ]; then
-            target_dir="${HOME}/bin"
+            if [ -n "$PYLN_DIR" ]; then
+                target_dir="$PYLN_DIR"
+            else
+                target_dir="${HOME}/bin"
+            fi
+        fi
+        if ! [ -d "$target_dir" ]; then
+            cat <<EOF
+
+ERROR: Target directory doesn't exist or isn't a directory.
+    Target: $target_dir
+
+EOF
+            return 1
         fi
 
-        ln -s "${PYENV_ROOT}/versions/${venv}/bin/${exec_name}" "$target_dir"
+        source_path="${PYENV_ROOT}/versions/${venv}/bin/${exec_name}"
+        target_path="${target_dir}/${exec_name}"
+        ln -s "$source_path" "$target_path"
+        if [ "$?" = "0" ]; then
+            echo "Symlink \"${target_dir}/${exec_name}\" created."
+        else
+            cat <<EOF
+
+WARNING: Symlink not created.
+    Source: $source_path
+    Target: $target_path
+
+EOF
+        fi
     }
 
     _pyln_complete () {
@@ -376,12 +405,14 @@ EOF
         local py_version="$2"
         local package_path="$3"
         local full_name
+        local pyln_dir_string
 
         if [ -z "$package_name" ]; then
             cat <<EOF
-Usage: pyinst PACKAGE_NAME PY_VERSION [PACKAGE_PATH]
+Usage: PYLN_DIR=SYMLINK_TARGET_DIR pyinst PACKAGE_NAME PY_VERSION [PACKAGE_PATH]
 If PY_VERSION is 2 or 3, the latest installed Python release with that major
 version will be used.
+If PYLN_DIR is not set, SYMLINK_TARGET_DIR defaults to ${HOME}/bin.
 
 ERROR: No package name given.
 EOF
@@ -411,13 +442,17 @@ EOF
             echo "ERROR: installation failed.  Stopping."
             return 1
         fi
-        cd "${HOME}/bin"
-        ln -s "${PYENV_ROOT}/versions/${full_name}/bin/${package}" .
+        if [ -e "$(pybin_dir "${full_name}")/${package_name}" ]; then
+            pyln "${full_name}" "${package_name}" "$PYLN_DIR"
+        fi
+        pyln_dir_string=""
+        if [ -n "$PYLN_DIR" ]; then
+            pyln_dir_string=" \"$PYLN_DIR\""
+        fi
         cat <<EOF
 
 To symlink other executables:
-    cd "${HOME}/bin"
-    ln -s "${PYENV_ROOT}/versions/${full_name}/bin/EXECUTABLE" .
+    pyln "${full_name}" "EXECUTABLE"$pyln_dir_string
 
 EOF
 
