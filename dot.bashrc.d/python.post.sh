@@ -244,7 +244,9 @@ EOF
             return 1
         fi
 
-        # symlink, mainly for Tox
+        # tox seems to look directly in virtualenvs' bin directories, and
+        # requires a minor-versioned python binary (e.g. python3.6), which the
+        # above doesn't seem to provide (at least for python3).
         major=$(printf "%s\n" "$py_version" |
             sed 's/^\([0-9]\)\.[0-9]\.[0-9]$/\1/'
         )
@@ -255,6 +257,11 @@ EOF
         ln -s "python$major" "python$major_minor"
 
         pyenv activate "$full_name"
+        # I haven't figured out how to make new virtualenvs have new pip;
+        # pyenv global 3.6.5; pyenv deactivate; pip install --upgrade pip
+        # will update the base image, but that apparently won't affect the new
+        # ones.  I thought the problem might be with ensurepip, but that
+        # doesn't seem to be it either.
         pip install --upgrade pip
         if [ -n "$proj_path" ]; then
             cd "$proj_path"
