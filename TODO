@@ -10,13 +10,15 @@ pyrecreate w/diff ver/name
 pycopy w/diff ver/name
 pylast
 pyfix
-pyln
 pybase - tox, pip
 move to .sh, sep repo - but Sp?
 .python_version in pyvirt, pyact
 docs: CRUD
 $0
 aliases/symlinks
+return 0
+PY_ -> PYTHON_?
+auto local/trailing tests
 
 running pytest?
 pip timeout
