@@ -366,24 +366,24 @@ EOF
 
         # to remove the virtualenv:
         #rm ~/bin/EXECUTABLE
-        #pyenv uninstall $package-$py_version
+        #pyenv uninstall $package_name-$py_version
 
         pyutil_wrapper _pyinst "$@"
     }
 
     _pyinst () {
-        local package="$1"
+        local package_name="$1"
         local py_version="$2"
-        local pkg_path="$3"
+        local package_path="$3"
         local full_name
 
-        if [ -z "$package" ]; then
+        if [ -z "$package_name" ]; then
             cat <<EOF
-Usage: pyinst PACKAGE PY_VERSION [PKG_PATH]
+Usage: pyinst PACKAGE_NAME PY_VERSION [PACKAGE_PATH]
 If PY_VERSION is 2 or 3, the latest installed Python release with that major
 version will be used.
 
-ERROR: No package given.
+ERROR: No package name given.
 EOF
             return 1
         fi
@@ -395,17 +395,17 @@ EOF
         if [ "$py_version" = "2" ] || [ "$py_version" = "3" ]; then
             py_version=$(pylatest "$py_version" "installed_only")
         fi
-        full_name="${package}-${py_version}"
+        full_name="${package_name}-${py_version}"
 
-        if ! pyvenv "$package" "$py_version"; then
+        if ! pyvenv "$package_name" "$py_version"; then
             # error will already have been printed
             return 1
         fi
         pyenv activate "$full_name"
-        if [ -z "$pkg_path" ]; then
-            pip install "$package"
+        if [ -z "$package_path" ]; then
+            pip install "$package_name"
         else
-            pip install "$pkg_path"
+            pip install "$package_path"
         fi
         if [ $? != "0" ]; then
             echo "ERROR: installation failed.  Stopping."
