@@ -16,7 +16,7 @@ bash:
   quotes
 - I'm going to use "" unless strings contain $ or "
   ---
-  Enclosing characters in double quotes preserves the literal value of all 
+  Enclosing characters in double quotes preserves the literal value of all
   characters within the quotes, with the exception of $, `, \, and, when
   history expansion is enabled, !.
   The backslash retains its special meaning only when followed by one of the
@@ -25,3 +25,10 @@ bash:
   will make them consistent
 - I'm going to use '' for sed, awk, single-character delimiters, and tr, unless
   there's a specific reason not to
+- old note, kept for reference:
+  (aliases used \more)
+  - any later aliasing of 'more' ordinarily wouldn't affect these because
+    aliases are expanded when functions are defined, not executed
+  - but re-sourcing this file afterwards _would_ change the definitions
+  - so, use backslashes
+  - however, making 'more' a function will still change these

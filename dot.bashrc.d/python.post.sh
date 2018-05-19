@@ -46,7 +46,7 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
 
     pyvenvs () {
         pyenv virtualenvs | sed -e 's/^..//' -e 's/ (.*$//' | \
-            grep -v "/envs/" 
+            grep -v "/envs/"
     }
 
 
@@ -155,7 +155,7 @@ EOF
         if [ "$py_version" = "2" ] || [ "$py_version" = "3" ]; then
             py_version=$(pylatest "$py_version")
         fi
-        shift        
+        shift
 
         CFLAGS="$cflags_add $CFLAGS" pyenv install "$@" "$py_version"
     }

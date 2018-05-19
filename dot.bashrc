@@ -148,17 +148,17 @@ typeset +x PS1  # this is exported on Cygwin for some reason
 
 # -- notes on prompt strings --
 #
-# PS1 is evaluated before printing, so it can be in single-quotes and 
-# still contain variables (which is clearer); otherwise, we would have to 
-# reset it in PROMPT_COMMAND
+# PS1 is evaluated before printing, so it can be in single-quotes and still
+# contain variables (which is clearer); otherwise, we would have to reset it in
+# PROMPT_COMMAND
 #
 # it can also contain variables set with $'' to include escape chars
 # e.g. blue=$'ansi_cmd'; PS1='\[$blue\] bluetext'
 # (\[\] have to be in PS1, not blue - see below)
 # PS1_COLOR is easier to work with by hand as number(s), though
 #
-# \[ and \] mark non-printing sequences (so the shell can calculate the 
-# length of the prompt)
+# \[ and \] mark non-printing sequences (so the shell can calculate the length
+# of the prompt)
 #
 # to enter control codes manually, use $' quoting:
 # echo $'codes'
@@ -168,7 +168,7 @@ typeset +x PS1  # this is exported on Cygwin for some reason
 # ANSI color codes (partial list):
 #
 # \e[<param>m where <param> = zero or more of the following, separated with ;
-# 
+#
 # 0        = reset
 # 1  or 22 = bold (bright fg)   on or off
 # 7  or 27 = negative (inverse) on or off
@@ -233,14 +233,6 @@ fi
 
 # directory listing shortcuts
 #
-# [ old note, kept for reference:
-# [ (aliases used \more)
-# [-any later aliasing of 'more' ordinarily wouldn't affect these because 
-# [ aliases are expanded when functions are defined, not executed
-# [-but re-sourcing this file afterwards _would_ change the definitions
-# [-so, use backslashes
-# [-however, making 'more' a function will still change these
-#
 # ${1+"$@"} isn't really necessary in bash, but it's the portable usage;
 # some shells will convert "$@" to "" if there are no arguments
 #
@@ -288,15 +280,15 @@ alias p=clear
 alias j="jobs -l"
 
 # history list shortcut, with additions
-# 
+#
 # 1) with no arguments, prints the last 20 history entries
-# 2) uses the existing value/state of HISTTIMEFORMAT, or accepts -t to 
+# 2) uses the existing value/state of HISTTIMEFORMAT, or accepts -t to
 #    include/change timestamps (default '%R  ')
 # 3) -t can have a format string added (e.g. '-t%a  ' or -t%a\ \ )
 # 4) +t removes timestamps, including any existing HISTTIMEFORMAT
 # 5) last -/+t sets format string
-# 6) -/+t does not count as an argument for point (1), with or without a 
-#    string (i.e. h -t still prints 20 entries)
+# 6) -/+t does not count as an argument for point (1), with or without a string
+#    (i.e. h -t still prints 20 entries)
 # 7) leaves global HISTTIMEFORMAT unchanged (even with -/+t)
 # 8) any non- -/+t arguments are passed to the history builtin
 #
@@ -374,8 +366,8 @@ fg () {
 # note: uses $OS_UNAME and requires in_path(), find, sed, and sort
 #
 gc () {
-  # note: bash seems to be inconsistent about whether local declarations 
-  # with no initializer create unset or null variables
+  # note: bash seems to be inconsistent about whether local declarations with no
+  # initializer create unset or null variables
   local cygflag  # starts out unset/null, not 0
   local path="$PATH"
   local IFS
@@ -384,9 +376,8 @@ gc () {
   local f
   local list
 
-  # it's important for $list to start out unset;
-  # because we declared it local above, it will still be local
-  # when we actually use it
+  # it's important for $list to start out unset; because we declared it local
+  # above, it will still be local when we actually use it
   unset list
 
   if [ -z "$1" ]; then
@@ -412,17 +403,17 @@ gc () {
   for d in $path; do  # no quotes
     [ -z "$d" ] && d="."  # :: or leading : in $path
 
-    # have to reset IFS around this command so ${} results will be split 
-    # into multiple words
+    # have to reset IFS around this command so ${} results will be split into
+    # multiple words
     #
-    # have to separate the ^$d and ^/ patterns because dirs with (single) 
-    # trailing slashes in $path will only get one slash in the output
+    # have to separate the ^$d and ^/ patterns because dirs with (single)
+    # slashes in $path will only get one slash in the output
     #
-    # could use ${//} instead of sed but this is more portable
-    # (and probably not much slower overall given the heavy use of find)
+    # could use ${//} instead of sed but this is more portable (and probably
+    # not much slower overall given the heavy use of find)
     #
-    # use : as delimiter in sed because it's guaranteed not to be in $d
-    # (or else $d would have been split)
+    # use : as delimiter in sed because it's guaranteed not to be in $d (or
+    # else $d would have been split)
     #
     IFS=" "
     f=$(find -H "$d" -maxdepth 1 -mindepth 1 \
@@ -434,9 +425,9 @@ gc () {
     : $(( i++ ))
   done
 
-  # any member of $list that was actually set won't be null,
-  # so there won't be blank lines from (e.g.) directories with no results;
-  # but the join will produce "" if there were no results at all, so:
+  # any member of $list that was actually set won't be null, so there won't be
+  # blank lines from (e.g.) directories with no results; but the join will
+  # produce "" if there were no results at all, so:
   if [ -n "${list[*]}" ]; then
     IFS=$'\n'
     printf "%s\n" "${list[*]}" | sort -u
