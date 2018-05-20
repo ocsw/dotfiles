@@ -35,3 +35,5 @@ bash:
 - https://www.in-ulm.de/~mascheck/
 - re find + instead of xargs: https://www.in-ulm.de/~mascheck/various/find/
 - re ${1+"$@"}: https://www.in-ulm.de/~mascheck/various/bourne_args/
+- http://mywiki.wooledge.org/BashFAQ
+- re populating an array from $(): http://mywiki.wooledge.org/BashFAQ/005

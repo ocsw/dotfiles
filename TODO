@@ -3,6 +3,7 @@ rename all 4+ prompt funcs?
 more modularization?
 check old locals
 umask
+gc in default complete?
 
 base upgrade
 pyrecreate w/diff ver/name
@@ -19,6 +20,9 @@ PY_ -> PYTHON_?
 auto local/trailing tests
 verify versions, venvs, etc.
 bash $! and/or if around complete
+ln python check?
+activate checks
+pyrm?
 
 running pytest?
 pip timeout
