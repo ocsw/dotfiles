@@ -102,3 +102,10 @@ s/^version *= *//
 
 if []; then
 for i in foo; do
+
+versioning
+
+test -e
+test -x
+test -h must be used rather than the test -L
+o.{a,so}
