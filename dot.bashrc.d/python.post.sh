@@ -263,6 +263,15 @@ EOF
     }
     complete -o default -F _pyfix_complete pyfix
 
+    pyfix_all () {
+        local venv
+        for venv in $(pyvenvs); do
+            echo "Fixing virtualenv \"$venv\"..."
+            pyfix "$venv"
+        done
+        echo "Done."
+    }
+
 
     pyvenv () {
         # create a pyenv-virtualenv virtualenv with a bunch of tweaks and
@@ -295,6 +304,14 @@ EOF
             echo "ERROR: Bad project directory."
             return 1
         fi
+        if [ -n "$project_dir" ] && \
+                ! compgen -G "$project_dir/*requirements.txt" \
+                > /dev/null 2>&1; then
+            cat <<EOF
+ERROR: No requirements files in project directory; try again without it.
+EOF
+            return 1
+        fi
 
         if [ "$py_version" = "2" ] || [ "$py_version" = "3" ]; then
             py_version=$(pylatest "$py_version" "installed_only")
@@ -309,27 +326,7 @@ EOF
         fi
         pyfix "$full_name"
         if [ -n "$project_dir" ]; then
-            if compgen -G "$project_dir/*requirements.txt" \
-                    > /dev/null 2>&1; then
-                pyenv activate "$full_name"
-                if ! cd "$project_dir"; then
-                    echo
-                    echo "ERROR: Can't change to project directory.  Stopping."
-                    echo
-                    return 1
-                fi
-                for i in *req*; do
-                    pip install -r "$i"
-                done
-            else
-                cat <<EOF
-
-WARNING: No requirements files in project directory.
-    To use a different path, run:
-    pyreqs "$full_name" "$project_dir"
-
-EOF
-            fi
+            pyreqs "$full_name" "$project_dir"
         fi
         cat <<EOF
 
