@@ -1,14 +1,22 @@
 move errorcode_prompt?
 rename all 4+ prompt funcs?
 more modularization?
-check old locals
 umask
 gc in default complete?
+
+running pytest?
+pip timeout
+automatic on cd?
+
+findrepo
+gitlast
 
 base upgrade
 pyrecreate w/diff ver/name
 pycopy w/diff ver/name
+pyrm?
 pylast
+
 pybase - tox, pip
 move to .sh, sep repo - but Sp?
 .python_version in pyvirt, pyact
@@ -22,10 +30,3 @@ verify versions, venvs, etc.
 bash $! and/or if around complete
 ln python check?
 activate checks
-pyrm?
-
-running pytest?
-pip timeout
-automatic on cd?
-findrepo
-gitlast
