@@ -566,7 +566,7 @@ EOF
             echo
             return 1
         fi
-        for i in *req*; do
+        for i in *requirements.txt; do
             pip install -r "$i"
         done
 

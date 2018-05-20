@@ -6,6 +6,7 @@ bash:
 - http://wiki.bash-hackers.org/scripting/bashchanges
 - https://wiki.ubuntu.com/DashAsBinSh
 - https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.69/html_node/Portable-Shell.html#Portable-Shell
+- https://www.gnu.org/software/bash/manual/bashref.html#Top
 - I'm going to use [] and = unless specifically using bash features (and
   quote variables)
 - I'm going to quote all variables including in assignments to build the habit
@@ -37,3 +38,64 @@ bash:
 - re ${1+"$@"}: https://www.in-ulm.de/~mascheck/various/bourne_args/
 - http://mywiki.wooledge.org/BashFAQ
 - re populating an array from $(): http://mywiki.wooledge.org/BashFAQ/005
+- http://mywiki.wooledge.org/BashPitfalls
+
+
+quoting
+" '
+=""
+[ "" ]
+[ "$cur_word" = "2" ]
+
+[] vs []
+
+bashisms, shebangs
+bash 4
+
+ERROR: Capital blah.
+
+error blank lines
+
+identifiers
+
+locals
+
+return
+
++=( 3 )
+
+foo () {
+}
+_foo
+py3latest () { pylatest 3; }
+
+blanks in/between functions
+
+trailing space
+
+printf
+
+$(foo \
+bar)
+
+EOF vs -EOF
+
+check returns, incl. cd
+
+minimal foo || bar
+
+! [ ] || ...
+
+shellcheck (except 1117)
+
+80 char
+
+if in_path pip ||
+        in_path pip2 ||
+
+local prev_venv
+local global_env
+local retval
+prev_venv=$(pycur)
+
+s/^version *= *//
