@@ -18,6 +18,7 @@ aliases/symlinks
 return 0
 PY_ -> PYTHON_?
 auto local/trailing tests
+verify versions, venvs, etc.
 
 running pytest?
 pip timeout

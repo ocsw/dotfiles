@@ -24,10 +24,10 @@ if in_path pip ||
 fi
 
 if in_path pyenv; then
-    eval "$(pyenv init - | grep -v PATH)"
+    eval "$(pyenv init - | grep -v "PATH")"
 fi
 if in_path pyenv-virtualenv-init; then
-    eval "$(pyenv virtualenv-init - | grep -v PATH)"
+    eval "$(pyenv virtualenv-init - | grep -v "PATH")"
 fi
 if in_path pyenv && in_path pyenv-virtualenv-init; then
     pycur () {
@@ -110,10 +110,9 @@ EOF
         # see:
         # https://stackoverflow.com/questions/742466/how-can-i-reverse-the-order-of-lines-in-a-file
         # https://web.archive.org/web/20090208232311/http://student.northpark.edu/pemente/awk/awk1line.txt
-        versions=$(pyenv install --list | tail -n +2 | sed 's/^..//' |
-            grep "^${major_version}\.[0-9]" | grep -vi "[a-z]" |
-            awk '{a[i++]=$0} END {for (j=i-1; j>=0;) print a[j--]}'
-        )
+        versions=$(pyenv install --list | tail -n +2 | sed 's/^..//' | \
+            grep "^${major_version}\.[0-9]" | grep -vi "[a-z]" | \
+            awk '{a[i++]=$0} END {for (j=i-1; j>=0;) print a[j--]}')
 
         if [ -z "$installed_only" ]; then
             printf "%s\n" "$versions" | head -n 1
@@ -200,6 +199,59 @@ EOF
     }
 
 
+    pyfix () {
+        # fix a couple of things in a virtualenv that don't seem to come out
+        # right by default
+        pyutil_wrapper _pyfix "$@"
+    }
+
+    _pyfix () {
+        local venv="$1"
+        local py_version
+        local major
+        local major_minor
+
+        if [ -z "$venv" ]; then
+            echo "Usage: pyfix VIRTUALENV"
+            echo
+            echo "ERROR: No virtualenv given."
+            return 1
+        fi
+        if ! pyvenvs | grep "^$venv\$" > /dev/null 2>&1; then
+            echo "ERROR: \"$venv\" is not a valid virtualenv."
+            return 1
+        fi
+
+        # tox seems to look directly in virtualenvs' bin directories, and
+        # requires a minor-versioned python binary (e.g. python3.6), which the
+        # above doesn't seem to provide (at least for python3).
+        py_version=$(grep "^version *= *" \
+            "${PYENV_ROOT}/versions/${venv}/pyvenv.cfg" | \
+            sed 's/^version *= *//')
+        major=$(printf "%s\n" "$py_version" | \
+            sed 's/^\([0-9]\)\.[0-9]\.[0-9]$/\1/')
+        major_minor=$(printf "%s\n" "$py_version" | \
+            sed 's/^\([0-9]\.[0-9]\)\.[0-9]$/\1/')
+        cd "${PYENV_ROOT}/versions/${venv}/bin"
+        ln -s "python$major" "python$major_minor"
+
+        # I haven't figured out how to make new virtualenvs have new pip;
+        # pyenv global 3.6.5; pyenv deactivate; pip install --upgrade pip
+        # will update the base image, but that apparently won't affect the new
+        # ones.  I thought the problem might be with ensurepip, but that
+        # doesn't seem to be it either.
+        pyenv activate "$venv"
+        pip install --upgrade pip
+    }
+
+    _pyfix_complete () {
+        if [ "$COMP_CWORD" = "1" ]; then
+            _py_venv_complete
+        fi
+    }
+    complete -o default -F _pyfix_complete pyfix
+
+
     pyvenv () {
         # create a pyenv-virtualenv virtualenv with a bunch of tweaks and
         # installs
@@ -211,8 +263,6 @@ EOF
         local py_version="$2"
         local proj_path="$3"
         local full_name
-        local major
-        local major_minor
         local i
 
         if [ -z "$short_name" ]; then
@@ -243,31 +293,23 @@ EOF
             echo "ERROR: can't create virtualenv.  Stopping."
             return 1
         fi
-
-        # tox seems to look directly in virtualenvs' bin directories, and
-        # requires a minor-versioned python binary (e.g. python3.6), which the
-        # above doesn't seem to provide (at least for python3).
-        major=$(printf "%s\n" "$py_version" |
-            sed 's/^\([0-9]\)\.[0-9]\.[0-9]$/\1/'
-        )
-        major_minor=$(printf "%s\n" "$py_version" |
-            sed 's/^\([0-9]\.[0-9]\)\.[0-9]$/\1/'
-        )
-        cd "${PYENV_ROOT}/versions/${full_name}/bin"
-        ln -s "python$major" "python$major_minor"
-
-        pyenv activate "$full_name"
-        # I haven't figured out how to make new virtualenvs have new pip;
-        # pyenv global 3.6.5; pyenv deactivate; pip install --upgrade pip
-        # will update the base image, but that apparently won't affect the new
-        # ones.  I thought the problem might be with ensurepip, but that
-        # doesn't seem to be it either.
-        pip install --upgrade pip
+        pyfix "$full_name"
         if [ -n "$proj_path" ]; then
-            cd "$proj_path"
-            for i in *req*; do
-                pip install -r "$i"
-            done
+            if compgen -G "$proj_path/*requirements.txt" > /dev/null 2>&1; then
+                pyenv activate "$full_name"
+                cd "$proj_path"
+                for i in *req*; do
+                    pip install -r "$i"
+                done
+            else
+                cat <<EOF
+
+WARNING: No requirements files in project path.
+    To use a different path, run:
+    pyreqs "$full_name" "$proj_path"
+
+EOF
+            fi
         fi
         cat <<EOF
 
@@ -382,7 +424,7 @@ EOF
         if [ "$COMP_CWORD" = "1" ]; then
             _py_venv_complete
         elif [ "$COMP_CWORD" = "2" ]; then
-            COMPREPLY=( $(pybin_ls "${COMP_WORDS[1]}" 2>/dev/null |
+            COMPREPLY=( $(pybin_ls "${COMP_WORDS[1]}" 2>/dev/null | \
                 grep "^${COMP_WORDS[2]}") )
         fi
     }
@@ -489,6 +531,10 @@ EOF
         fi
         if [ ! -d "$proj_path" ]; then
             echo "ERROR: Bad project path."
+            return 1
+        fi
+        if ! compgen -G "$proj_path/*requirements.txt" > /dev/null 2>&1; then
+            echo "ERROR: No requirements files in project path."
             return 1
         fi
 
