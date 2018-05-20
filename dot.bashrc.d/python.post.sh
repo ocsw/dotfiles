@@ -174,6 +174,7 @@ EOF
         local wrapped="$1"
         if [ -z "$wrapped" ]; then
             echo "Usage: pyutil_wrapper COMMAND [ARGS]"
+            echo
             echo "ERROR: No command given."
             return 1
         fi
@@ -236,7 +237,7 @@ EOF
         major_minor=$(printf "%s\n" "$py_version" | \
             sed 's/^\([0-9]\.[0-9]\)\.[0-9]$/\1/')
         if ! cd "${PYENV_ROOT}/versions/${venv}/bin"; then
-            cat <<EOF
+            cat << EOF
 
 ERROR: Can't change to bin directory.  Stopping.
     Target: ${PYENV_ROOT}/versions/${venv}/bin
@@ -301,7 +302,9 @@ EOF
         full_name="${short_name}-${py_version}"
 
         if ! pyenv virtualenv "$py_version" "$full_name"; then
+            echo
             echo "ERROR: Can't create virtualenv.  Stopping."
+            echo
             return 1
         fi
         pyfix "$full_name"
@@ -412,12 +415,8 @@ EOF
             fi
         fi
         if ! [ -d "$target_dir" ]; then
-            cat <<EOF
-
-ERROR: Target directory doesn't exist or isn't a directory.
-    Target: $target_dir
-
-EOF
+            echo "ERROR: Target directory doesn't exist or isn't a directory."
+            echo "    Target: $target_dir"
             return 1
         fi
 
@@ -559,12 +558,14 @@ EOF
         fi
 
         if ! pyenv activate "$venv"; then
+            echo
             echo "ERROR: Can't activate virtualenv.  Stopping."
+            echo
             return 1
         fi
         if ! cd "$project_dir"; then
             echo
-            echo "ERROR: Can't change to project directory."
+            echo "ERROR: Can't change to project directory.  Stopping."
             echo
             return 1
         fi
