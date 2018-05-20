@@ -448,7 +448,7 @@ EOF
         # specifically for a Python-based utility
 
         # to remove the virtualenv:
-        #rm ~/bin/EXECUTABLE
+        #rm PYLN_DIR/EXECUTABLE
         #pyenv uninstall $package_name-$py_version
 
         pyutil_wrapper _pyinst "$@"

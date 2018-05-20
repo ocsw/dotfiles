@@ -99,3 +99,6 @@ local retval
 prev_venv=$(pycur)
 
 s/^version *= *//
+
+if []; then
+for i in foo; do
