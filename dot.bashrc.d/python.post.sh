@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 _python_venv_prompt () {
     # Note: 'pyenv activate' uses $PYENV_VERSION, which pyenv checks first.
     # In order for a .python_version to take effect (which uses
@@ -178,14 +180,15 @@ EOF
 
         shift
         local prev_wd="$PWD"
-        local prev_venv=$(pycur)
+        local prev_venv
         local global_env
         local retval
+        prev_venv=$(pycur)
 
         "$wrapped" "$@"
         retval="$?"
 
-        cd "$prev_wd"
+        cd "$prev_wd" || true  # ignore failure
         if [ "$(pycur)" != "$prev_venv" ]; then
             global_env=$(pyenv global)
             if [ "$prev_venv" != "$global_env" ]; then
@@ -232,7 +235,15 @@ EOF
             sed 's/^\([0-9]\)\.[0-9]\.[0-9]$/\1/')
         major_minor=$(printf "%s\n" "$py_version" | \
             sed 's/^\([0-9]\.[0-9]\)\.[0-9]$/\1/')
-        cd "${PYENV_ROOT}/versions/${venv}/bin"
+        if ! cd "${PYENV_ROOT}/versions/${venv}/bin"; then
+            cat <<EOF
+
+ERROR: Can't change to bin directory.  Stopping.
+    Target: ${PYENV_ROOT}/versions/${venv}/bin
+
+EOF
+            return 1
+        fi
         ln -s "python$major" "python$major_minor"
 
         # I haven't figured out how to make new virtualenvs have new pip;
@@ -261,13 +272,13 @@ EOF
     _pyvenv () {
         local short_name="$1"
         local py_version="$2"
-        local proj_path="$3"
+        local project_dir="$3"
         local full_name
         local i
 
         if [ -z "$short_name" ]; then
             cat <<EOF
-Usage: pyvenv SHORT_NAME PY_VERSION [PROJ_PATH]
+Usage: pyvenv SHORT_NAME PY_VERSION [PROJECT_DIRECTORY]
 If PY_VERSION is 2 or 3, the latest installed Python release with that major
 version will be used.
 
@@ -279,8 +290,8 @@ EOF
             echo "ERROR: No Python version given."
             return 1
         fi
-        if [ -n "$proj_path" ] && [ ! -d "$proj_path" ]; then
-            echo "ERROR: Bad project path."
+        if [ -n "$project_dir" ] && [ ! -d "$project_dir" ]; then
+            echo "ERROR: Bad project directory."
             return 1
         fi
 
@@ -290,23 +301,29 @@ EOF
         full_name="${short_name}-${py_version}"
 
         if ! pyenv virtualenv "$py_version" "$full_name"; then
-            echo "ERROR: can't create virtualenv.  Stopping."
+            echo "ERROR: Can't create virtualenv.  Stopping."
             return 1
         fi
         pyfix "$full_name"
-        if [ -n "$proj_path" ]; then
-            if compgen -G "$proj_path/*requirements.txt" > /dev/null 2>&1; then
+        if [ -n "$project_dir" ]; then
+            if compgen -G "$project_dir/*requirements.txt" \
+                    > /dev/null 2>&1; then
                 pyenv activate "$full_name"
-                cd "$proj_path"
+                if ! cd "$project_dir"; then
+                    echo
+                    echo "ERROR: Can't change to project directory.  Stopping."
+                    echo
+                    return 1
+                fi
                 for i in *req*; do
                     pip install -r "$i"
                 done
             else
                 cat <<EOF
 
-WARNING: No requirements files in project path.
+WARNING: No requirements files in project directory.
     To use a different path, run:
-    pyreqs "$full_name" "$proj_path"
+    pyreqs "$full_name" "$project_dir"
 
 EOF
             fi
@@ -334,7 +351,7 @@ EOF
         if [ -z "$venv" ]; then
             echo "Usage: pybin_dir VIRTUALENV"
             echo
-            echo "ERROR: no virtualenv given."
+            echo "ERROR: No virtualenv given."
             return 1
         fi
         printf "%s\n" "${PYENV_ROOT}/versions/${venv}/bin"
@@ -352,7 +369,7 @@ EOF
         if [ -z "$venv" ]; then
             echo "Usage: pybin_ls VIRTUALENV [LS_ARGS]"
             echo
-            echo "ERROR: no virtualenv given."
+            echo "ERROR: No virtualenv given."
             return 1
         fi
         shift
@@ -406,8 +423,7 @@ EOF
 
         source_path="${PYENV_ROOT}/versions/${venv}/bin/${exec_name}"
         target_path="${target_dir}/${exec_name}"
-        ln -s "$source_path" "$target_path"
-        if [ "$?" = "0" ]; then
+        if ln -s "$source_path" "$target_path"; then
             echo "Symlink \"${target_dir}/${exec_name}\" created."
         else
             cat <<EOF
@@ -447,6 +463,7 @@ EOF
         local py_version="$2"
         local package_path="$3"
         local full_name
+        local install_string
         local pyln_dir_string
 
         if [ -z "$package_name" ]; then
@@ -476,12 +493,14 @@ EOF
         fi
         pyenv activate "$full_name"
         if [ -z "$package_path" ]; then
-            pip install "$package_name"
+            install_string="$package_name"
         else
-            pip install "$package_path"
+            install_string="$package_path"
         fi
-        if [ $? != "0" ]; then
-            echo "ERROR: installation failed.  Stopping."
+        if ! pip install "$install_string"; then
+            echo
+            echo "ERROR: Installation failed.  Stopping."
+            echo
             return 1
         fi
         if [ -e "$(pybin_dir "${full_name}")/${package_name}" ]; then
@@ -516,33 +535,39 @@ EOF
 
     _pyreqs () {
         local venv="$1"
-        local proj_path="$2"
+        local project_dir="$2"
         local i
 
         if [ -z "$venv" ]; then
-            echo "Usage: pyreqs VIRTUALENV PROJ_PATH"
+            echo "Usage: pyreqs VIRTUALENV PROJECT_DIRECTORY"
             echo
             echo "ERROR: No virtualenv given."
             return 1
         fi
-        if [ -z "$proj_path" ]; then
-            echo "ERROR: No project path given."
+        if [ -z "$project_dir" ]; then
+            echo "ERROR: No project directory given."
             return 1
         fi
-        if [ ! -d "$proj_path" ]; then
-            echo "ERROR: Bad project path."
+        if [ ! -d "$project_dir" ]; then
+            echo "ERROR: Bad project directory."
             return 1
         fi
-        if ! compgen -G "$proj_path/*requirements.txt" > /dev/null 2>&1; then
-            echo "ERROR: No requirements files in project path."
+        if ! compgen -G "$project_dir/*requirements.txt" \
+                > /dev/null 2>&1; then
+            echo "ERROR: No requirements files in project directory."
             return 1
         fi
 
         if ! pyenv activate "$venv"; then
-            echo "ERROR: can't activate virtualenv.  Stopping."
+            echo "ERROR: Can't activate virtualenv.  Stopping."
             return 1
         fi
-        cd "$proj_path"
+        if ! cd "$project_dir"; then
+            echo
+            echo "ERROR: Can't change to project directory."
+            echo
+            return 1
+        fi
         for i in *req*; do
             pip install -r "$i"
         done
