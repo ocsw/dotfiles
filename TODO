@@ -3,7 +3,6 @@ rename all 4+ prompt funcs?
 more modularization?
 check old locals
 umask
-${1+"$@"} stuff???
 
 base upgrade
 pyrecreate w/diff ver/name
@@ -23,3 +22,5 @@ auto local/trailing tests
 running pytest?
 pip timeout
 automatic on cd?
+findrepo
+gitlast

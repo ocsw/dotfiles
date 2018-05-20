@@ -32,3 +32,6 @@ bash:
   - but re-sourcing this file afterwards _would_ change the definitions
   - so, use backslashes
   - however, making 'more' a function will still change these
+- https://www.in-ulm.de/~mascheck/
+- re find + instead of xargs: https://www.in-ulm.de/~mascheck/various/find/
+- re ${1+"$@"}: https://www.in-ulm.de/~mascheck/various/bourne_args/
