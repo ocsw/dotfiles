@@ -27,7 +27,7 @@ export PAGER="less -E"
 
 # see also $DIRPAGER and more and lessx aliases in .bashrc
 # note: use of '?a .' gets around %t being broken
-export LESS='-QX -Ps?m(%i/%m).?f?a .%f.?e?a .(END):?pB?a .%pB\%..?c?a .[Col %c].?e?x - Next\: %x.%t$'
+export LESS='-QRX -Ps?m(%i/%m).?f?a .%f.?e?a .(END):?pB?a .%pB\%..?c?a .[Col %c].?e?x - Next\: %x.%t$'
 export LESSHISTFILE="/dev/null"
 
 export MANPAGER="less -F"
