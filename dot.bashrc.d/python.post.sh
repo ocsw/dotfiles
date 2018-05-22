@@ -394,7 +394,7 @@ EOF
             cat <<EOF
 Usage: pyln VIRTUALENV EXECUTABLE TARGET_DIR
 If TARGET_DIR is omitted, it defaults to the value of the PYLN_DIR environment
-variable; if that is unset, it defaults to ${HOME}/bin.
+variable; if that is unset, it defaults to \$HOME/bin.
 
 ERROR: No virtualenv given.
 EOF
@@ -467,7 +467,7 @@ EOF
 Usage: PYLN_DIR=SYMLINK_TARGET_DIR pyinst PACKAGE_NAME PY_VERSION [PACKAGE_PATH]
 If PY_VERSION is 2 or 3, the latest installed Python release with that major
 version will be used.
-If PYLN_DIR is not set, SYMLINK_TARGET_DIR defaults to ${HOME}/bin.
+If PYLN_DIR is not set, SYMLINK_TARGET_DIR defaults to \$HOME/bin.
 
 ERROR: No package name given.
 EOF
