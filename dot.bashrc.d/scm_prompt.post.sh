@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # [from the Facebook dotfile collection, tweaked and modified to add __git_ps1]
 
 # Determines the "branch" of the current repo and emits it.
@@ -69,7 +71,8 @@ _prompt_scm_info()
     elif [ -d "$hg/.hg/merge" ]; then
       extra="|MERGE"
     fi
-    local dirstate=$(test -f "$hg/.hg/dirstate" && \
+    local dirstate
+    dirstate=$(test -f "$hg/.hg/dirstate" && \
       hexdump -vn 20 -e '1/1 "%02x"' "$hg/.hg/dirstate" || \
       echo "empty")
     local current="$hg/.hg/bookmarks.current"
@@ -81,7 +84,8 @@ _prompt_scm_info()
           marks="$(cat "$hg/.hg/sharedpath")/bookmarks"
       fi
       if [ -z "$extra" ] && [ -f "$marks" ]; then
-        local markstate=$(grep --color=never " $br$" "$marks" | cut -f 1 -d ' ')
+        local markstate
+        markstate=$(grep --color=never " $br$" "$marks" | cut -f 1 -d ' ')
         if [ "$markstate" != "$dirstate" ]; then
           extra="|UPDATE_NEEDED"
         fi
@@ -91,14 +95,15 @@ _prompt_scm_info()
     fi
     local remote="$hg/.hg/remotenames"
     if [ -f "$remote" ]; then
-      local marks=$(grep --color=never "^$dirstate bookmarks" "$remote" | \
+      local marks
+      marks=$(grep --color=never "^$dirstate bookmarks" "$remote" | \
         cut -f 3 -d ' ' | tr '\n' '|' | sed 's/.$//')
       if [ -n "$marks" ]; then
         br="$br|$marks"
       fi
     fi
     local branch
-    if [ -f "$hg/.hg/branch"] ; then
+    if [ -f "$hg/.hg/branch" ] ; then
       branch=$(cat "$hg/.hg/branch")
       if [ "$branch" != "default" ]; then
         br="$br|$branch"
@@ -142,6 +147,7 @@ _prompt_scm_info()
     fi
   fi
   if [ -n "$br" ]; then
+    # shellcheck disable=SC2059
     printf "$fmt" "$br"
   fi
 }

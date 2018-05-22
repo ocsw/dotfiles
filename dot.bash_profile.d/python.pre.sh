@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 if in_path pyenv; then
     if [ -z "$PYENV_ROOT" ] && [ -d "$HOME/.pyenv" ]; then
         export PYENV_ROOT="$HOME/.pyenv"

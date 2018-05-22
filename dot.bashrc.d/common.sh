@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # --- tools used in both .bash_profile and .bashrc (and their modules) ---
 
 # note: if we define or include these only in .bash_profile, sub-shells won't

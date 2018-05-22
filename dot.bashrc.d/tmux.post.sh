@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 # manage tmux sessions
 _tmux-auto () {
   local cc=""

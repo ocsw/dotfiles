@@ -1,3 +1,5 @@
+#!/usr/bin/env bash
+
 _errorcode_prompt () {
   # first copy the status array in case we do something that changes it as we
   # go along
