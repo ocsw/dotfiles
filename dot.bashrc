@@ -1,3 +1,6 @@
+#!/usr/bin/env bash
+# shellcheck disable=SC2012
+
 # --- setup ---
 
 # stop if shell is non-interactive
@@ -13,6 +16,7 @@ OS_UNAME=$(uname)
 unset PROMPT_COMMAND
 
 # tools needed for both main body and sub-scripts
+# shellcheck disable=SC1090
 . "${HOME}/.bashrc.d/common.sh"
 
 
@@ -20,6 +24,7 @@ unset PROMPT_COMMAND
 
 if compgen -G "${HOME}/.bashrc.d/*.pre.sh" > /dev/null 2>&1; then
   for i in "${HOME}"/.bashrc.d/*.pre.sh; do
+    # shellcheck disable=SC1090
     . "$i"
   done
 fi
@@ -73,7 +78,9 @@ else
 fi
 
 # are we in mosh, tmux, and/or screen?
+# shellcheck disable=SC2009
 SELF_PPID=$(ps -eo pid,ppid | grep "^[ 	]*$$[ 	]*" | awk '{print $2}')
+# shellcheck disable=SC2009
 SELF_PARENT=$(
   ps -eo pid,comm | grep "^[ 	]*${SELF_PPID}[ 	]*" | \
   sed "s/^[ 	]*${SELF_PPID}[ 	]*//"
@@ -106,6 +113,7 @@ jobs_flag () {
   # terminal \n is stripped by the substitution in PS1, so we don't need
   # to use echo -n or printf
   #
+  # shellcheck disable=SC2006
   [ -n "`jobs -p`" ] && echo "."
 }
 
@@ -118,11 +126,13 @@ if [ -n "$LIGHT_BG" ]; then
   #PS1_COLOR=${PS1_COLOR:-34}    # blue
   #
   # white, red, yellow, green, cyan, blue, magenta
+  # shellcheck disable=SC2034
   PS1_COLORS=("37" "31" "33" "32" "36" "34" "35")
 else
   #PS1_COLOR=${PS1_COLOR:-1;36}  # bright cyan
   #
   # white, bright {red, yellow, green, cyan, blue, magenta}
+  # shellcheck disable=SC2034
   PS1_COLORS=("37" "1;31" "1;33" "1;32" "1;36" "1;34" "1;35")
 fi
 
@@ -136,6 +146,8 @@ fi
 #
 # 0 and 1 and 4 and 5 are in single strings to avoid having an extra space if a
 # component is empty
+#
+# shellcheck disable=SC2016
 PS1_PARTS=(
   '\[\e[${PS1_COLORS[0]}m\]$(_python_venv_prompt)\[\e[0m\]\[\e[${PS1_COLORS[1]}m\][ $(_errorcode_prompt) ]\[\e[0m\]'
   '\[\e[${PS1_COLORS[2]}m\]\!\[\e[0m\]'
@@ -211,7 +223,7 @@ in_path nano && alias pico=nano
 in_path less && alias more="less -E"
 alias lessx="less -+X"
 if [[ "$OS_UNAME" == CYGWIN* ]]; then
-  explorer () { command explorer ${1:+$(cygpath -wl $1)}; }
+  explorer () { command explorer ${1:+$(cygpath -wl "$1")}; }
   alias mintty="run mintty -t bash -e env SHLVL=0 bash -l"
   alias brmintty="run mintty -c ~/.minttyrc.bigrev -t bash -e env LIGHT_BG=1 SHLVL=0 bash -l"
   alias traceroute="echo; echo '[Windows tracert]'; tracert"
@@ -313,6 +325,7 @@ h () {
     fi
   done
 
+  # shellcheck disable=SC2086
   builtin history ${h_args:-20}  # no quotes
 }
 
@@ -327,8 +340,10 @@ cd () {
 
 # move up the directory tree; partly from Simon Elmir
 up () {
-  local updir=$(printf "../%.0s" $(seq 1 $1))  # no quotes
+  local updir
+  updir=$(printf "../%.0s" $(seq 1 "$1"))  # no quotes
   if [ -t 1 ]; then
+    # shellcheck disable=SC2164
     cd "$updir"
   else
     printf "%s\n" "$updir"
@@ -436,6 +451,7 @@ gc () {
 
 if compgen -G "${HOME}/.bashrc.d/*.post.sh" > /dev/null 2>&1; then
   for i in "${HOME}"/.bashrc.d/*.post.sh; do
+    # shellcheck disable=SC1090
     . "$i"
   done
 fi
@@ -443,4 +459,5 @@ fi
 
 # --- machine-specific settings, overrides, aliases, etc. ---
 
-[ -e ~/.bashrc.local ] && . ~/.bashrc.local
+# shellcheck disable=SC1090
+[ -e "${HOME}/.bashrc.local" ] && . "${HOME}/.bashrc.local"

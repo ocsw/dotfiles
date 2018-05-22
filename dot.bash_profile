@@ -1,5 +1,8 @@
+#!/usr/bin/env bash
+
 # --- tools needed for both main body and sub-scripts ---
 
+# shellcheck disable=SC1090  # seems to cover the whole file?
 . "${HOME}/.bashrc.d/common.sh"
 
 
@@ -7,6 +10,7 @@
 
 if compgen -G "${HOME}/.bash_profile.d/*.pre.sh" > /dev/null 2>&1; then
   for i in "${HOME}"/.bash_profile.d/*.pre.sh; do
+    # shellcheck disable=SC1090
     . "$i"
   done
 fi
@@ -32,6 +36,7 @@ export LESSHISTFILE="/dev/null"
 
 export MANPAGER="less -F"
 # note: \% and \: from original prompt don't need extra \ in bash
+# shellcheck disable=SC2016
 export MANOPT='-r ?m(%i/%m).?a\ .Manual\ page\ \$MAN_PN?e?a\ .(END):?pB?a\ .%pB\%..?c?a\ .[Col\ %c].?e?x\ -\ Next\:\ %x.%t'
 
 if [ -n "$PS1" ]; then
@@ -44,10 +49,12 @@ fi
 
 if compgen -G "${HOME}/.bash_profile.d/*.post.sh" > /dev/null 2>&1; then
   for i in "${HOME}"/.bash_profile.d/*.post.sh; do
+    # shellcheck disable=SC1090
     . "$i"
   done
 fi
 
 
 # --- source .bashrc ---
-[ -e ~/.bashrc ] && . ~/.bashrc
+# shellcheck disable=SC1090
+[ -e "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
