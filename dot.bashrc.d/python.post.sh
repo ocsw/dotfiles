@@ -5,6 +5,8 @@ _python_venv_prompt () {
     # In order for a .python_version to take effect (which uses
     # $PYENV_VIRTUAL_ENV), you must be on the global pyenv version (i.e. do
     # 'pyenv deactivate').
+    # ('pyenv activate' actually also sets $PYENV_VIRTUAL_ENV, but what matters
+    # for us here is $PYENV_VERSION.)
     if [ -n "$PYENV_VERSION" ]; then
         printf "%s " "$PYENV_VERSION"
     elif [ -n "$PYENV_VIRTUAL_ENV" ]; then
