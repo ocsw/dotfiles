@@ -103,7 +103,7 @@ s/^version *= *//
 if []; then
 for i in foo; do
 
-versioning
+versioning, changelogs
 
 test -e
 test -x
