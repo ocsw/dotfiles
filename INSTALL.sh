@@ -1,15 +1,10 @@
-DF=".dotfiles"
-cd
+#!/usr/bin/env bash
+
+DF="${HOME}/.dotfiles"
 git clone git@github.com:ocsw/dotfiles.git "$DF"
-ln_dotfile () {
-    ln -s "${DF}/dot${1}" "$1"
-}
-cp_dotfile () {
-    if ! [ -e "$1" ]; then  # -e isn't technically portable
-        cp "${DF}/dot${1}" "$1"
-    fi
-}
-#
+# shellcheck disable=SC1090
+. "${DF}/dot.bashrc.d/dotfiles.post.sh"
+
 ln_dotfile .bash_profile
 ln_dotfile .bash_profile.d
 ln_dotfile .bashrc
@@ -24,24 +19,21 @@ cp_dotfile .vimrc.local
 #
 #ln_dotfile .muttrc  # maybe
 
-TBU=".to_back_up"
-cd
-mkdir "$TBU"
-ln_tbu () {
-    if ! [ -e "${TBU}/${1}" ]; then  # -e isn't technically portable
-        mv "$1" "$TBU"
-        ln -s "${TBU}/${1}" .
-    fi
-}
-#
+touch .bash_history
 ln_tbu .bash_history
+touch .bashrc.local
 ln_tbu .bashrc.local
+touch .vimrc.local
 ln_tbu .vimrc.local
+#
+mkdir -p .ipython
+ln_tbu .ipython
+touch .python_history
+ln_tbu .python_history
+mkdir -p .pip
+ln_tbu .pip
+touch .pypirc
 ln_tbu .pypirc
 #
-ln_tbu .ipython
-ln_tbu .python_history
-ln_tbu .pip
-
-#
+mkdir -p .vscode
 ln_tbu .vscode
