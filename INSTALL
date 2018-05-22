@@ -37,8 +37,11 @@ ln_tbu () {
 ln_tbu .bash_history
 ln_tbu .bashrc.local
 ln_tbu .vimrc.local
+ln_tbu .pypirc
 #
 ln_tbu .ipython
 ln_tbu .python_history
+ln_tbu .pip
+
 #
 ln_tbu .vscode
