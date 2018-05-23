@@ -15,7 +15,7 @@ set modelines=0
 let mapleader = "\<Space>"
 
 " command-line tab completion
-set wildmode=list:longest,list:full   " with list, longest then cycle
+set wildmode=list:longest,list:full  " with list, longest then cycle
 
 
 " ***********************
@@ -38,7 +38,7 @@ set smarttab        " tab inserts indents instead of tabs at begining of line
 " ****************************
 
 " line beginnings/endings
-set autoindent      " carry indent over to new lines
+set autoindent                  " carry indent over to new lines
 set backspace=indent,eol,start  " backspace over everything
 
 " cleanup whitespace at end of line
@@ -51,22 +51,22 @@ set pastetoggle=<F2>
 set completeopt=longest,menu,preview  " longest match, menu, extra info
 
 " scrolling
-set scrolljump=5    " scroll five lines at a time vertically
-set sidescroll=10   " minumum columns to scroll horizontally
+set scrolljump=5     " scroll five lines at a time vertically
+set sidescroll=10    " minumum columns to scroll horizontally
 
 " search
-set incsearch       " search with typeahead
-set ignorecase      " ignore case when searching
-set smartcase       " unless we have at least 1 cap
+set incsearch        " search with typeahead
+set ignorecase       " ignore case when searching
+set smartcase        " unless we have at least 1 cap
 
 " history, undo
-set history=50      " keep 50 lines of command line history
-set undolevels=1000   " number of undos stored
+set history=50       " keep 50 lines of command line history
+set undolevels=1000  " number of undos stored
 
 " temp files
-set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp   " swap files
-set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp   " backups
-set backup          " keep backups
+set directory=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp  " swap files
+set backupdir=~/.vim-tmp,~/.tmp,~/tmp,/var/tmp,/tmp  " backups
+set backup           " keep backups
 
 
 " ***************
@@ -74,66 +74,66 @@ set backup          " keep backups
 " ***************
 
 " window
-set title           " set title when running in term
-set noerrorbells    " no bells in terminal
+set title         " set title when running in term
+set noerrorbells  " no bells in terminal
 
 " vim meta
-set showcmd         " show normal mode commands as they are entered
-set showmode        " show editing mode in status (-- INSERT --)
+set showcmd       " show normal mode commands as they are entered
+set showmode      " show editing mode in status (-- INSERT --)
 
 " buffer meta
-set ruler           " show cursor position
-set nonumber        " hide line numbers
-set laststatus=2    " 2 status lines
+set ruler         " show cursor position
+set nonumber      " hide line numbers
+set laststatus=2  " 2 status lines
 set statusline=%t[%{strlen(&fenc)?&fenc:'none'},%{&ff}]%h%y\ Buf\ %n\ %m%r
 set statusline+=%=%c,%l/%L\ %P\ 
 
 " in buffer
-set list listchars=tab:»·,trail:·   " show tabs and trailing spaces
-set showmatch       " flash matching delimiters
+set list listchars=tab:»·,trail:·  " show tabs and trailing spaces
+set showmatch     " flash matching delimiters
 
 " colors
-set t_Co=256        " 256 colors
+set t_Co=256      " 256 colors
 "set background=dark
 "colorscheme solarized
 
 " highlighting
 if (&t_Co > 2 || has("gui_running"))
-  " syntax highlighting
-  syntax on
+    " syntax highlighting
+    syntax on
 
-  " persist search highlighting
-  set hlsearch
-  " clear current highlighting
-  nnoremap <Leader><Space> :nohlsearch<Bar>:echo<CR>
+    " persist search highlighting
+    set hlsearch
+    " clear current highlighting
+    nnoremap <Leader><Space> :nohlsearch<Bar>:echo<CR>
 
-  " 80-column marking
-  highlight OverLength ctermbg=Red ctermfg=White guibg=Red
-  match OverLength /\%81v.\+/
-  """set colorcolumn=81
+    " 80-column marking
+    highlight OverLength ctermbg=Red ctermfg=White guibg=Red
+    match OverLength /\%81v.\+/
+    """set colorcolumn=81
 
-  " cursor-line highlighting
-  if (&t_Co >= 256)
-    " see http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
-    highlight CursorLine cterm=NONE ctermbg=236 guibg=#303030
-  else
-    highlight CursorLine cterm=NONE ctermbg=DarkGray guibg=#303030
-  endif
-  set cursorline
-  " toggle
-  nnoremap <Leader>h :set cursorline!<CR>
-  " for current window only
-  " (see http://vim.wikia.com/wiki/Highlight_current_line)
-  """ augroup CursorLine
-  """   au!
-  """   au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
-  """   au WinLeave * setlocal nocursorline
-  """ augroup END
+    " cursor-line highlighting
+    if (&t_Co >= 256)
+        " see http://vim.wikia.com/wiki/Xterm256_color_names_for_console_Vim
+        highlight CursorLine cterm=NONE ctermbg=236 guibg=#303030
+    else
+        highlight CursorLine cterm=NONE ctermbg=DarkGray guibg=#303030
+    endif
+    set cursorline
+    " toggle
+    nnoremap <Leader>h :set cursorline!<CR>
+    " for current window only
+    " (see http://vim.wikia.com/wiki/Highlight_current_line)
+    """ augroup CursorLine
+    """     au!
+    """     au VimEnter,WinEnter,BufWinEnter * setlocal cursorline
+    """     au WinLeave * setlocal nocursorline
+    """ augroup END
 
 else
-  syntax off        " no syntax highlighting
-  set nohlsearch    " don't persist search highlighting
-  set nocursorline  " no cursor-line highlighting
+    syntax off        " no syntax highlighting
+    set nohlsearch    " don't persist search highlighting
+    set nocursorline  " no cursor-line highlighting
 endif
 
 
@@ -160,14 +160,14 @@ let g:CommandTFileScanner='watchman'
 "set cursorline
 
 "if has("autocmd")
-"  augroup redhat
-"  autocmd!
-"  " When editing a file, always jump to the last cursor position
-"  autocmd BufReadPost *
-"  \ if line("'\"") > 0 && line ("'\"") <= line("$") |
-"  \   exe "normal! g'\"" |
-"  \ endif
-"  augroup END
+"    augroup redhat
+"    autocmd!
+"    " When editing a file, always jump to the last cursor position
+"    autocmd BufReadPost *
+"    \ if line("'\"") > 0 && line ("'\"") <= line("$") |
+"    \   exe "normal! g'\"" |
+"    \ endif
+"    augroup END
 "endif
 
 
@@ -178,7 +178,7 @@ let g:CommandTFileScanner='watchman'
 let s:vimrc_extra = $HOME . "/.vimrc.d"
 let file_list = split(globpath(s:vimrc_extra, "*.vim"), "\n")
 for file in file_list
-  execute "source " . fnameescape(file)
+    execute "source " . fnameescape(file)
 endfor
 
 
@@ -188,5 +188,5 @@ endfor
 
 let s:vimrc_local = $HOME . "/.vimrc.local"
 if filereadable(s:vimrc_local)
-  execute "source " . fnameescape(s:vimrc_local)
+    execute "source " . fnameescape(s:vimrc_local)
 endif

@@ -23,10 +23,10 @@ unset PROMPT_COMMAND
 # --- pre-rc sub-scripts ---
 
 if compgen -G "${HOME}/.bashrc.d/*.pre.sh" > /dev/null 2>&1; then
-  for i in "${HOME}"/.bashrc.d/*.pre.sh; do
-    # shellcheck disable=SC1090
-    . "$i"
-  done
+    for i in "${HOME}"/.bashrc.d/*.pre.sh; do
+        # shellcheck disable=SC1090
+        . "$i"
+    done
 fi
 
 
@@ -46,25 +46,25 @@ shopt -s histappend histverify
 # completion settings
 shopt -s no_empty_cmd_completion
 if [ -t 0 ]; then
-  bind "set mark-symlinked-directories on"
-  bind "set page-completions off"
-  bind "set show-all-if-unmodified on"
-  #bind "set completion-query-items 1000"
-  #bind "set match-hidden-files off"
-  #bind "set show-all-if-ambiguous on"
+    bind "set mark-symlinked-directories on"
+    bind "set page-completions off"
+    bind "set show-all-if-unmodified on"
+    #bind "set completion-query-items 1000"
+    #bind "set match-hidden-files off"
+    #bind "set show-all-if-ambiguous on"
 fi
 
 # key bindings
 if [ -t 0 ]; then
-  bind '"\C-d": delete-char-or-list'
-  # see also .inputrc
+    bind '"\C-d": delete-char-or-list'
+    # see also .inputrc
 fi
 
 # misc settings
 set -o noclobber
 shopt -s checkwinsize
 if [ -t 0 ]; then
-  bind "set bell-style none"
+    bind "set bell-style none"
 fi
 
 
@@ -72,9 +72,9 @@ fi
 
 # mark at the end of the prompt
 if [ "$EUID" -eq 0 ]; then
-  PS1_MK="#"
+    PS1_MK="#"
 else
-  PS1_MK='$'
+    PS1_MK='$'
 fi
 
 # are we in mosh, tmux, and/or screen?
@@ -82,8 +82,8 @@ fi
 SELF_PPID=$(ps -eo pid,ppid | grep "^[ 	]*$$[ 	]*" | awk '{print $2}')
 # shellcheck disable=SC2009
 SELF_PARENT=$(
-  ps -eo pid,comm | grep "^[ 	]*${SELF_PPID}[ 	]*" | \
-  sed "s/^[ 	]*${SELF_PPID}[ 	]*//"
+    ps -eo pid,comm | grep "^[ 	]*${SELF_PPID}[ 	]*" | \
+    sed "s/^[ 	]*${SELF_PPID}[ 	]*//"
 )
 [ "$SELF_PARENT" = "mosh-server" ] && export _IN_MOSH="yes"
 [ -n "$TMUX" ] && export _IN_TMUX="yes"
@@ -92,11 +92,11 @@ SELF_PARENT=$(
 # string of marks, 1 for each level of shell nesting, with corrections
 MARKLVL="$SHLVL"
 for i in $_IN_MOSH $_IN_TMUX $_IN_SCREEN; do  # no quotes
-  MARKLVL=$((MARKLVL - 1))
+    MARKLVL=$((MARKLVL - 1))
 done
 PS1_MARKS=""
 for ((i=MARKLVL; i > 0; i--)); do
-  PS1_MARKS="$PS1_MK$PS1_MARKS"
+    PS1_MARKS="$PS1_MK$PS1_MARKS"
 done
 
 # add mosh/tmux/screen markers, in order
@@ -106,15 +106,15 @@ done
 
 # if there are jobs (stopped or running), add a symbol to the prompt
 jobs_flag () {
-  # bash 4.0 has a bug that prevents the prompt from being printed at all
-  # if there's a $() in anything run from PROMPT_COMMAND or PS1;
-  # but $() in PS1 itself works, and so does ``
-  #
-  # terminal \n is stripped by the substitution in PS1, so we don't need
-  # to use echo -n or printf
-  #
-  # shellcheck disable=SC2006
-  [ -n "`jobs -p`" ] && echo "."
+    # bash 4.0 has a bug that prevents the prompt from being printed at all
+    # if there's a $() in anything run from PROMPT_COMMAND or PS1;
+    # but $() in PS1 itself works, and so does ``
+    #
+    # terminal \n is stripped by the substitution in PS1, so we don't need
+    # to use echo -n or printf
+    #
+    # shellcheck disable=SC2006
+    [ -n "`jobs -p`" ] && echo "."
 }
 
 # prompt colors
@@ -123,17 +123,17 @@ jobs_flag () {
 # see list below for possible values
 #
 if [ -n "$LIGHT_BG" ]; then
-  #PS1_COLOR=${PS1_COLOR:-34}    # blue
-  #
-  # white, red, yellow, green, cyan, blue, magenta
-  # shellcheck disable=SC2034
-  PS1_COLORS=("37" "31" "33" "32" "36" "34" "35")
+    #PS1_COLOR=${PS1_COLOR:-34}    # blue
+    #
+    # white, red, yellow, green, cyan, blue, magenta
+    # shellcheck disable=SC2034
+    PS1_COLORS=("37" "31" "33" "32" "36" "34" "35")
 else
-  #PS1_COLOR=${PS1_COLOR:-1;36}  # bright cyan
-  #
-  # white, bright {red, yellow, green, cyan, blue, magenta}
-  # shellcheck disable=SC2034
-  PS1_COLORS=("37" "1;31" "1;33" "1;32" "1;36" "1;34" "1;35")
+    #PS1_COLOR=${PS1_COLOR:-1;36}  # bright cyan
+    #
+    # white, bright {red, yellow, green, cyan, blue, magenta}
+    # shellcheck disable=SC2034
+    PS1_COLORS=("37" "1;31" "1;33" "1;32" "1;36" "1;34" "1;35")
 fi
 
 # set the prompt
@@ -149,11 +149,11 @@ fi
 #
 # shellcheck disable=SC2016
 PS1_PARTS=(
-  '\[\e[${PS1_COLORS[0]}m\]$(_python_venv_prompt)\[\e[0m\]\[\e[${PS1_COLORS[1]}m\][ $(_errorcode_prompt) ]\[\e[0m\]'
-  '\[\e[${PS1_COLORS[2]}m\]\!\[\e[0m\]'
-  '\[\e[${PS1_COLORS[3]}m\]\u@\h\[\e[0m\]'
-  '\[\e[${PS1_COLORS[4]}m\]${PWD}\[\e[0m\]\[\e[${PS1_COLORS[5]}m\]$(_prompt_scm_info " %s")\[\e[0m\]'
-  '\[\e[${PS1_COLORS[6]}m\]$(jobs_flag)$PS1_MARKS\[\e[0m\]'
+    '\[\e[${PS1_COLORS[0]}m\]$(_python_venv_prompt)\[\e[0m\]\[\e[${PS1_COLORS[1]}m\][ $(_errorcode_prompt) ]\[\e[0m\]'
+    '\[\e[${PS1_COLORS[2]}m\]\!\[\e[0m\]'
+    '\[\e[${PS1_COLORS[3]}m\]\u@\h\[\e[0m\]'
+    '\[\e[${PS1_COLORS[4]}m\]${PWD}\[\e[0m\]\[\e[${PS1_COLORS[5]}m\]$(_prompt_scm_info " %s")\[\e[0m\]'
+    '\[\e[${PS1_COLORS[6]}m\]$(jobs_flag)$PS1_MARKS\[\e[0m\]'
 )
 PS1="${PS1_PARTS[*]} "
 typeset +x PS1  # this is exported on Cygwin for some reason
@@ -223,24 +223,24 @@ in_path nano && alias pico=nano
 in_path less && alias more="less -E"
 alias lessx="less -+X"
 if [[ "$OS_UNAME" == CYGWIN* ]]; then
-  explorer () { command explorer ${1:+$(cygpath -wl "$1")}; }
-  alias mintty="run mintty -t bash -e env SHLVL=0 bash -l"
-  alias brmintty="run mintty -c ~/.minttyrc.bigrev -t bash -e env LIGHT_BG=1 SHLVL=0 bash -l"
-  alias traceroute="echo; echo '[Windows tracert]'; tracert"
-  alias trg="traceroute -d 8.8.8.8"
+    explorer () { command explorer ${1:+$(cygpath -wl "$1")}; }
+    alias mintty="run mintty -t bash -e env SHLVL=0 bash -l"
+    alias brmintty="run mintty -c ~/.minttyrc.bigrev -t bash -e env LIGHT_BG=1 SHLVL=0 bash -l"
+    alias traceroute="echo; echo '[Windows tracert]'; tracert"
+    alias trg="traceroute -d 8.8.8.8"
 else
-  alias trg="traceroute -n 8.8.8.8"
+    alias trg="traceroute -n 8.8.8.8"
 fi
 if [ "$OS_UNAME" = "Darwin" ]; then
-  alias ls="ls -G"
-  if in_path gcp brew && \
-      [ "$(command -v gcp)" = "$(brew --prefix)/bin/gcp" ]; then
-    alias cp="gcp"
-  fi
-  if in_path gmv brew && \
-      [ "$(command -v gmv)" = "$(brew --prefix)/bin/gmv" ]; then
-    alias mv="gmv"
-  fi
+    alias ls="ls -G"
+    if in_path gcp brew && \
+            [ "$(command -v gcp)" = "$(brew --prefix)/bin/gcp" ]; then
+        alias cp="gcp"
+    fi
+    if in_path gmv brew && \
+            [ "$(command -v gmv)" = "$(brew --prefix)/bin/gmv" ]; then
+        alias mv="gmv"
+    fi
 fi
 
 # directory listing shortcuts
@@ -251,38 +251,38 @@ d () { ls -l   "@" 2>&1 | $DIRPAGER; }
 s () { ls -laR "@" 2>&1 | $DIRPAGER; }
 a () { ls -la  "@" 2>&1 | $DIRPAGER; }
 case "$OS_UNAME" in
-  # for some unknown reason, this started breaking on OSX without the function
-  # keyword
-  CYGWIN*)
-    # note: /a is for ASCII; no way to exclude dotfiles
-    # dirs, incl. dots
-    t () {
-      tree.com /a    ${1+"$(cygpath -ml "$1" | sed 's|/$||')"} | \
-        sed -e '1,2d' -e 's/^[A-Z]:\.$/./' | $DIRPAGER
-    }
-    # files, incl. dots
-    tf () {
-      tree.com /a /f ${1+"$(cygpath -ml "$1" | sed 's|/$||')"} | \
-        sed -e '1,2d' -e 's/^[A-Z]:\.$/./' | $DIRPAGER
-    }
-    ;;
-  OpenBSD)
-    t ()   { tree -s -d    "@" 2>&1 | $DIRPAGER; }  # dirs,  no dots
-    tf ()  { tree -s       "@" 2>&1 | $DIRPAGER; }  # files, no dots
-    ta ()  { tree -s -d -a "@" 2>&1 | $DIRPAGER; }  # dirs,  incl. dots
-    tfa () { tree -s    -a "@" 2>&1 | $DIRPAGER; }  # files, incl. dots
-    ;;
-  *)
-    t ()   { tree --noreport -d    "@" 2>&1 | $DIRPAGER; }  # d, no .
-    tf ()  { tree --noreport       "@" 2>&1 | $DIRPAGER; }  # f, no .
-    ta ()  { tree --noreport -d -a "@" 2>&1 | $DIRPAGER; }  # d, incl. .
-    tfa () { tree --noreport    -a "@" 2>&1 | $DIRPAGER; }  # f, incl. .
-    ;;
+    # for some unknown reason, this started breaking on OSX without the function
+    # keyword
+    CYGWIN*)
+        # note: /a is for ASCII; no way to exclude dotfiles
+        # dirs, incl. dots
+        t () {
+            tree.com /a    ${1+"$(cygpath -ml "$1" | sed 's|/$||')"} | \
+                sed -e '1,2d' -e 's/^[A-Z]:\.$/./' | $DIRPAGER
+        }
+        # files, incl. dots
+        tf () {
+            tree.com /a /f ${1+"$(cygpath -ml "$1" | sed 's|/$||')"} | \
+                sed -e '1,2d' -e 's/^[A-Z]:\.$/./' | $DIRPAGER
+        }
+        ;;
+    OpenBSD)
+        t ()   { tree -s -d    "@" 2>&1 | $DIRPAGER; }  # dirs,  no dots
+        tf ()  { tree -s       "@" 2>&1 | $DIRPAGER; }  # files, no dots
+        ta ()  { tree -s -d -a "@" 2>&1 | $DIRPAGER; }  # dirs,  incl. dots
+        tfa () { tree -s    -a "@" 2>&1 | $DIRPAGER; }  # files, incl. dots
+        ;;
+    *)
+        t ()   { tree --noreport -d    "@" 2>&1 | $DIRPAGER; }  # d, no .
+        tf ()  { tree --noreport       "@" 2>&1 | $DIRPAGER; }  # f, no .
+        ta ()  { tree --noreport -d -a "@" 2>&1 | $DIRPAGER; }  # d, incl. .
+        tfa () { tree --noreport    -a "@" 2>&1 | $DIRPAGER; }  # f, incl. .
+        ;;
 esac
 
 # misc shortcuts
 wintitle () {
-  printf "\033]0;%s\a" "$*"
+    printf "\033]0;%s\a" "$*"
 }
 alias m=mutt  # mailreader; if mutt isn't installed, override in .bashrc.local
 alias p=clear
@@ -302,68 +302,68 @@ alias j="jobs -l"
 # 8) any non- -/+t arguments are passed to the history builtin
 #
 h () {
-  local h_args=""
-  local htf
-  local i
+    local h_args=""
+    local htf
+    local i
 
-  # local copy of HTF, including set/unset/null status
-  if [ -n "${HISTTIMEFORMAT+x}" ]; then
-    local HISTTIMEFORMAT="$HISTTIMEFORMAT"
-  else
-    local HISTTIMEFORMAT
-    unset HISTTIMEFORMAT  # will still be local if we set it later
-  fi
-
-  for i in "$@"; do
-    if [ "${i:0:2}" = "-t" ]; then
-      htf="${i:2}"
-      HISTTIMEFORMAT="${htf:-%R  }"
-    elif [ "${i:0:2}" = "+t" ]; then
-      unset HISTTIMEFORMAT
+    # local copy of HTF, including set/unset/null status
+    if [ -n "${HISTTIMEFORMAT+x}" ]; then
+        local HISTTIMEFORMAT="$HISTTIMEFORMAT"
     else
-      h_args="$h_args $i"  # unnecessary space at the beginning (shrug)
+        local HISTTIMEFORMAT
+        unset HISTTIMEFORMAT  # will still be local if we set it later
     fi
-  done
 
-  # shellcheck disable=SC2086
-  builtin history ${h_args:-20}  # no quotes
+    for i in "$@"; do
+        if [ "${i:0:2}" = "-t" ]; then
+            htf="${i:2}"
+            HISTTIMEFORMAT="${htf:-%R  }"
+        elif [ "${i:0:2}" = "+t" ]; then
+            unset HISTTIMEFORMAT
+        else
+            h_args="$h_args $i"  # unnecessary space at the beginning (shrug)
+        fi
+    done
+
+    # shellcheck disable=SC2086
+    builtin history ${h_args:-20}  # no quotes
 }
 
 # make cd not print the target directory for "cd -"
 cd () {
-  if [ "$*" = "-" ]; then
-    builtin cd - > /dev/null
-  else
-    builtin cd "$@"
-  fi
+    if [ "$*" = "-" ]; then
+        builtin cd - > /dev/null
+    else
+        builtin cd "$@"
+    fi
 }
 
 # move up the directory tree; partly from Simon Elmir
 up () {
-  local updir
-  updir=$(printf "../%.0s" $(seq 1 "$1"))  # no quotes
-  if [ -t 1 ]; then
-    # shellcheck disable=SC2164
-    cd "$updir"
-  else
-    printf "%s\n" "$updir"
-  fi
+    local updir
+    updir=$(printf "../%.0s" $(seq 1 "$1"))  # no quotes
+    if [ -t 1 ]; then
+        # shellcheck disable=SC2164
+        cd "$updir"
+    else
+        printf "%s\n" "$updir"
+    fi
 }
 
 # make bg and fg accept a bare number instead of %num
 bg () {
-  if [ -n "$1" ]; then
-    builtin bg "%$1"
-  else
-    builtin bg
-  fi
+    if [ -n "$1" ]; then
+        builtin bg "%$1"
+    else
+        builtin bg
+    fi
 }
 fg () {
-  if [ -n "$1" ]; then
-    builtin fg "%$1"
-  else
-    builtin fg
-  fi
+    if [ -n "$1" ]; then
+        builtin fg "%$1"
+    else
+        builtin fg
+    fi
 }
 
 # glob expansion for commands
@@ -378,82 +378,82 @@ fg () {
 # note: uses $OS_UNAME and requires in_path(), find, sed, and sort
 #
 gc () {
-  # note: bash seems to be inconsistent about whether local declarations with no
-  # initializer create unset or null variables
-  local cygflag  # starts out unset/null, not 0
-  local path="$PATH"
-  local IFS
-  local i
-  local d
-  local f
-  local list
+    # note: bash seems to be inconsistent about whether local declarations with
+    # no initializer create unset or null variables
+    local cygflag  # starts out unset/null, not 0
+    local path="$PATH"
+    local IFS
+    local i
+    local d
+    local f
+    local list
 
-  # it's important for $list to start out unset; because we declared it local
-  # above, it will still be local when we actually use it
-  unset list
+    # it's important for $list to start out unset; because we declared it local
+    # above, it will still be local when we actually use it
+    unset list
 
-  if [ -z "$1" ]; then
-    echo "Usage: gc 'PATTERN'"
-    return
-  fi
+    if [ -z "$1" ]; then
+        echo "Usage: gc 'PATTERN'"
+        return
+    fi
 
-  # before we start doing anything messy or time consuming...
-  if ! in_path find sed sort; then
-    echo "Error: gc requires find, sed, and sort available in the path."
-    return
-  fi
+    # before we start doing anything messy or time consuming...
+    if ! in_path find sed sort; then
+        echo "Error: gc requires find, sed, and sort available in the path."
+        return
+    fi
 
-  [[ "$OS_UNAME" == CYGWIN* ]] && cygflag=1
+    [[ "$OS_UNAME" == CYGWIN* ]] && cygflag=1
 
-  # trailing : in $PATH is interpreted as .
-  # make it :: so the loop will see it
-  # (leading : will already show up)
-  [[ "$path" == *: ]] && path="$path:"
+    # trailing : in $PATH is interpreted as .
+    # make it :: so the loop will see it
+    # (leading : will already show up)
+    [[ "$path" == *: ]] && path="$path:"
 
-  i=0
-  IFS=":"
-  for d in $path; do  # no quotes
-    [ -z "$d" ] && d="."  # :: or leading : in $path
-
-    # have to reset IFS around this command so ${} results will be split into
-    # multiple words
-    #
-    # have to separate the ^$d and ^/ patterns because dirs with (single)
-    # slashes in $path will only get one slash in the output
-    #
-    # could use ${//} instead of sed but this is more portable (and probably
-    # not much slower overall given the heavy use of find)
-    #
-    # use : as delimiter in sed because it's guaranteed not to be in $d (or
-    # else $d would have been split)
-    #
-    IFS=" "
-    f=$(find -H "$d" -maxdepth 1 -mindepth 1 \
-      \( -name "$1" ${cygflag:+-o -name "$1.exe"} \) 2>/dev/null | \
-      sed -e "s:^$d::" -e "s:^/::" ${cygflag:+-e '/\.dll$/d'})
+    i=0
     IFS=":"
-    [ -n "$f" ] && list["$i"]="$f"
+    for d in $path; do  # no quotes
+        [ -z "$d" ] && d="."  # :: or leading : in $path
 
-    : $(( i++ ))
-  done
+        # have to reset IFS around this command so ${} results will be split
+        # into multiple words
+        #
+        # have to separate the ^$d and ^/ patterns because dirs with (single)
+        # slashes in $path will only get one slash in the output
+        #
+        # could use ${//} instead of sed but this is more portable (and probably
+        # not much slower overall given the heavy use of find)
+        #
+        # use : as delimiter in sed because it's guaranteed not to be in $d (or
+        # else $d would have been split)
+        #
+        IFS=" "
+        f=$(find -H "$d" -maxdepth 1 -mindepth 1 \
+            \( -name "$1" ${cygflag:+-o -name "$1.exe"} \) 2>/dev/null | \
+            sed -e "s:^$d::" -e "s:^/::" ${cygflag:+-e '/\.dll$/d'})
+        IFS=":"
+        [ -n "$f" ] && list["$i"]="$f"
 
-  # any member of $list that was actually set won't be null, so there won't be
-  # blank lines from (e.g.) directories with no results; but the join will
-  # produce "" if there were no results at all, so:
-  if [ -n "${list[*]}" ]; then
-    IFS=$'\n'
-    printf "%s\n" "${list[*]}" | sort -u
-  fi
+        : $(( i++ ))
+    done
+
+    # any member of $list that was actually set won't be null, so there won't be
+    # blank lines from (e.g.) directories with no results; but the join will
+    # produce "" if there were no results at all, so:
+    if [ -n "${list[*]}" ]; then
+        IFS=$'\n'
+        printf "%s\n" "${list[*]}" | sort -u
+    fi
 }
 
 
 # --- post-rc sub-scripts ---
 
 if compgen -G "${HOME}/.bashrc.d/*.post.sh" > /dev/null 2>&1; then
-  for i in "${HOME}"/.bashrc.d/*.post.sh; do
-    # shellcheck disable=SC1090
-    . "$i"
-  done
+    for i in "${HOME}"/.bashrc.d/*.post.sh; do
+        # shellcheck disable=SC1090
+        . "$i"
+    done
 fi
 
 

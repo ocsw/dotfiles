@@ -89,6 +89,7 @@ minimal foo || bar
 shellcheck (except 1117)
 
 80 char
+4 spaces
 
 if in_path pip ||
         in_path pip2 ||

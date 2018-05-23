@@ -7,10 +7,10 @@
 
 # check for command in path
 in_path () {
-  hash "$@" > /dev/null 2>&1
+    hash "$@" > /dev/null 2>&1
 }
 
 # check for component of $PATH itself
 is_path_component () {
-  [[ "$PATH" =~ (^|:)$1(:|$) ]]  # no quotes around regex
+    [[ "$PATH" =~ (^|:)$1(:|$) ]]  # no quotes around regex
 }
