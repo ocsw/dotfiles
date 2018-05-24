@@ -116,7 +116,7 @@ _prompt_scm_info () {
             __git_ps1 "$fmt"
         else
             if [ -f "$git/.git/HEAD" ]; then
-                read br < "$git/.git/HEAD"
+                read -r br < "$git/.git/HEAD"
                 case "$br" in
                     ref:\ refs/heads/*) br="${br#ref: refs/heads/}" ;;
                     *) br=$(printf "%s\n" "$br" | cut -c 1-7) ;;
