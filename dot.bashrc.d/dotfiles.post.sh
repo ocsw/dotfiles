@@ -5,6 +5,7 @@ _add_dotfile () {
     local dotfile="$2"
     local target_dir="$3"
     local cmd
+
     if [ -z "$DOTFILE_REPO" ]; then
         export DOTFILE_REPO="${HOME}/.dotfiles"
     fi
@@ -47,6 +48,7 @@ _add_dotfile () {
             return 1
             ;;
     esac
+
     $cmd "${DOTFILE_REPO}/dot${dotfile}" "${target_dir}/${dotfile}"
 }
 
