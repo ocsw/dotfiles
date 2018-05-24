@@ -1,9 +1,10 @@
 #!/usr/bin/env bash
 
-DF="${HOME}/.dotfiles"
-git clone git@github.com:ocsw/dotfiles.git "$DF"
+export DOTFILE_REPO="${HOME}/.dotfiles"
+git clone git@github.com:ocsw/dotfiles.git "$DOTFILE_REPO"
+
 # shellcheck disable=SC1090
-. "${DF}/dot.bashrc.d/dotfiles.post.sh"
+. "${DOTFILE_REPO}/dot.bashrc.d/dotfiles.post.sh"
 
 ln_dotfile .bash_profile
 ln_dotfile .bash_profile.d
