@@ -53,6 +53,40 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
             grep -v "/envs/"
     }
 
+    pycur_is_global() {
+        [ -z "$PYENV_VERSION" ] && [ -z "$PYENV_VIRTUAL_ENV" ]
+    }
+
+    pycur_is_venv() {
+        [ -n "$PYENV_VERSION" ] && [ -n "$PYENV_VIRTUAL_ENV" ]
+    }
+
+    pycur_is_dotfile () {
+        [ -z "$PYENV_VERSION" ] && [ -n "$PYENV_VIRTUAL_ENV" ]
+    }
+
+    pyname_is_global () {
+        local name="$1"
+        if [ -z "$name" ]; then
+            echo "Usage: pyname_is_global NAME"
+            echo
+            echo "ERROR: No name given."
+            return 1
+        fi
+        pybases_installed | grep "^${name}\$" > /dev/null 2>&1
+    }
+
+    pyname_is_venv () {
+        local name="$1"
+        if [ -z "$name" ]; then
+            echo "Usage: pyname_is_venv NAME"
+            echo
+            echo "ERROR: No name given."
+            return 1
+        fi
+        pyvenvs | grep "^${name}\$" > /dev/null 2>&1
+    }
+
 
     _py_base_complete () {
         local ver_func="$1"
@@ -75,7 +109,7 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
 
     pyact () {
         local venv="$1"
-        if [ -n "$venv" ]; then
+        if [ -z "$venv" ]; then
             pyenv activate "$venv"
         else
             pyenv deactivate
