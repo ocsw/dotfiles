@@ -4,14 +4,11 @@ more modularization?
 umask
 gc in default complete?
 
+gitlast
+
 running pytest?
 pip timeout
 automatic on cd?
-
-findrepo
-gitlast
-install - multiple at once?
-re-source?
 
 base upgrade
 pyrecreate w/diff ver/name
