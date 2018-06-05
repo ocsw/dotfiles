@@ -106,6 +106,18 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
         COMPREPLY=( $(pyvenvs | grep "^${cur_word}") )
     }
 
+    _py_all_complete () {
+        local cur_word="${COMP_WORDS[$COMP_CWORD]}"
+        COMPREPLY=( $(pybases_installed | grep "^${cur_word}") )
+        COMPREPLY+=( $(pyvenvs | grep "^${cur_word}") )
+        if [ -z "$cur_word" ]; then
+            COMPREPLY+=( 2 3 )
+        elif [ "$cur_word" = "2" ]; then
+            COMPREPLY+=( 2 )
+        elif [ "$cur_word" = "3" ]; then
+            COMPREPLY+=( 3 )
+        fi
+    }
 
     pyact () {
         local venv="$1"
