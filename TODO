@@ -31,3 +31,6 @@ bash $! and/or if around complete
 ln python check?
 activate checks
 prefix
+vscode
+    echo '{"hello": "world"}' | jq --arg foo bar '. + {hello: ("not" + $foo)}'
+    jq [options] <jq filter> [file...]
