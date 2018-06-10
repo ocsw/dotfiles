@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# bash 3.1+ required
+
 _python_venv_prompt () {
     # Note: 'pyenv activate' uses $PYENV_VERSION, which pyenv checks first.
     # In order for a .python_version to take effect (which uses
@@ -90,8 +92,13 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
 
     _py_base_complete () {
         local ver_func="$1"
+        local add="$2"
         local cur_word="${COMP_WORDS[$COMP_CWORD]}"
-        COMPREPLY=( $("$ver_func" | grep "^${cur_word}") )
+        if [ -z "$add" ]; then
+            # seems to not be necessary, but just in case...
+            COMPREPLY=()
+        fi
+        COMPREPLY+=( $("$ver_func" | grep "^${cur_word}") )
         if [ -z "$cur_word" ]; then
             COMPREPLY+=( 2 3 )
         elif [ "$cur_word" = "2" ]; then
@@ -102,21 +109,18 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
     }
 
     _py_venv_complete () {
+        local add="$1"
+        if [ -z $add ]; then
+            # seems to not be necessary, but just in case...
+            COMPREPLY=()
+        fi
         local cur_word="${COMP_WORDS[$COMP_CWORD]}"
-        COMPREPLY=( $(pyvenvs | grep "^${cur_word}") )
+        COMPREPLY+=( $(pyvenvs | grep "^${cur_word}") )
     }
 
     _py_all_complete () {
-        local cur_word="${COMP_WORDS[$COMP_CWORD]}"
-        COMPREPLY=( $(pybases_installed | grep "^${cur_word}") )
-        COMPREPLY+=( $(pyvenvs | grep "^${cur_word}") )
-        if [ -z "$cur_word" ]; then
-            COMPREPLY+=( 2 3 )
-        elif [ "$cur_word" = "2" ]; then
-            COMPREPLY+=( 2 )
-        elif [ "$cur_word" = "3" ]; then
-            COMPREPLY+=( 3 )
-        fi
+        _py_base_complete pybases_installed
+        _py_venv_complete add
     }
 
     pyact () {
