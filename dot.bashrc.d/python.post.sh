@@ -20,9 +20,12 @@ if in_path pip ||
         in_path pip2 ||
         in_path pip3; then
     _pip_completion () {
-        COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
-                       COMP_CWORD=$COMP_CWORD \
-                       PIP_AUTO_COMPLETE=1 $1 ) )
+        while read -r -a line; do
+            COMPREPLY+=("${line[@]}")
+        done < <(COMP_WORDS="${COMP_WORDS[*]}" \
+                COMP_CWORD="$COMP_CWORD" \
+                PIP_AUTO_COMPLETE=1 "$1")
+        [ -n "$line" ] && COMPREPLY+=("${line[@]}")
     }
     in_path pip && complete -o default -F _pip_completion pip
     in_path pip2 && complete -o default -F _pip_completion pip2
@@ -101,6 +104,7 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
         while read -r line; do
             COMPREPLY+=("$line")
         done < <("$ver_func" | grep "^${cur_word}")
+        [ -n "$line" ] && COMPREPLY+=("$line")
         if [ -z "$cur_word" ]; then
             COMPREPLY+=(2 3)
         elif [ "$cur_word" = "2" ]; then
@@ -120,6 +124,7 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
         while read -r line; do
             COMPREPLY+=("$line")
         done < <(pyvenvs | grep "^${cur_word}")
+        [ -n "$line" ] && COMPREPLY+=("$line")
     }
 
     _py_all_complete () {
@@ -496,6 +501,7 @@ EOF
             COMPREPLY+=("$line")
         done < <(pybin_ls "${COMP_WORDS[1]}" 2>/dev/null | \
                 grep "^${COMP_WORDS[2]}")
+        [ -n "$line" ] && COMPREPLY+=("$line")
         fi
     }
     complete -o default -F _pyln_complete pyln

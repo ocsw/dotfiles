@@ -34,3 +34,4 @@ prefix
 vscode
     echo '{"hello": "world"}' | jq --arg foo bar '. + {hello: ("not" + $foo)}'
     jq [options] <jq filter> [file...]
+|| return "$?"
