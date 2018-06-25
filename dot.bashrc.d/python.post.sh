@@ -206,10 +206,17 @@ EOF
 
     pyact () {
         local venv="$1"
-        if [ -z "$venv" ]; then
+        if [ -n "$venv" ]; then
             pyenv activate "$venv"
         else
-            pyenv deactivate
+            pyenv deactivate || return "$?"
+            if [ "$(pyenv global)" != "$(pycur)" ]; then
+                cat <<EOF
+WARNING: Global env was set but isn't active; are you in a directory with a
+.python-version file?
+EOF
+                return 1
+            fi
         fi
     }
 
@@ -222,8 +229,8 @@ EOF
 
     # wrap 'python global' for convenience, preserving autocomplete
     pyglobal () {
-        local ver="$1"  # base or venv
-        pyenv global "$ver"  # if empty, just prints current
+        local env="$1"  # base or venv
+        pyenv global "$env"  # if empty, just prints current
     }
 
     _pyglobal_complete () {

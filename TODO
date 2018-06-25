@@ -16,6 +16,7 @@ pyrecreate w/diff ver/name
 pycopy w/diff ver/name
 pyrm?
 pylast
+nosort for pyglobal
 
 pybase - tox, pip
 move to .sh, sep repo - but Sp?
