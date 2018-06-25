@@ -162,6 +162,15 @@ EOF
             COMPREPLY+=("$line")
         done < <("$ver_func" | grep "^${cur_word}")
         [ -n "$line" ] && COMPREPLY+=("$line")
+    }
+
+    _py_latest_complete () {
+        local add="$1"
+        local cur_word="${COMP_WORDS[$COMP_CWORD]}"
+        if [ -z "$add" ]; then
+            # seems to not be necessary, but just in case...
+            COMPREPLY=()
+        fi
         if [ -z "$cur_word" ]; then
             COMPREPLY+=(2 3)
         elif [ "$cur_word" = "2" ]; then
@@ -185,6 +194,7 @@ EOF
     }
 
     _py_all_complete () {
+        # bases first, for pyglobal
         _py_base_complete pybases_installed
         _py_venv_complete add
     }
@@ -209,6 +219,23 @@ EOF
         fi
     }
     complete -o default -F _pyact_complete pyact
+
+    # wrap 'python global' for convenience, preserving autocomplete
+    pyglobal () {
+        local ver="$1"  # base or venv
+        pyenv global "$ver"  # if empty, just prints current
+    }
+
+    _pyglobal_complete () {
+        local cur_word="${COMP_WORDS[$COMP_CWORD]}"
+        if [ "$COMP_CWORD" = "1" ]; then
+            if [ -z "$cur_word" ]; then
+                COMPREPLY=("system")
+            fi
+            _py_all_complete
+        fi
+    }
+    complete -o default -F _pyglobal_complete pyglobal
 
 
     ####################
@@ -241,6 +268,7 @@ EOF
     _pybase_complete () {
         if [ "$COMP_CWORD" = "1" ]; then
             _py_base_complete pybases_available
+            _py_latest_complete add
         fi
     }
     complete -o default -F _pybase_complete pybase
@@ -418,6 +446,7 @@ EOF
     _pyvenv_complete () {
         if [ "$COMP_CWORD" = "2" ]; then
             _py_base_complete pybases_installed
+            _py_latest_complete add
         fi
     }
     complete -o default -F _pyvenv_complete pyvenv
@@ -599,6 +628,7 @@ EOF
     _pyinst_complete () {
         if [ "$COMP_CWORD" = "2" ]; then
             _py_base_complete pybases_installed
+            _py_latest_complete add
         fi
     }
     complete -o default -F _pyinst_complete pyinst
