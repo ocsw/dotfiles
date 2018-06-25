@@ -43,6 +43,18 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
         printf "%s\n" "$(pyenv version | sed 's/ (.*$//')"
     }
 
+    pycur_is_global() {
+        [ -z "$PYENV_VERSION" ] && [ -z "$PYENV_VIRTUAL_ENV" ]
+    }
+
+    pycur_is_venv() {
+        [ -n "$PYENV_VERSION" ] && [ -n "$PYENV_VIRTUAL_ENV" ]
+    }
+
+    pycur_is_dotfile () {
+        [ -z "$PYENV_VERSION" ] && [ -n "$PYENV_VIRTUAL_ENV" ]
+    }
+
     pybases_available () {
         pyenv install --list | tail -n +2 | sed 's/^..//'
     }
@@ -56,18 +68,6 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
     pyvenvs () {
         pyenv virtualenvs | sed -e 's/^..//' -e 's/ (.*$//' | \
             grep -v "/envs/"
-    }
-
-    pycur_is_global() {
-        [ -z "$PYENV_VERSION" ] && [ -z "$PYENV_VIRTUAL_ENV" ]
-    }
-
-    pycur_is_venv() {
-        [ -n "$PYENV_VERSION" ] && [ -n "$PYENV_VIRTUAL_ENV" ]
-    }
-
-    pycur_is_dotfile () {
-        [ -z "$PYENV_VERSION" ] && [ -n "$PYENV_VIRTUAL_ENV" ]
     }
 
     pyname_is_global () {
