@@ -39,6 +39,10 @@ if in_path pyenv-virtualenv-init; then
     eval "$(pyenv virtualenv-init - | grep -v "PATH")"
 fi
 if in_path pyenv && in_path pyenv-virtualenv-init; then
+    #####################
+    # get current state #
+    #####################
+
     pycur () {
         printf "%s\n" "$(pyenv version | sed 's/ (.*$//')"
     }
@@ -92,63 +96,6 @@ if in_path pyenv && in_path pyenv-virtualenv-init; then
         pyvenvs | grep "^${name}\$" > /dev/null 2>&1
     }
 
-
-    _py_base_complete () {
-        local ver_func="$1"
-        local add="$2"
-        local cur_word="${COMP_WORDS[$COMP_CWORD]}"
-        if [ -z "$add" ]; then
-            # seems to not be necessary, but just in case...
-            COMPREPLY=()
-        fi
-        while read -r line; do
-            COMPREPLY+=("$line")
-        done < <("$ver_func" | grep "^${cur_word}")
-        [ -n "$line" ] && COMPREPLY+=("$line")
-        if [ -z "$cur_word" ]; then
-            COMPREPLY+=(2 3)
-        elif [ "$cur_word" = "2" ]; then
-            COMPREPLY+=(2)
-        elif [ "$cur_word" = "3" ]; then
-            COMPREPLY+=(3)
-        fi
-    }
-
-    _py_venv_complete () {
-        local add="$1"
-        if [ -z "$add" ]; then
-            # seems to not be necessary, but just in case...
-            COMPREPLY=()
-        fi
-        local cur_word="${COMP_WORDS[$COMP_CWORD]}"
-        while read -r line; do
-            COMPREPLY+=("$line")
-        done < <(pyvenvs | grep "^${cur_word}")
-        [ -n "$line" ] && COMPREPLY+=("$line")
-    }
-
-    _py_all_complete () {
-        _py_base_complete pybases_installed
-        _py_venv_complete add
-    }
-
-    pyact () {
-        local venv="$1"
-        if [ -z "$venv" ]; then
-            pyenv activate "$venv"
-        else
-            pyenv deactivate
-        fi
-    }
-
-    _pyact_complete () {
-        if [ "$COMP_CWORD" = "1" ]; then
-            _py_venv_complete
-        fi
-    }
-    complete -o default -F _pyact_complete pyact
-
-
     pylatest () {
         # get the latest available (or latest locally installed) version of
         # Python for a specified major version in pyenv
@@ -198,6 +145,75 @@ EOF
     py3latest_local () { pylatest_local 3; }
     py2latest_local () { pylatest_local 2; }
 
+
+    ###############
+    # completions #
+    ###############
+
+    _py_base_complete () {
+        local ver_func="$1"
+        local add="$2"
+        local cur_word="${COMP_WORDS[$COMP_CWORD]}"
+        if [ -z "$add" ]; then
+            # seems to not be necessary, but just in case...
+            COMPREPLY=()
+        fi
+        while read -r line; do
+            COMPREPLY+=("$line")
+        done < <("$ver_func" | grep "^${cur_word}")
+        [ -n "$line" ] && COMPREPLY+=("$line")
+        if [ -z "$cur_word" ]; then
+            COMPREPLY+=(2 3)
+        elif [ "$cur_word" = "2" ]; then
+            COMPREPLY+=(2)
+        elif [ "$cur_word" = "3" ]; then
+            COMPREPLY+=(3)
+        fi
+    }
+
+    _py_venv_complete () {
+        local add="$1"
+        if [ -z "$add" ]; then
+            # seems to not be necessary, but just in case...
+            COMPREPLY=()
+        fi
+        local cur_word="${COMP_WORDS[$COMP_CWORD]}"
+        while read -r line; do
+            COMPREPLY+=("$line")
+        done < <(pyvenvs | grep "^${cur_word}")
+        [ -n "$line" ] && COMPREPLY+=("$line")
+    }
+
+    _py_all_complete () {
+        _py_base_complete pybases_installed
+        _py_venv_complete add
+    }
+
+
+    #####################
+    # set current state #
+    #####################
+
+    pyact () {
+        local venv="$1"
+        if [ -z "$venv" ]; then
+            pyenv activate "$venv"
+        else
+            pyenv deactivate
+        fi
+    }
+
+    _pyact_complete () {
+        if [ "$COMP_CWORD" = "1" ]; then
+            _py_venv_complete
+        fi
+    }
+    complete -o default -F _pyact_complete pyact
+
+
+    ####################
+    # install / create #
+    ####################
 
     pybase () {
         # install a version of Python in pyenv
