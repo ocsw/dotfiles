@@ -17,10 +17,11 @@ pycopy w/diff ver/name
 pyrm?
 pylast
 nosort for pyglobal
+option for pyglobal?
 
 pybase - tox, pip
 move to .sh, sep repo - but Sp?
-.python_version in pyvirt, pyact
+.python_version in pyvirt
 docs: CRUD
 $0
 aliases/symlinks
