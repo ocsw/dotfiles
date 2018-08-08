@@ -12,10 +12,8 @@ pip timeout
 
 base upgrade
 pyrecreate w/diff ver/name
-pyrm?
 pylast
 nosort for pyglobal
-option for pyglobal?
 temp vert?
 
 pybase - tox, pip

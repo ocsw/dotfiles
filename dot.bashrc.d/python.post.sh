@@ -227,8 +227,13 @@ EOF
     }
 
     _py_all_complete () {
+        local add="$1"
+        if [ -z "$add" ]; then
+            # seems to not be necessary, but just in case...
+            COMPREPLY=()
+        fi
         # bases first, for pyglobal
-        _py_base_complete pybases_installed
+        _py_base_complete pybases_installed add
         _py_venv_complete add
     }
 
@@ -269,10 +274,11 @@ EOF
     _pyglobal_complete () {
         local cur_word="${COMP_WORDS[$COMP_CWORD]}"
         if [ "$COMP_CWORD" = "1" ]; then
-            if [ -z "$cur_word" ]; then
+            COMPREPLY=()
+            if [[ "system" =~ ^$cur_word ]] || [[ "-f" =~ ^$cur_word ]]; then
                 COMPREPLY=("system")
             fi
-            _py_all_complete
+            _py_all_complete all
         fi
     }
     complete -o default -F _pyglobal_complete pyglobal
@@ -881,5 +887,27 @@ EOF
         fi
     }
     complete -o default -F _pypipcopy_complete pypipcopy
+
+
+    ##########
+    # delete #
+    ##########
+
+    # wrap 'pyenv uninstall' for convenience, preserving autocomplete
+    pyrm () {
+        pyenv uninstall "$@"
+    }
+
+    _pyrm_complete () {
+        local cur_word="${COMP_WORDS[$COMP_CWORD]}"
+        if [ "$COMP_CWORD" = "1" ] || [ "$COMP_CWORD" = "2" ]; then
+            COMPREPLY=()
+            if [[ "--force" =~ ^$cur_word ]] || [[ "-f" =~ ^$cur_word ]]; then
+                COMPREPLY+=("--force")
+            fi
+            _py_all_complete add
+        fi
+    }
+    complete -o default -F _pyrm_complete pyrm
 
 fi  # end test for pyenv and pyenv-virtualenv
