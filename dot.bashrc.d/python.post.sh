@@ -147,7 +147,8 @@ EOF
 
     pyvenv_version () {
         # get the version of a virtualenv; don't rely on the name
-        venv="$1"
+        local venv="$1"
+        local py_version
         if [ -z "$venv" ]; then
             echo "Usage: pyvenv_version VIRTUALENV"
             echo
@@ -259,7 +260,7 @@ EOF
     }
     complete -o default -F _pyact_complete pyact
 
-    # wrap 'python global' for convenience, preserving autocomplete
+    # wrap 'pyenv global' for convenience, preserving autocomplete
     pyglobal () {
         local env="$1"  # base or venv
         pyenv global "$env"  # if empty, just prints current
@@ -679,9 +680,10 @@ EOF
     }
 
     _pycopy () {
-        source_venv="$1"
-        target_short_name="$2"
-        target_py_version="$3"
+        local source_venv="$1"
+        local target_short_name="$2"
+        local target_py_version="$3"
+        local target_long_name
         if [ -z "$source_venv" ]; then
             cat <<EOF
 Usage: pycopy SOURCE_VIRTUALENV TARGET_SHORT_NAME [TARGET_PY_VERSION]
@@ -745,9 +747,9 @@ EOF
     complete -o default -F _pycopy_complete pycopy
 
 
-    ####################
+    ###################
     # update / change #
-    ####################
+    ###################
 
     pyreqs () {
         # install a project's requirements in a pyenv-virtualenv virtualenv
@@ -812,8 +814,9 @@ EOF
     }
 
     _pypipcopy () {
-        source_venv="$1"
-        target_venv="$2"
+        local source_venv="$1"
+        local target_venv="$2"
+        local reqs_file
         if [ -z "$source_venv" ]; then
             echo "Usage: pypipcopy SOURCE_VIRTUALENV TARGET_VIRTUALENV"
             echo
