@@ -12,7 +12,6 @@ pip timeout
 
 base upgrade
 pyrecreate w/diff ver/name
-pycopy w/diff ver
 pyrm?
 pylast
 nosort for pyglobal

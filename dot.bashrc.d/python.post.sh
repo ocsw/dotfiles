@@ -681,10 +681,13 @@ EOF
     _pycopy () {
         source_venv="$1"
         target_short_name="$2"
+        target_py_version="$3"
         if [ -z "$source_venv" ]; then
-            echo "Usage: pycopy SOURCE_VIRTUALENV TARGET_SHORT_NAME"
-            echo
-            echo "ERROR: No source virtualenv given."
+            cat <<EOF
+Usage: pycopy SOURCE_VIRTUALENV TARGET_SHORT_NAME [TARGET_PY_VERSION]
+
+ERROR: No source virtualenv given.
+EOF
             return 1
         fi
         if ! pyname_is_venv "$source_venv"; then
@@ -695,12 +698,24 @@ EOF
             echo "ERROR: No target short name given."
             return 1
         fi
-        source_version=$(pyvenv_version "$source_venv")
-        if [ -z "$source_version" ]; then
-            # error already printed
-            return 1
+        if [ -z "$target_py_version" ]; then
+            target_py_version=$(pyvenv_version "$source_venv")
+            if [ -z "$target_py_version" ]; then
+                # error already printed
+                return 1
+            fi
+        else
+            if [ "$target_py_version" = "2" ] || \
+                    [ "$target_py_version" = "3" ]; then
+                target_py_version=$(pylatest "$target_py_version" \
+                    "installed_only")
+            fi
+            if ! pyname_is_global "$target_py_version"; then
+                echo "ERROR: Target Python version not found."
+                return 1
+            fi
         fi
-        target_long_name="${target_short_name}-${source_version}"
+        target_long_name="${target_short_name}-${target_py_version}"
         if pyname_is_venv "$target_long_name"; then
             cat <<EOF
 ERROR: Target virtualenv already exists; use pypipcopy if you want to copy
@@ -710,7 +725,7 @@ EOF
         fi
 
         echo "Creating virtualenv..."
-        if ! pyvenv "$target_short_name" "$source_version"; then
+        if ! pyvenv "$target_short_name" "$target_py_version"; then
             # error already printed
             return 1
         fi
@@ -721,6 +736,10 @@ EOF
     _pycopy_complete () {
         if [ "$COMP_CWORD" = "1" ]; then
             _py_venv_complete
+        fi
+        if [ "$COMP_CWORD" = "3" ]; then
+            _py_base_complete pybases_installed
+            _py_latest_complete add
         fi
     }
     complete -o default -F _pycopy_complete pycopy
