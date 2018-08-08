@@ -145,6 +145,38 @@ EOF
     py3latest_local () { pylatest_local 3; }
     py2latest_local () { pylatest_local 2; }
 
+    pyvenv_version () {
+        # get the version of a virtualenv; don't rely on the name
+        venv="$1"
+        if [ -z "$venv" ]; then
+            echo "Usage: pyvenv_version VIRTUALENV"
+            echo
+            echo "ERROR: No virtualenv given."
+            return 1
+        fi
+        if ! pyname_is_venv "$venv"; then
+            echo "ERROR: Virtualenv not found."
+            return 1
+        fi
+
+        py_version=$(pyenv versions | sed -e 's/^..//' -e 's/ (.*$//' | \
+            grep "/envs/${venv}\$" | sed 's|/.*$||')
+        if [ -z "$py_version" ]; then
+            echo
+            echo "ERROR: Can't get version for virtualenv."
+            echo
+            return 1
+        fi
+        printf "%s\n" "$py_version"
+    }
+
+    _pyvenv_version_complete () {
+        if [ "$COMP_CWORD" = "1" ]; then
+            _py_venv_complete
+        fi
+    }
+    complete -o default -F _pyvenv_version_complete pyvenv_version
+
 
     ###############
     # completions #
@@ -641,6 +673,63 @@ EOF
     complete -o default -F _pyinst_complete pyinst
 
 
+    pycopy () {
+        # create a new virtualenv based on an existing one, including packages
+        pyutil_wrapper _pycopy "$@"
+    }
+
+    _pycopy () {
+        source_venv="$1"
+        target_short_name="$2"
+        if [ -z "$source_venv" ]; then
+            echo "Usage: pycopy SOURCE_VIRTUALENV TARGET_SHORT_NAME"
+            echo
+            echo "ERROR: No source virtualenv given."
+            return 1
+        fi
+        if ! pyname_is_venv "$source_venv"; then
+            echo "ERROR: Source virtualenv not found."
+            return 1
+        fi
+        if [ -z "$target_short_name" ]; then
+            echo "ERROR: No target short name given."
+            return 1
+        fi
+        source_version=$(pyvenv_version "$source_venv")
+        if [ -z "$source_version" ]; then
+            # error already printed
+            return 1
+        fi
+        target_long_name="${target_short_name}-${source_version}"
+        if pyname_is_venv "$target_long_name"; then
+            cat <<EOF
+ERROR: Target virtualenv already exists; use pypipcopy if you want to copy
+just the packages.
+EOF
+            return 1
+        fi
+
+        echo "Creating virtualenv..."
+        if ! pyvenv "$target_short_name" "$source_version"; then
+            # error already printed
+            return 1
+        fi
+        echo "Copying packages..."
+        pypipcopy "$source_venv" "$target_long_name"
+    }
+
+    _pycopy_complete () {
+        if [ "$COMP_CWORD" = "1" ]; then
+            _py_venv_complete
+        fi
+    }
+    complete -o default -F _pycopy_complete pycopy
+
+
+    ####################
+    # update / change #
+    ####################
+
     pyreqs () {
         # install a project's requirements in a pyenv-virtualenv virtualenv
         pyutil_wrapper _pyreqs "$@"
@@ -696,4 +785,79 @@ EOF
         fi
     }
     complete -o default -F _pyreqs_complete pyreqs
+
+
+    pypipcopy () {
+        # add the packages from one virtualenv to another virtualenv
+        pyutil_wrapper _pypipcopy "$@"
+    }
+
+    _pypipcopy () {
+        source_venv="$1"
+        target_venv="$2"
+        if [ -z "$source_venv" ]; then
+            echo "Usage: pypipcopy SOURCE_VIRTUALENV TARGET_VIRTUALENV"
+            echo
+            echo "ERROR: No source virtualenv given."
+            return 1
+        fi
+        if ! pyname_is_venv "$source_venv"; then
+            echo "ERROR: Source virtualenv not found."
+            return 1
+        fi
+        if [ -z "$target_venv" ]; then
+            echo "ERROR: No target virtualenv given."
+            return 1
+        fi
+        if ! pyname_is_venv "$target_venv"; then
+            echo "ERROR: Target virtualenv not found."
+            return 1
+        fi
+        if [ "$source_venv" = "$target_venv" ]; then
+            echo "ERROR: Source and target are the same."
+            return 1
+        fi
+
+        if ! pyenv activate "$source_venv"; then
+            echo
+            echo "ERROR: Can't activate source virtualenv.  Stopping."
+            echo
+            return 1
+        fi
+        reqs_file=$(mktemp)
+        if [ -z "$reqs_file" ]; then
+            echo
+            echo "ERROR: Can't create temp file.  Stopping."
+            echo
+            return 1
+        fi
+        if ! pip freeze --all --local >| "$reqs_file"; then
+            echo
+            echo "ERROR: Can't get package list.  Stopping."
+            echo
+            return 1
+        fi
+        if ! pyenv activate "$target_venv"; then
+            echo
+            echo "ERROR: Can't activate target virtualenv.  Stopping."
+            echo
+            return 1
+        fi
+        if ! pip install -r "$reqs_file"; then
+            echo
+            echo "ERROR: Can't install packages.  Stopping."
+            echo
+            rm -rf "$reqs_file"
+            return 1
+        fi
+        rm -rf "$reqs_file"
+    }
+
+    _pypipcopy_complete () {
+        if [ "$COMP_CWORD" = "1" ] || [ "$COMP_CWORD" = "2" ]; then
+            _py_venv_complete
+        fi
+    }
+    complete -o default -F _pypipcopy_complete pypipcopy
+
 fi  # end test for pyenv and pyenv-virtualenv

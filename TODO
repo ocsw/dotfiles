@@ -9,11 +9,10 @@ gitlast
 
 running pytest?
 pip timeout
-automatic on cd?
 
 base upgrade
 pyrecreate w/diff ver/name
-pycopy w/diff ver/name
+pycopy w/diff ver
 pyrm?
 pylast
 nosort for pyglobal
@@ -38,3 +37,4 @@ vscode
     echo '{"hello": "world"}' | jq --arg foo bar '. + {hello: ("not" + $foo)}'
     jq [options] <jq filter> [file...]
 || return "$?"
+stderr?
