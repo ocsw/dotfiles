@@ -20,6 +20,10 @@ cp_dotfile .vimrc.local
 #
 #ln_dotfile .muttrc  # maybe
 
+# shellcheck disable=SC1090
+. "${DOTFILE_REPO}/dot.bashrc.d/to_back_up.post.sh"
+cd "$HOME"
+
 touch .bash_history
 ln_tbu .bash_history
 touch .bashrc.local
