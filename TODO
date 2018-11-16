@@ -17,7 +17,7 @@ nosort for pyglobal
 temp vert?
 
 pybase - tox, pip
-move to .sh, sep repo - but Sp?
+move to .sh, sep repo
 .python_version in pyvirt
 docs: CRUD
 $0
