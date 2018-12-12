@@ -41,5 +41,5 @@ fi
 if in_path pyenv && in_path pyenv-virtualenv-init && \
         [ -f "${HOME}/.pypvutil/python.post.sh" ]; then
     # shellcheck disable=SC1090
-    . "${HOME}/.pypvutil/python.post.sh"
+    . "${HOME}/.pypvutil/pypvutil_init.sh"
 fi
