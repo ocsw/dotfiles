@@ -9,29 +9,3 @@ gitlast
 
 running pytest?
 pip timeout
-
-base upgrade
-pyrecreate w/diff ver/name
-pylast
-nosort for pyglobal
-temp vert?
-
-pybase - tox, pip
-move to .sh, sep repo
-.python_version in pyvirt
-docs: CRUD
-$0
-aliases/symlinks
-return 0
-PY_ -> PYTHON_?
-auto local/trailing tests
-verify versions, venvs, etc.
-bash $! and/or if around complete
-ln python check?
-activate checks
-prefix
-vscode
-    echo '{"hello": "world"}' | jq --arg foo bar '. + {hello: ("not" + $foo)}'
-    jq [options] <jq filter> [file...]
-|| return "$?"
-stderr?
