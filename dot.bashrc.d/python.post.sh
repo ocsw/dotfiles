@@ -39,7 +39,7 @@ if in_path pyenv-virtualenv-init; then
     eval "$(pyenv virtualenv-init - | grep -v "PATH")"
 fi
 if in_path pyenv && in_path pyenv-virtualenv-init && \
-        [ -f "${HOME}/.pypvutil/python.post.sh" ]; then
+        [ -f "${HOME}/.pypvutil/pypyutil_init.sh" ]; then
     # shellcheck disable=SC1090
     . "${HOME}/.pypvutil/pypvutil_init.sh"
 fi
