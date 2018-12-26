@@ -38,8 +38,11 @@ fi
 if in_path pyenv-virtualenv-init; then
     eval "$(pyenv virtualenv-init - | grep -v "PATH")"
 fi
+export PYPVUTIL_HOME="${HOME}/.pypvutil"
 if in_path pyenv && in_path pyenv-virtualenv-init && \
-        [ -f "${HOME}/.pypvutil/pypvutil_init.sh" ]; then
+        [ -f "${PYPVUTIL_HOME}/pypvutil_init.sh" ]; then
     # shellcheck disable=SC1090
-    . "${HOME}/.pypvutil/pypvutil_init.sh"
+    . "${PYPVUTIL_HOME}/pypvutil_init.sh"
+else
+    unset PYPVUTIL_HOME
 fi
