@@ -329,12 +329,13 @@ h () {
     builtin history ${h_args:-20}  # no quotes
 }
 
-# make cd not print the target directory for "cd -"
+# make cd not print the target directory for "cd -";
+# ||s are to shut up shellcheck
 cd () {
     if [ "$*" = "-" ]; then
-        builtin cd - > /dev/null
+        builtin cd - > /dev/null || return $?
     else
-        builtin cd "$@"
+        builtin cd "$@" || return $?
     fi
 }
 
