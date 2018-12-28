@@ -1,39 +1,10 @@
 #!/usr/bin/env bash
 
-clone-fork () {
-    local fork_url="$1"
-    local upstream_url="$2"
-
-    if [ -z "$fork_url" ]; then
-        echo "ERROR: Missing fork_url."
-        return 1
-    fi
-    if [ -z "$upstream_url" ]; then
-        echo "ERROR: Missing upstream_url."
-        return 1
-    fi
-
-    fork_user=$(printf "%s\n" "$fork_url" | awk -F/ '{print $(NF-1)}' | \
-        sed 's/^.*://')
-    fork_repo=$(printf "%s\n" "$fork_url" | awk -F/ '{print $(NF)}' | \
-        sed 's/\.git$//')
-
-    git clone "$fork_url" "${fork_user}-${fork_repo}" || return $?
-    cd "${fork_user}-${fork_repo}" || return $?
-    git remote add upstream "$upstream_url" || return $?
-    # shellcheck disable=SC2164
-    cd -
+git-current-branch () {
+    git branch | sed -n '/^*\ /  s/^..//p'
 }
 
-update-fork () {
-    git fetch upstream || return $?
-    git checkout master || return $?
-    git pull || return $?
-    git merge upstream/master || return $?
-    git push
-}
-
-update-repos () {
+git-update-repos () {
     start_dir="$PWD"
     trap 'cd "$start_dir"' RETURN
 
@@ -64,4 +35,37 @@ update-repos () {
         git pull 2>&1 | grep -v 'Already up to date'
         cd - || return $?
     done
+}
+
+git-clone-fork () {
+    local fork_url="$1"
+    local upstream_url="$2"
+
+    if [ -z "$fork_url" ]; then
+        echo "ERROR: Missing fork_url."
+        return 1
+    fi
+    if [ -z "$upstream_url" ]; then
+        echo "ERROR: Missing upstream_url."
+        return 1
+    fi
+
+    fork_user=$(printf "%s\n" "$fork_url" | awk -F/ '{print $(NF-1)}' | \
+        sed 's/^.*://')
+    fork_repo=$(printf "%s\n" "$fork_url" | awk -F/ '{print $(NF)}' | \
+        sed 's/\.git$//')
+
+    git clone "$fork_url" "${fork_user}-${fork_repo}" || return $?
+    cd "${fork_user}-${fork_repo}" || return $?
+    git remote add upstream "$upstream_url" || return $?
+    # shellcheck disable=SC2164
+    cd -
+}
+
+git-update-fork () {
+    git fetch upstream || return $?
+    git checkout master || return $?
+    git pull || return $?
+    git merge upstream/master || return $?
+    git push
 }
