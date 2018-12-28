@@ -44,10 +44,14 @@ update-repos () {
     "
     cd "${HOME}" || return $?
     for i in $own_repos; do
+        [ -d "$i" ] || continue
         cd "$i" || continue
+        printf "%s\n" "Repo: $i"
         if [ -z "$(git status --porcelain)" ]; then
-            git pull
-            git push
+            git pull 2>&1 | grep -v 'Already up to date'
+            git push 2>&1 | grep -v 'Everything up-to-date'
+        else
+            echo "WARNING: Git status not empty; skipping this repo."
         fi
         cd - || return $?
     done
@@ -56,7 +60,8 @@ update-repos () {
     cd "${HOME}/.vim" || return $?
     for i in vim-pathogen bundle/*; do
         cd "$i" || continue
-        git pull
+        printf "%s\n" "Repo: $i"
+        git pull 2>&1 | grep -v 'Already up to date'
         cd - || return $?
     done
 }
