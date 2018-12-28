@@ -4,35 +4,74 @@ git-current-branch () {
     git branch | sed -n '/^*\ /  s/^..//p'
 }
 
-git-update-repos () {
-    start_dir="$PWD"
-    trap 'cd "$start_dir"' RETURN
+# Git repo collection
+# - paths must be either absolute or relative to $HOME
+# - globs must be quoted or escaped
+# - prepend 'RO|' to skip push
+# - master and develop branches will be updated (pull/push) if present
+GIT_REPOS_TO_UPDATE=(
+    # "RO|.vim/bundle/*"
+    # "RO|.vim/vim-pathogen"
+    ".dotfiles"
+    ".pypvutil"
+    "sysadmin-notes"
+)
 
-    own_repos="
-        .dotfiles
-        .pypvutil
-        sysadmin-notes
-    "
+git-update-repos () {
+    local quiet="$1"
+
+    starting_dir="$PWD"
+    trap 'cd "$starting_dir"' RETURN
     cd "${HOME}" || return $?
-    for i in $own_repos; do
-        [ -d "$i" ] || continue
-        cd "$i" || continue
-        printf "%s\n" "Repo: $i"
-        if [ -z "$(git status --porcelain)" ]; then
-            git pull 2>&1 | grep -v 'Already up to date'
-            git push 2>&1 | grep -v 'Everything up-to-date'
-        else
-            echo "WARNING: Git status not empty; skipping this repo."
-        fi
+
+    # repos with one (master) branch, read only
+    # shellcheck disable=SC2068
+    for repo in ${GIT_RO_REPOS[@]}; do
+        [ -d "$repo" ] || continue  # ignore missing repos
+        printf "%s\n" "Repo: $repo"
+        cd "$repo" || continue
+        git pull 2>&1 | grep -v 'Already up to date'
         cd - || return $?
     done
 
-    # vim stuff
-    cd "${HOME}/.vim" || return $?
-    for i in vim-pathogen bundle/*; do
-        cd "$i" || continue
-        printf "%s\n" "Repo: $i"
-        git pull 2>&1 | grep -v 'Already up to date'
+    # repos with multiple branches, read/write; update master and develop
+    # shellcheck disable=SC2068
+    for repo in ${GIT_REPOS_TO_UPDATE[@]}; do
+        [ -d "$repo" ] || continue  # ignore missing repos
+        if [ -z "$quiet" ]; then
+            printf "%s\n" "Repo: $repo"
+            rstr=""
+        else
+            rstr=" ($repo)"
+        fi
+        cd "$repo" || continue
+        if [ -n "$(git status --porcelain)" ]; then
+            echo "WARNING: Git status not empty; skipping this repo${rstr}."
+            cd - || return $?
+            continue
+        fi
+        starting_branch=$(git-current-branch)
+        if [ -z "$starting_branch" ]; then
+            echo "WARNING: Can't get current branch; skipping this repo${rstr}."
+            cd - || return $?
+            continue
+        fi
+        for branch in develop master; do
+            # ignore missing branches
+            git branch 2>/dev/null |
+                grep "^[* ] ${branch}\$" > /dev/null 2>&1 || continue
+            [ -z "$quiet" ] && printf "%s\n" "Branch: $branch"
+            git checkout "$branch" > /dev/null 2>&1 || continue
+            git pull 2>&1 | grep -v 'Already up to date'
+            git push 2>&1 | grep -v 'Everything up-to-date'
+            git checkout "$starting_branch" > /dev/null 2>&1 || return $?
+        done
+        extra_branches=$(git branch 2>/dev/null |
+            grep -vE "^[* ] (develop|master)\$")
+        if [ -n "$extra_branches" ]; then
+            echo "Extra branches${rstr}:"
+            printf "%s\n" "$extra_branches"
+        fi
         cd - || return $?
     done
 }
