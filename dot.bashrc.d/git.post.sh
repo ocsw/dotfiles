@@ -6,8 +6,9 @@ git-current-branch () {
 
 # Git repo collection
 # - paths must be either absolute or relative to $HOME
-# - globs must be quoted or escaped
-# - prepend 'RO|' to skip push
+# - paths must not contain spaces
+# - globs are allowed but must be quoted or escaped
+# - prepend 'RO|' to a repo to skip push
 # - master and develop branches will be updated (pull/push) if present
 GIT_REPOS_TO_UPDATE=(
     # "RO|.vim/bundle/*"
@@ -19,6 +20,12 @@ GIT_REPOS_TO_UPDATE=(
 
 git-update-repos () {
     local quiet="$1"
+    local starting_dir
+    local repo
+    local rstr
+    local starting_branch
+    local branch
+    local extra_branches
 
     starting_dir="$PWD"
     trap 'cd "$starting_dir"' RETURN
@@ -79,6 +86,8 @@ git-update-repos () {
 git-clone-fork () {
     local fork_url="$1"
     local upstream_url="$2"
+    local fork_user
+    local fork_repo
 
     if [ -z "$fork_url" ]; then
         echo "ERROR: Missing fork_url."
