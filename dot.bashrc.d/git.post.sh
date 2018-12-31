@@ -83,7 +83,7 @@ git-update-repos () (  # subshell
         read_only="no"
         is_fork="no"
         [ "$flags" = "RO" ] && read_only="yes"
-        [ "$flags" = "FORK" ] && read_only="yes"
+        [ "$flags" = "FORK" ] && is_fork="yes"
 
         [ -d "$repo" ] || continue  # ignore missing repos
         if [ "$verbose" = "yes" ]; then
@@ -112,14 +112,16 @@ git-update-repos () (  # subshell
                 grep "^[* ] ${branch}\$" > /dev/null 2>&1 || continue
             [ "$verbose" = "yes" ] && printf "%s\n" "Branch: $branch"
             git checkout "$branch" > /dev/null 2>&1 || continue
+
             git pull 2>&1 | grep -v 'Already up to date'
             if [ "$is_fork" = "yes" ] && [ "$branch" = "master" ]; then
                 git fetch upstream
-                git merge upstream/master
+                git merge upstream/master 2>&1 | grep -v 'Already up to date'
             fi
             if [ "$read_only" = "no" ]; then
                 git push 2>&1 | grep -v 'Everything up-to-date'
             fi
+
             git checkout "$starting_branch" > /dev/null 2>&1 || return $?
         done
 
