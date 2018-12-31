@@ -6,8 +6,8 @@ git-current-branch () {
 
 # Git repo collection
 # - paths must be either absolute or relative to $HOME
-# - paths must not contain spaces
-# - globs are allowed but must be quoted or escaped
+# - paths must not contain whitespace
+# - shell patterns (globs) are allowed but must be quoted or escaped
 # - append '|RO' to a repo to skip push (must be quoted or escaped)
 # - master and develop branches will be updated (pull/push) if present
 GIT_REPOS_TO_UPDATE=(
@@ -18,10 +18,15 @@ GIT_REPOS_TO_UPDATE=(
     "sysadmin-notes"
 )
 
-git-update-repos () {
-    local quiet="$1"
-    local starting_dir
-    local expanded_repos
+git-update-repos () (  # subshell
+    # Originally, I saved the starting directory, and went pack to it with a
+    # trap.  But the trap command is global, and resetting it from within the
+    # trap handler doesn't seem to work.  Running within a subshell avoids all
+    # of that.
+
+    local repo_entries
+    local verbose
+    local expanded_entries
     local entry
     local repo
     local flags
@@ -32,29 +37,49 @@ git-update-repos () {
     local branch
     local extra_branches
 
-    starting_dir="$PWD"
-    trap 'cd "$starting_dir"' RETURN
+    repo_entries=("${GIT_REPOS_TO_UPDATE[@]}")
+    verbose="no"
+    while [ "$#" -gt 0 ]; do
+        case "$1" in
+            -r|--repos)
+                # shellcheck disable=SC2206
+                repo_entries=($2)  # no quotes so we get word splitting
+                shift
+                shift
+                break
+                ;;
+            -v|--verbose)
+                verbose="yes"
+                shift
+                break
+                ;;
+            *)
+                shift
+                break
+                ;;
+        esac
+    done
+
     cd "${HOME}" || return $?
 
-    expanded_repos=()
-    # shellcheck disable=SC2068
-    for entry in ${GIT_REPOS_TO_UPDATE[@]}; do
+    # expand globs in the input so we can apply flags separately
+    expanded_entries=()
+    for entry in "${repo_entries[@]}"; do
         repo="${entry%%|*}"  # might actually be a pattern
         flags="${entry##*|}"
-        for exp_repo in $repo; do
-            expanded_repos+=("${exp_repo}|${flags}")
+        for exp_repo in $repo; do  # no quotes so it expands
+            expanded_entries+=("${exp_repo}|${flags}")
         done
     done
 
-    # shellcheck disable=SC2068
-    for entry in ${expanded_repos[@]}; do
+    for entry in "${expanded_entries[@]}"; do
         repo="${entry%%|*}"
         flags="${entry##*|}"
         read_only="no"
         [ "$flags" = "RO" ] && read_only="yes"
 
         [ -d "$repo" ] || continue  # ignore missing repos
-        if [ -z "$quiet" ]; then
+        if [ "$verbose" = "yes" ]; then
             printf "%s\n" "Repo: $repo"
             rstr=""
         else
@@ -78,7 +103,7 @@ git-update-repos () {
             # ignore missing branches
             git branch 2>/dev/null | \
                 grep "^[* ] ${branch}\$" > /dev/null 2>&1 || continue
-            [ -z "$quiet" ] && printf "%s\n" "Branch: $branch"
+            [ "$verbose" = "yes" ] && printf "%s\n" "Branch: $branch"
             git checkout "$branch" > /dev/null 2>&1 || continue
             git pull 2>&1 | grep -v 'Already up to date'
             if [ "$read_only" = "no" ]; then
@@ -96,7 +121,7 @@ git-update-repos () {
 
         cd - || return $?
     done
-}
+)
 
 git-clone-fork () {
     local fork_url="$1"
