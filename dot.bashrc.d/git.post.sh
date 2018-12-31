@@ -8,8 +8,12 @@ git-current-branch () {
 # - paths must be either absolute or relative to $HOME
 # - paths must not contain whitespace
 # - shell patterns (globs) are allowed but must be quoted or escaped
-# - append '|RO' to a repo to skip push (must be quoted or escaped)
-# - master and develop branches will be updated (pull/push) if present
+# - options can be appended to repo entries with '|':
+#   - '|RO' to skip push
+#   - '|FORK' to sync from the upstream of a fork (in addition to the usual
+#     operations)
+# - globs and pipes ('|') must be quoted or escaped
+# - 'master' and 'develop' branches will be updated (pull/push) if present
 GIT_REPOS_TO_UPDATE=(
     ".vim/bundle/*|RO"
     ".vim/vim-pathogen|RO"
@@ -76,7 +80,9 @@ git-update-repos () (  # subshell
         repo="${entry%%|*}"
         flags="${entry##*|}"
         read_only="no"
+        is_fork="no"
         [ "$flags" = "RO" ] && read_only="yes"
+        [ "$flags" = "FORK" ] && read_only="yes"
 
         [ -d "$repo" ] || continue  # ignore missing repos
         if [ "$verbose" = "yes" ]; then
@@ -106,6 +112,10 @@ git-update-repos () (  # subshell
             [ "$verbose" = "yes" ] && printf "%s\n" "Branch: $branch"
             git checkout "$branch" > /dev/null 2>&1 || continue
             git pull 2>&1 | grep -v 'Already up to date'
+            if [ "$is_fork" = "yes" ] && [ "$branch" = "master" ]; then
+                git fetch upstream
+                git merge upstream/master
+            fi
             if [ "$read_only" = "no" ]; then
                 git push 2>&1 | grep -v 'Everything up-to-date'
             fi

@@ -10,11 +10,6 @@ gitlast
 running pytest?
 pip timeout
 
-git:
-# forks
-# source cd
-# test
-
 # no-ghe flag?
 # old branches incl backup scraps
 # improve clonedns
