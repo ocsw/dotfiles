@@ -129,6 +129,12 @@ git-update-repos () (  # subshell
             printf "%s\n" "$extra_branches"
         fi
 
+        stash_list=$(git stash list)
+        if [ -n "$stash_list" ]; then
+            echo "Stashes${rstr}:"
+            printf "%s\n" "$stash_list"
+        fi
+
         cd - || return $?
     done
 )
