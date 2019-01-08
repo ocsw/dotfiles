@@ -51,16 +51,13 @@ git-update-repos () (  # subshell
                 repo_entries=($2)  # no quotes so we get word splitting
                 shift
                 shift
-                break
                 ;;
             -v|--verbose)
                 verbose="yes"
                 shift
-                break
                 ;;
             *)
                 shift
-                break
                 ;;
         esac
     done
