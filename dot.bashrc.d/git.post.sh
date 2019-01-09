@@ -90,13 +90,6 @@ git-update-repos () (  # subshell
         fi
         cd "$repo" || continue
 
-        is_fork="no"
-        if [ "$read_only" = "no" ] && \
-                git remote -v 2>/dev/null | \
-                grep '^upstream[ 	].*(fetch)$' > /dev/null 2>&1; then
-            is_fork="yes"
-        fi
-
         if [ -n "$(git status --porcelain)" ]; then
             echo "WARNING: Git status not empty; skipping this repo${rstr}."
             cd - || return $?
@@ -117,7 +110,10 @@ git-update-repos () (  # subshell
             git checkout "$branch" > /dev/null 2>&1 || continue
 
             git pull 2>&1 | grep -v 'Already up to date'
-            if [ "$is_fork" = "yes" ] && [ "$branch" = "master" ]; then
+            if [ "$branch" = "master" ] && \
+                    [ "$read_only" = "no" ] && \
+                    git remote -v 2>/dev/null | \
+                    grep '^upstream[ 	].*(fetch)$' > /dev/null 2>&1; then
                 git fetch upstream
                 git merge upstream/master 2>&1 | grep -v 'Already up to date'
             fi
