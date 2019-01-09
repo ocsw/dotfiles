@@ -166,7 +166,8 @@ git-update-repos () (  # subshell
                     grep '^upstream[ 	].*(fetch)$' > /dev/null; then
                 git fetch upstream
                 if [ "$verbosity" -ge 2 ]; then
-                    git merge upstream/master 2>&1 | grep -v 'Already up to date'
+                    git merge upstream/master 2>&1 \
+                        | grep -v 'Already up to date'
                 else
                     # only drops stdout because of order
                     git merge upstream/master 2>&1 > /dev/null \
