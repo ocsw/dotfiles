@@ -10,7 +10,5 @@ gitlast
 running pytest?
 pip timeout
 
-# no-ghe flag?
-# old branches incl backup scraps
-# improve clonedns
-# update-all incl. brew
+brew, gem umask
+update-all incl. brew, repos w/ghe check/filter
