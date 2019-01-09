@@ -30,12 +30,16 @@ git-update-repos () (  # subshell
     # of that.
 
     local repo_entries
+    local exclusions
     local verbosity
     local expanded_entries
     local entry
     local repo
     local flags
     local exp_repo
+    local filtered_entries
+    local matched
+    local exclusion
     local read_only
     local rstr
     local starting_branch
@@ -49,6 +53,12 @@ git-update-repos () (  # subshell
             -r|--repos)
                 # shellcheck disable=SC2206
                 repo_entries=($2)  # no quotes so we get word splitting
+                shift
+                shift
+                ;;
+            -e|--exclude)
+                # shellcheck disable=SC2206
+                exclusions=($2)  # no quotes so we get word splitting
                 shift
                 shift
                 ;;
@@ -82,7 +92,24 @@ git-update-repos () (  # subshell
         done
     done
 
+    # apply exclusions
+    filtered_entries=()
     for entry in "${expanded_entries[@]}"; do
+        repo="${entry%%|*}"
+        flags="${entry##*|}"
+        matched="no"
+        for exclusion in "${exclusions[@]}"; do
+            if printf "%s\n" "$repo" | grep "$exclusion" > /dev/null; then
+                matched="yes"
+                break
+            fi
+        done
+        if [ "$matched" = "no" ]; then
+            filtered_entries+=("${repo}|${flags}")
+        fi
+    done
+
+    for entry in "${filtered_entries[@]}"; do
         repo="${entry%%|*}"
         flags="${entry##*|}"
         read_only="no"
