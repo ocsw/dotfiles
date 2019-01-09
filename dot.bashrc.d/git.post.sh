@@ -10,10 +10,11 @@ git-current-branch () {
 # - shell patterns (globs) are allowed but must be quoted or escaped
 # - options can be appended to repo entries with '|':
 #   - '|RO' to skip push
-#   - '|FORK' to sync from the upstream of a fork (in addition to the usual
-#     operations)
 # - globs and pipes ('|') must be quoted or escaped
 # - 'master' and 'develop' branches will be updated (pull/push) if present
+# - forked repos will be detected, and the fork's 'master' branch will be
+#   updated from the original repo's (pull/push to the fork; the original will
+#   not be pushed to)
 GIT_REPOS_TO_UPDATE=(
     ".vim/bundle/*|RO"
     ".vim/vim-pathogen|RO"
@@ -78,9 +79,7 @@ git-update-repos () (  # subshell
         repo="${entry%%|*}"
         flags="${entry##*|}"
         read_only="no"
-        is_fork="no"
         [ "$flags" = "RO" ] && read_only="yes"
-        [ "$flags" = "FORK" ] && is_fork="yes"
 
         [ -d "$repo" ] || continue  # ignore missing repos
         if [ "$verbose" = "yes" ]; then
@@ -90,6 +89,13 @@ git-update-repos () (  # subshell
             rstr=" ($repo)"
         fi
         cd "$repo" || continue
+
+        is_fork="no"
+        if [ "$read_only" = "no" ] && \
+                git remote -v 2>/dev/null | \
+                grep '^upstream[ 	].*(fetch)$' > /dev/null 2>&1; then
+            is_fork="yes"
+        fi
 
         if [ -n "$(git status --porcelain)" ]; then
             echo "WARNING: Git status not empty; skipping this repo${rstr}."
@@ -167,9 +173,5 @@ git-clone-fork () {
 }
 
 git-update-fork () {
-    git fetch upstream || return $?
-    git checkout master || return $?
-    git pull || return $?
-    git merge upstream/master || return $?
-    git push
+    git-update-repos -r "$(pwd)" "$@"
 }
