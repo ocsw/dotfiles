@@ -125,13 +125,16 @@ git-update-repos () (  # subshell
         cd "$repo" || continue
 
         if [ -n "$(git status --porcelain)" ]; then
-            echo "WARNING: Git status not empty; skipping this repo${rstr}."
+            echo "WARNING: Git status not empty; skipping this repo${rstr}." \
+                1>&2
             cd - || return $?
             continue
         fi
         starting_branch=$(git-current-branch)
         if [ -z "$starting_branch" ]; then
-            echo "WARNING: Can't get current branch; skipping this repo${rstr}."
+            # shellcheck disable=SC2140
+            echo "WARNING: Can't get current branch; skipping this "\
+"repo${rstr}." 1>&2
             cd - || return $?
             continue
         fi
@@ -218,11 +221,11 @@ git-clone-fork () {
     local fork_repo
 
     if [ -z "$fork_url" ]; then
-        echo "ERROR: Missing fork_url."
+        echo "ERROR: Missing fork_url." 1>&2
         return 1
     fi
     if [ -z "$upstream_url" ]; then
-        echo "ERROR: Missing upstream_url."
+        echo "ERROR: Missing upstream_url." 1>&2
         return 1
     fi
 
