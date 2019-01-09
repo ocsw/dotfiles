@@ -10,6 +10,7 @@ gitlast
 running pytest?
 pip timeout
 
+# fork autorecognition
 # no-ghe flag?
 # old branches incl backup scraps
 # improve clonedns
