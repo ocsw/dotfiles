@@ -30,7 +30,7 @@ git-update-repos () (  # subshell
     # of that.
 
     local repo_entries
-    local verbose
+    local verbosity
     local expanded_entries
     local entry
     local repo
@@ -43,7 +43,7 @@ git-update-repos () (  # subshell
     local extra_branches
 
     repo_entries=("${GIT_REPOS_TO_UPDATE[@]}")
-    verbose="no"
+    verbosity="2"
     while [ "$#" -gt 0 ]; do
         case "$1" in
             -r|--repos)
@@ -53,7 +53,15 @@ git-update-repos () (  # subshell
                 shift
                 ;;
             -v|--verbose)
-                verbose="yes"
+                verbosity="3"
+                shift
+                ;;
+            -q|--quiet)
+                verbosity="1"
+                shift
+                ;;
+            -s|--silent)
+                verbosity="0"
                 shift
                 ;;
             *)
@@ -81,7 +89,7 @@ git-update-repos () (  # subshell
         [ "$flags" = "RO" ] && read_only="yes"
 
         [ -d "$repo" ] || continue  # ignore missing repos
-        if [ "$verbose" = "yes" ]; then
+        if [ "$verbosity" -ge 3 ]; then
             printf "%s\n" "Repo: $repo"
             rstr=""
         else
@@ -103,37 +111,73 @@ git-update-repos () (  # subshell
 
         for branch in develop master; do
             # ignore missing branches
-            git branch 2>/dev/null | \
-                grep "^[* ] ${branch}\$" > /dev/null 2>&1 || continue
-            [ "$verbose" = "yes" ] && printf "%s\n" "Branch: $branch"
-            git checkout "$branch" > /dev/null 2>&1 || continue
+            git branch | \
+                grep "^[* ] ${branch}\$" > /dev/null || continue
 
-            git pull 2>&1 | grep -v 'Already up to date'
+            # checkout
+            [ "$verbosity" -ge 3 ] && printf "%s\n" "Branch: $branch"
+            # only drops stdout because of order
+            if git checkout "$branch" 2>&1 > /dev/null | \
+                    grep -v '^Already on'; then
+                continue
+            fi
+
+            # pull
+            if [ "$verbosity" -ge 2 ]; then
+                git pull 2>&1 | grep -v 'Already up to date'
+            else
+                # only drops stdout because of order
+                git pull 2>&1 > /dev/null | grep -v 'Already up to date'
+            fi
+
+            # update fork
             if [ "$branch" = "master" ] && \
-                    [ "$read_only" = "no" ] && \
-                    git remote -v 2>/dev/null | \
-                    grep '^upstream[ 	].*(fetch)$' > /dev/null 2>&1; then
+                    git remote -v | \
+                    grep '^upstream[ 	].*(fetch)$' > /dev/null; then
                 git fetch upstream
-                git merge upstream/master 2>&1 | grep -v 'Already up to date'
-            fi
-            if [ "$read_only" = "no" ]; then
-                git push 2>&1 | grep -v 'Everything up-to-date'
+                if [ "$verbosity" -ge 2 ]; then
+                    git merge upstream/master 2>&1 | grep -v 'Already up to date'
+                else
+                    # only drops stdout because of order
+                    git merge upstream/master 2>&1 > /dev/null \
+                        | grep -v 'Already up to date'
+                fi
             fi
 
-            git checkout "$starting_branch" > /dev/null 2>&1 || return $?
+            # push
+            if [ "$read_only" = "no" ]; then
+                if [ "$verbosity" -ge 2 ]; then
+                    git push 2>&1 | grep -v 'Everything up-to-date'
+                else
+                    # only drops stdout because of order
+                    git push 2>&1 > /dev/null | grep -v 'Everything up-to-date'
+                fi
+            fi
+
+            # go back to previous branch
+            # only drops stdout because of order
+            if git checkout "$starting_branch" 2>&1 > /dev/null | \
+                    grep -v '^Already on'; then
+                continue
+            fi
+
         done
 
-        extra_branches=$(git branch 2>/dev/null | \
-            grep -vE "^[* ] (develop|master)\$")
-        if [ -n "$extra_branches" ]; then
-            echo "Extra branches${rstr}:"
-            printf "%s\n" "$extra_branches"
-        fi
+        if [ "$verbosity" -ge 1 ]; then
+            # extra branches
+            extra_branches=$(git branch | \
+                grep -vE "^[* ] (develop|master)\$")
+            if [ -n "$extra_branches" ]; then
+                echo "Extra branches${rstr}:"
+                printf "%s\n" "$extra_branches"
+            fi
 
-        stash_list=$(git stash list)
-        if [ -n "$stash_list" ]; then
-            echo "Stashes${rstr}:"
-            printf "%s\n" "$stash_list"
+            # stashes
+            stash_list=$(git stash list)
+            if [ -n "$stash_list" ]; then
+                echo "Stashes${rstr}:"
+                printf "%s\n" "$stash_list"
+            fi
         fi
 
         cd - || return $?
