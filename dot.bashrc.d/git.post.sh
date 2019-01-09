@@ -37,7 +37,6 @@ git-update-repos () (  # subshell
     local flags
     local exp_repo
     local read_only
-    local is_fork
     local rstr
     local starting_branch
     local branch
