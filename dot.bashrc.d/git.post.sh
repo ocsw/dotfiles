@@ -208,7 +208,7 @@ git-update-repos () (  # subshell
             stash_list=$(git stash list)
             if [ -n "$stash_list" ]; then
                 echo "Stashes${rstr}:"
-                printf "%s\n" "$stash_list"
+                printf "%s\n" "$stash_list" | sed 's/^/  /'
             fi
         fi
 
