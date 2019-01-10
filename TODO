@@ -12,3 +12,5 @@ pip timeout
 
 brew, gem umask
 update-all incl. brew, repos w/ghe check/filter
+
+usage/docs

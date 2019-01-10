@@ -23,6 +23,37 @@ GIT_REPOS_TO_UPDATE=(
     "sysadmin-notes"
 )
 
+_git-update-repos-usage () {
+    cat 1>&2 <<EOF
+Usage:
+GIT_REPOS_TO_UPDATE=(REPO REPO REPO ...)
+git-update-repos [-r REPOLIST] [-e EXCLUSIONS] [-v | --verbose] [-q | --quiet]
+                 [-s | --silent] [-h | --help]
+
+This tool updates a list of local git repos:
+- 'master' and 'develop' branches will be pulled and pushed if present
+- Forked repos will be detected, and the fork's 'master' branch will be
+  updated from the original repo's (pull/push to the fork; the original will
+  not be pushed to)
+- Repos that are not currently quiescent (nothing in git status) will be
+  skipped with warnings
+
+By default, it uses the GIT_REPOS_TO_UPDATE array (which should not be exported
+or prepended to the command line) to determine which repos to update.  The
+elements in this array are local filesystem paths.  Each path:
+- Must be either absolute or relative to $HOME
+- Must not contain whitespace
+- Can contain shell patterns (globs)
+Each path may also have options appended to it after a '|':
+- '|RO' to skip push
+Globs and pipes ('|') in entries must be quoted or escaped.
+
+
+
+
+EOF
+}
+
 git-update-repos () (  # subshell
     # Originally, I saved the starting directory, and went pack to it with a
     # trap.  But the trap command is global, and resetting it from within the
@@ -75,7 +106,14 @@ git-update-repos () (  # subshell
                 verbosity="0"
                 shift
                 ;;
+            -h|--help)
+                _git-update-repos-usage
+                exit 0
+                shift
+                ;;
             *)
+                _git-update-repos-usage
+                exit 1
                 shift
                 ;;
         esac
