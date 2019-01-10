@@ -131,7 +131,7 @@ git-update-repos () (  # subshell
         done
     done
 
-    # apply exclusions
+    # apply exclusions (can be grep regexes; matched against full path)
     filtered_entries=()
     for entry in "${expanded_entries[@]}"; do
         repo="${entry%%|*}"
@@ -200,6 +200,7 @@ git-update-repos () (  # subshell
             fi
 
             # update fork
+            # note hardcoded tab
             if [ "$branch" = "master" ] && \
                     git remote -v | \
                     grep '^upstream[ 	].*(fetch)$' > /dev/null; then
