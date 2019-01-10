@@ -149,16 +149,16 @@ git-update-repos () (  # subshell
             [ "$verbosity" -ge 3 ] && printf "%s\n" "Branch: $branch"
             # only drops stdout because of order
             if git checkout "$branch" 2>&1 > /dev/null | \
-                    grep -v '^Already on'; then
+                    grep -vE '^(Already on|Switched to branch)'; then
                 continue
             fi
 
             # pull
             if [ "$verbosity" -ge 2 ]; then
-                git pull 2>&1 | grep -v 'Already up to date'
+                git pull 2>&1 | grep -v '^Already up to date'
             else
                 # only drops stdout because of order
-                git pull 2>&1 > /dev/null | grep -v 'Already up to date'
+                git pull 2>&1 > /dev/null | grep -v '^Already up to date'
             fi
 
             # update fork
@@ -168,28 +168,28 @@ git-update-repos () (  # subshell
                 git fetch upstream
                 if [ "$verbosity" -ge 2 ]; then
                     git merge upstream/master 2>&1 \
-                        | grep -v 'Already up to date'
+                        | grep -v '^Already up to date'
                 else
                     # only drops stdout because of order
                     git merge upstream/master 2>&1 > /dev/null \
-                        | grep -v 'Already up to date'
+                        | grep -v '^Already up to date'
                 fi
             fi
 
             # push
             if [ "$read_only" = "no" ]; then
                 if [ "$verbosity" -ge 2 ]; then
-                    git push 2>&1 | grep -v 'Everything up-to-date'
+                    git push 2>&1 | grep -v '^Everything up-to-date'
                 else
                     # only drops stdout because of order
-                    git push 2>&1 > /dev/null | grep -v 'Everything up-to-date'
+                    git push 2>&1 > /dev/null | grep -v '^Everything up-to-date'
                 fi
             fi
 
             # go back to previous branch
             # only drops stdout because of order
             if git checkout "$starting_branch" 2>&1 > /dev/null | \
-                    grep -v '^Already on'; then
+                    grep -vE '^(Already on|Switched to branch)'; then
                 continue
             fi
 
