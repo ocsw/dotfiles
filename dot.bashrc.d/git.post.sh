@@ -47,6 +47,7 @@ git-update-repos () (  # subshell
     local extra_branches
 
     repo_entries=("${GIT_REPOS_TO_UPDATE[@]}")
+    exclusions=()
     verbosity="2"
     while [ "$#" -gt 0 ]; do
         case "$1" in
