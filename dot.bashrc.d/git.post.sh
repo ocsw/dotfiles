@@ -154,7 +154,12 @@ git-update-repos () (  # subshell
         read_only="no"
         [ "$flags" = "RO" ] && read_only="yes"
 
-        [ -d "$repo" ] || continue  # ignore missing repos
+        if ! [ -d "$repo" ]; then
+            echo "WARNING: Repo not found or not a directory; skipping${rstr}." 1>&2
+            cd - || return $?
+            continue
+        fi
+
         if [ "$verbosity" -ge 3 ]; then
             printf "%s\n" "Repo: $repo"
             rstr=""
