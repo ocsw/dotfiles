@@ -44,7 +44,12 @@ ln_tbu () {
         return 1
     fi
 
-    source_path_prefix="${source_path%/*}"
+    source_path_prefix=""
+    subtree=""
+    if [[ $source_path =~ / ]]; then
+        source_path_prefix="${source_path%/*}"
+        subtree="${source_path_prefix#/}/"
+    fi
     if [ -n "$source_path_prefix" ]; then
         if ! mkdir -p "${TBU_DIR}/${source_path_prefix#/}"; then
             echo
@@ -60,7 +65,7 @@ ln_tbu () {
         return 1
     fi
 
-    if ! mv "$source_path" "${TBU_DIR}/${source_path_prefix#/}/"; then
+    if ! mv "$source_path" "${TBU_DIR}/${subtree}"; then
         echo
         echo "ERROR: Can't move source to backup directory.  Stopping."
         echo "    Backup directory: $TBU_DIR"
