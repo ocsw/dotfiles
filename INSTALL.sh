@@ -24,25 +24,24 @@ cp_dotfile .vimrc.local
 
 # shellcheck disable=SC1090
 . "${DOTFILE_REPO}/dot.bashrc.d/to_back_up.post.sh"
-cd "$HOME" || exit 1
 
-touch .bash_history
-ln_tbu .bash_history
-touch .bashrc.local
-ln_tbu .bashrc.local
-touch .vimrc.local
-ln_tbu .vimrc.local
+touch ~/.bash_history
+ln_tbu ~/.bash_history
+touch ~/.bashrc.local
+ln_tbu ~/.bashrc.local
+touch ~/.vimrc.local
+ln_tbu ~/.vimrc.local
 #
-mkdir -p .ipython
-ln_tbu .ipython
-touch .python_history
-ln_tbu .python_history
-mkdir -p .pip
-ln_tbu .pip
-touch .pypirc
-ln_tbu .pypirc
-touch .flake8
-ln_tbu .flake8
+mkdir -p ~/.ipython
+ln_tbu ~/.ipython
+touch ~/.python_history
+ln_tbu ~/.python_history
+mkdir -p ~/.pip
+ln_tbu ~/.pip
+touch ~/.pypirc
+ln_tbu ~/.pypirc
+touch ~/.flake8
+ln_tbu ~/.flake8
 #
-mkdir -p .vscode
-ln_tbu .vscode
+mkdir -p ~/.vscode
+ln_tbu ~/.vscode
