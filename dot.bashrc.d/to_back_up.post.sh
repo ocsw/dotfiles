@@ -52,10 +52,10 @@ ln_tbu () {
     subtree=""
     if [[ $source_path =~ / ]]; then
         source_path_prefix="${source_path%/*}"
-        subtree="${source_path_prefix#/}/"
+        subtree="${source_path_prefix##/}/"
     fi
     if [ -n "$source_path_prefix" ]; then
-        if ! mkdir -p "${TBU_DIR}/${source_path_prefix#/}"; then
+        if ! mkdir -p "${TBU_DIR}/${source_path_prefix##/}"; then
             echo
             echo "ERROR: Can't create source path in backup directory."
             echo "    Backup directory: $TBU_DIR"
@@ -63,7 +63,7 @@ ln_tbu () {
             return 1
         fi
     fi
-    if [ -e "${TBU_DIR}/${source_path#/}" ]; then
+    if [ -e "${TBU_DIR}/${source_path##/}" ]; then
         echo "ERROR: Source already exists in backup directory."
         echo "    Backup directory: $TBU_DIR"
         return 1
@@ -76,5 +76,5 @@ ln_tbu () {
         echo
         return 1
     fi
-    ln -s "${TBU_DIR}/${source_path#/}" "$source_path"
+    ln -s "${TBU_DIR}/${source_path##/}" "$source_path"
 }
