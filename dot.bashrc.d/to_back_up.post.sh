@@ -13,6 +13,7 @@ EOF
 ln_tbu () {
     local source_path="$1"
     local source_path_prefix
+    local subtree
 
     if [ -z "$TBU_DIR" ]; then
         export TBU_DIR="${HOME}/.to_back_up"
