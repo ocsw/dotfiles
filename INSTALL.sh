@@ -24,29 +24,33 @@ cp_dotfile .vimrc.local
 
 # shellcheck disable=SC1090
 . "${DOTFILE_REPO}/dot.bashrc.d/to_back_up.post.sh"
+cd "$HOME" || exit 1
 
-touch ~/.bash_history
-ln_tbu ~/.bash_history
-touch ~/.bashrc.local
-ln_tbu ~/.bashrc.local
-touch ~/.vimrc.local
-ln_tbu ~/.vimrc.local
+touch .bash_history
+ln_tbu .bash_history
+touch .bashrc.local
+ln_tbu .bashrc.local
+touch .vimrc.local
+ln_tbu .vimrc.local
 #
-touch ~/.gitconfig
-ln_tbu ~/.gitconfig
-touch ~/.gitignore_global
-ln_tbu ~/.gitignore_global
+mkdir -p .ssh
+chmod 700 .ssh
+touch .ssh/config
+chmod 600 .ssh/config
+ln_tbu .ssh/config
 #
-mkdir -p ~/.ipython
-ln_tbu ~/.ipython
-touch ~/.python_history
-ln_tbu ~/.python_history
-mkdir -p ~/.pip
-ln_tbu ~/.pip
-touch ~/.pypirc
-ln_tbu ~/.pypirc
-touch ~/.flake8
-ln_tbu ~/.flake8
+touch .gitconfig
+ln_tbu .gitconfig
+touch .gitignore_global
+ln_tbu .gitignore_global
 #
-mkdir -p ~/.vscode
-ln_tbu ~/.vscode
+mkdir -p .ipython
+ln_tbu .ipython
+touch .python_history
+ln_tbu .python_history
+mkdir -p .pip
+ln_tbu .pip
+touch .pypirc
+ln_tbu .pypirc
+touch .flake8
+ln_tbu .flake8
