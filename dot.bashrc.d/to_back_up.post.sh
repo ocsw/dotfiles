@@ -44,6 +44,9 @@ ln_tbu () {
         echo "ERROR: Source path doesn't exist."
         return 1
     fi
+    if [[ $source_path =~ /$ ]]; then
+        source_path="${source_path_prefix%%/}"
+    fi
 
     source_path_prefix=""
     subtree=""
