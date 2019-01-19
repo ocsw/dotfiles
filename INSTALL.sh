@@ -32,6 +32,11 @@ ln_tbu ~/.bashrc.local
 touch ~/.vimrc.local
 ln_tbu ~/.vimrc.local
 #
+touch ~/.gitconfig
+ln_tbu ~/.gitconfig
+touch ~/.gitignore_global
+ln_tbu ~/.gitignore_global
+#
 mkdir -p ~/.ipython
 ln_tbu ~/.ipython
 touch ~/.python_history
