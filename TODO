@@ -14,3 +14,13 @@ brew, gem umask
 update-all incl. brew, repos w/ghe check/filter
 
 usage/docs
+
+kube:
+completions
+alias
+ctx completions
+ctx aliases if
+ps1
+longlist
+kctx guc1
+kns alf
