@@ -54,3 +54,14 @@ touch .pypirc
 ln_tbu .pypirc
 touch .flake8
 ln_tbu .flake8
+#
+vscode_confdir="Library/Application Support/Code/User"
+mkdir -p "$vscode_confdir"
+touch "$vscode_confdir/keybindings.json"
+ln_tbu "$vscode_confdir/keybindings.json"
+touch "$vscode_confdir/settings.json"
+ln_tbu "$vscode_confdir/settings.json"
+mkdir -p "$vscode_confdir/snippets"
+ln_tbu "$vscode_confdir/snippets"
+touch "$vscode_confdir/syncLocalSettings.json"
+ln_tbu "$vscode_confdir/syncLocalSettings.json"
