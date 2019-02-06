@@ -155,7 +155,7 @@ git-update-repos () (  # subshell
         [ "$flags" = "RO" ] && read_only="yes"
 
         if ! [ -d "$repo" ]; then
-            echo "WARNING: Repo not found or not a directory; skipping${rstr}." 1>&2
+            echo "WARNING: Repo not found or not a directory; skipping ($repo)." 1>&2
             cd - || return $?
             continue
         fi
