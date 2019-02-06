@@ -39,6 +39,23 @@ touch .ssh/config
 chmod 600 .ssh/config
 ln_tbu .ssh/config
 #
+mkdir -p .gnupg
+touch .gnupg/dirmngr.conf
+ln_tbu .gnupg/dirmngr.conf
+touch .gnupg/gpg-agent.conf
+ln_tbu .gnupg/gpg-agent.conf
+touch .gnupg/gpg.conf
+ln_tbu .gnupg/gpg.conf
+if [ "$(uname)" = 'Darwin' ]; then
+    mkdir -p .gnupg_pre_2.1
+    touch .gnupg_pre_2.1/dirmngr.conf
+    ln_tbu .gnupg_pre_2.1/dirmngr.conf
+    touch .gnupg_pre_2.1/gpg-agent.conf
+    ln_tbu .gnupg_pre_2.1/gpg-agent.conf
+    touch .gnupg_pre_2.1/gpg.conf
+    ln_tbu .gnupg_pre_2.1/gpg.conf
+fi
+#
 touch .gitconfig
 ln_tbu .gitconfig
 touch .gitignore_global
