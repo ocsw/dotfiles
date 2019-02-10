@@ -84,6 +84,4 @@ if [ -n "$vscode_confdir" ]; then
     ln_tbu "$vscode_confdir/settings.json"
     mkdir -p "$vscode_confdir/snippets"
     ln_tbu "$vscode_confdir/snippets"
-    touch "$vscode_confdir/syncLocalSettings.json"
-    ln_tbu "$vscode_confdir/syncLocalSettings.json"
 fi
