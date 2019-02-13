@@ -33,4 +33,11 @@ if in_path brew; then
         chmod 775 $gw
         find /usr/local \! -perm -044 -print0 | xargs -0 chmod -h go=u-w
     }
+
+    brew-up () {
+        brew update
+        brew upgrade
+        brew cleanup
+        brew doctor
+    }
 fi
