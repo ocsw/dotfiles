@@ -13,6 +13,8 @@ if in_path brew; then
     }
 
     brew-fix-perms () {
+        # WARNING: CHANGE THIS IF YOU ADD ANYTHING SECRET TO /usr/local
+        # (unlikely on a Mac)
         local gw="
             /usr/local/bin
             /usr/local/include
@@ -29,9 +31,6 @@ if in_path brew; then
         "
         # shellcheck disable=SC2086
         chmod 775 $gw
-        chmod -R go=u-w /usr/local
-        find /usr/local \! -perm 444 -a \! -perm 555 -a \! -perm 644 -a \
-            \! -perm 755 -a \! -perm 775 -print0 | \
-            xargs -0 chmod -h go=u-w
+        find /usr/local \! -perm -044 -print0 | xargs -0 chmod -h go=u-w
     }
 fi
