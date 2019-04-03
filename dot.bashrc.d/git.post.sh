@@ -17,8 +17,8 @@ _git-update-repos-usage () {
     cat 1>&2 <<EOF
 Usage:
 GIT_REPOS_TO_UPDATE=(REPO REPO REPO ...)
-git-update-repos [-r REPOLIST] [-e EXCLUSIONS] [-v | --verbose] [-q | --quiet]
-                 [-s | --silent] [-h | --help]
+git-update-repos [-r REPOLIST] [-e EXCLUSIONS] [-s | --silent] [-q | --quiet]
+                 [-v | --verbose] [-h | --help]
 
 This tool updates a list of local git repos:
 - 'master' and 'develop' branches will be pulled and pushed if present
@@ -55,12 +55,15 @@ Main options:
     -h | --help
         Prints this help text.
 
-There are 4 levels of verbosity:
-    -v | --verbose
-    (default)
-    -q | --quiet
+There are 4 levels of verbosity, which cumulatively add outputs:
     -s | --silent
-
+        Print only errors and warnings
+    -q | --quiet
+        Also print extra branches and stashes
+    (default)
+        Also print output from git commands
+    -v | --verbose
+        Also print repo and branch headers even if not doing anything
 EOF
 }
 
