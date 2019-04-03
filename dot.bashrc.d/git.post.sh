@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 git-current-branch () {
-    git branch | sed -n '/^*\ /  s/^..//p'
+    git branch | sed -n '/^\* /  s/^..//p'
 }
 
 # Git repo collection; see _git-update-repos-usage()
@@ -86,6 +86,7 @@ git-update-repos () (  # subshell
     local starting_branch
     local branch
     local extra_branches
+    local stash_list
 
     repo_entries=("${GIT_REPOS_TO_UPDATE[@]}")
     exclusions=()
