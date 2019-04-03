@@ -4,17 +4,7 @@ git-current-branch () {
     git branch | sed -n '/^*\ /  s/^..//p'
 }
 
-# Git repo collection
-# - paths must be either absolute or relative to $HOME
-# - paths must not contain whitespace
-# - shell patterns (globs) are allowed but must be quoted or escaped
-# - options can be appended to repo entries with '|':
-#   - '|RO' to skip push
-# - globs and pipes ('|') must be quoted or escaped
-# - 'master' and 'develop' branches will be updated (pull/push) if present
-# - forked repos will be detected, and the fork's 'master' branch will be
-#   updated from the original repo's (pull/push to the fork; the original will
-#   not be pushed to)
+# Git repo collection; see _git-update-repos-usage()
 GIT_REPOS_TO_UPDATE=(
     ".vim/bundle/*|RO"
     ".vim/vim-pathogen|RO"
@@ -32,11 +22,14 @@ git-update-repos [-r REPOLIST] [-e EXCLUSIONS] [-v | --verbose] [-q | --quiet]
 
 This tool updates a list of local git repos:
 - 'master' and 'develop' branches will be pulled and pushed if present
-- Forked repos will be detected, and the fork's 'master' branch will be
-  updated from the original repo's (pull/push to the fork; the original will
-  not be pushed to)
+- Forked repos will be detected by the presence of an 'upstream' remote, and
+  the fork's 'master' branch will be updated from the original repo's (pull and
+  push to the fork; the original will not be pushed to)
 - Repos that are not currently quiescent (nothing in git status) will be
   skipped with warnings
+
+It will also print information about 'extra' branches (not 'master' or
+'develop') and stashes.
 
 By default, it uses the GIT_REPOS_TO_UPDATE array (which should not be exported
 or prepended to the command line) to determine which repos to update.  The
@@ -48,8 +41,25 @@ Each path may also have options appended to it after a '|':
 - '|RO' to skip push
 Globs and pipes ('|') in entries must be quoted or escaped.
 
+Main options:
+    -r REPOLIST
+        Overrides the GIT_REPOS_TO_UPDATE array; REPOLIST is a string of
+        whitespace-separated repo entries.
 
+    -e EXCLUSIONS
+        Filters out repo names from the GIT_REPOS_TO_UPDATE array or -r
+        REPOLIST; EXCLUSIONS is string of whitespace-separated patterns (basic
+        regexes).  Matching is performed after any globs in the repo list are
+        expanded.
 
+    -h | --help
+        Prints this help text.
+
+There are 4 levels of verbosity:
+    -v | --verbose
+    (default)
+    -q | --quiet
+    -s | --silent
 
 EOF
 }
