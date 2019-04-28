@@ -18,7 +18,7 @@ _git-update-repos-usage () {
 Usage:
 GIT_REPOS_TO_UPDATE=(REPO REPO REPO ...)
 git-update-repos [-r REPOLIST] [-e EXCLUSIONS] [-s | --silent] [-q | --quiet]
-                 [-v | --verbose] [-h | --help]
+                 [-v | --verbose] [-g | --gitverbose] [-h | --help]
 
 This tool updates a list of local git repos:
 - 'master' and 'develop' branches will be pulled and pushed if present
@@ -64,6 +64,8 @@ There are 4 levels of verbosity, which cumulatively add outputs:
         Also print output from git commands
     -v | --verbose
         Also print repo and branch headers even if not doing anything
+    -g | --gitverbose
+        Also tell git to be verbose for pull, fetch, merge, and push
 EOF
 }
 
@@ -76,6 +78,7 @@ git-update-repos () (  # subshell
     local repo_entries
     local exclusions
     local verbosity
+    local git_verb_str
     local expanded_entries
     local entry
     local repo
@@ -95,6 +98,7 @@ git-update-repos () (  # subshell
     local VERB_QUIET=1
     local VERB_DEFAULT=2
     local VERB_VERBOSE=3
+    local VERB_GITVERBOSE=4
 
     repo_entries=("${GIT_REPOS_TO_UPDATE[@]}")
     exclusions=()
@@ -111,6 +115,10 @@ git-update-repos () (  # subshell
                 # shellcheck disable=SC2206
                 exclusions=($2)  # no quotes so we get word splitting
                 shift
+                shift
+                ;;
+            -g|--gitverbose)
+                verbosity="$VERB_GITVERBOSE"
                 shift
                 ;;
             -v|--verbose)
@@ -137,6 +145,14 @@ git-update-repos () (  # subshell
                 ;;
         esac
     done
+
+    if [ "$verbosity" -ge "$VERB_GITVERBOSE" ]; then
+        git_verb_str="-v"
+    elif [ "$verbosity" -ge "$VERB_DEFAULT" ]; then
+        git_verb_str=""
+    else
+        git_verb_str="-q"
+    fi
 
     cd "${HOME}" || return $?
 
@@ -217,11 +233,10 @@ git-update-repos () (  # subshell
             fi
 
             # pull
-            if [ "$verbosity" -ge "$VERB_DEFAULT" ]; then
-                git pull 2>&1 | grep -v '^Already up to date'
+            if [ -n "$git_verb_str" ]; then
+                git pull "$git_verb_str"
             else
-                # only drops stdout because of order
-                git pull 2>&1 > /dev/null | grep -v '^Already up to date'
+                git pull 2>&1 | grep -v '^Already up to date'
             fi
 
             # update fork
@@ -229,24 +244,25 @@ git-update-repos () (  # subshell
             if [ "$branch" = "master" ] && \
                     git remote -v | \
                     grep '^upstream[ 	].*(fetch)$' > /dev/null; then
-                git fetch upstream
-                if [ "$verbosity" -ge "$VERB_DEFAULT" ]; then
-                    git merge upstream/master 2>&1 \
-                        | grep -v '^Already up to date'
+                if [ -n "$git_verb_str" ]; then
+                    git fetch upstream "$git_verb_str"
                 else
-                    # only drops stdout because of order
-                    git merge upstream/master 2>&1 > /dev/null \
+                    git fetch upstream
+                fi
+                if [ -n "$git_verb_str" ]; then
+                    git merge upstream/master "$git_verb_str"
+                else
+                    git merge upstream/master 2>&1 \
                         | grep -v '^Already up to date'
                 fi
             fi
 
             # push
             if [ "$read_only" = "no" ]; then
-                if [ "$verbosity" -ge "$VERB_DEFAULT" ]; then
-                    git push 2>&1 | grep -v '^Everything up-to-date'
+                if [ -n "$git_verb_str" ]; then
+                    git push "$git_verb_str"
                 else
-                    # only drops stdout because of order
-                    git push 2>&1 > /dev/null | grep -v '^Everything up-to-date'
+                    git push 2>&1 | grep -v '^Everything up-to-date'
                 fi
             fi
 
