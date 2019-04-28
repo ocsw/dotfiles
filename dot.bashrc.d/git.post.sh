@@ -91,9 +91,14 @@ git-update-repos () (  # subshell
     local extra_branches
     local stash_list
 
+    local VERB_SILENT=0
+    local VERB_QUIET=1
+    local VERB_DEFAULT=2
+    local VERB_VERBOSE=3
+
     repo_entries=("${GIT_REPOS_TO_UPDATE[@]}")
     exclusions=()
-    verbosity="2"
+    verbosity="$VERB_DEFAULT"
     while [ "$#" -gt 0 ]; do
         case "$1" in
             -r|--repos)
@@ -109,15 +114,15 @@ git-update-repos () (  # subshell
                 shift
                 ;;
             -v|--verbose)
-                verbosity="3"
+                verbosity="$VERB_VERBOSE"
                 shift
                 ;;
             -q|--quiet)
-                verbosity="1"
+                verbosity="$VERB_QUIET"
                 shift
                 ;;
             -s|--silent)
-                verbosity="0"
+                verbosity="$VERB_SILENT"
                 shift
                 ;;
             -h|--help)
@@ -174,7 +179,7 @@ git-update-repos () (  # subshell
             continue
         fi
 
-        if [ "$verbosity" -ge 3 ]; then
+        if [ "$verbosity" -ge "$VERB_VERBOSE" ]; then
             printf "%s\n" "Repo: $repo"
             rstr=""
         else
@@ -203,7 +208,8 @@ git-update-repos () (  # subshell
                 grep "^[* ] ${branch}\$" > /dev/null || continue
 
             # checkout
-            [ "$verbosity" -ge 3 ] && printf "%s\n" "Branch: $branch"
+            [ "$verbosity" -ge "$VERB_VERBOSE" ] && \
+                printf "%s\n" "Branch: $branch"
             # only drops stdout because of order
             if git checkout "$branch" 2>&1 > /dev/null | \
                     grep -vE '^(Already on|Switched to branch)'; then
@@ -211,7 +217,7 @@ git-update-repos () (  # subshell
             fi
 
             # pull
-            if [ "$verbosity" -ge 2 ]; then
+            if [ "$verbosity" -ge "$VERB_DEFAULT" ]; then
                 git pull 2>&1 | grep -v '^Already up to date'
             else
                 # only drops stdout because of order
@@ -224,7 +230,7 @@ git-update-repos () (  # subshell
                     git remote -v | \
                     grep '^upstream[ 	].*(fetch)$' > /dev/null; then
                 git fetch upstream
-                if [ "$verbosity" -ge 2 ]; then
+                if [ "$verbosity" -ge "$VERB_DEFAULT" ]; then
                     git merge upstream/master 2>&1 \
                         | grep -v '^Already up to date'
                 else
@@ -236,7 +242,7 @@ git-update-repos () (  # subshell
 
             # push
             if [ "$read_only" = "no" ]; then
-                if [ "$verbosity" -ge 2 ]; then
+                if [ "$verbosity" -ge "$VERB_DEFAULT" ]; then
                     git push 2>&1 | grep -v '^Everything up-to-date'
                 else
                     # only drops stdout because of order
@@ -253,7 +259,7 @@ git-update-repos () (  # subshell
 
         done
 
-        if [ "$verbosity" -ge 1 ]; then
+        if [ "$verbosity" -ge "$VERB_QUIET" ]; then
             # extra branches
             extra_branches=$(git branch | \
                 grep -vE "^[* ] (develop|master)\$")
