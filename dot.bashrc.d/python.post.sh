@@ -41,8 +41,10 @@ fi
 export PYPVUTIL_HOME="${HOME}/.pypvutil"
 if in_path pyenv && in_path pyenv-virtualenv-init && \
         [ -f "${PYPVUTIL_HOME}/pypvutil_init.sh" ]; then
+    export PYPVUTIL_PREFIX="py"
     # shellcheck disable=SC1090
     . "${PYPVUTIL_HOME}/pypvutil_init.sh"
 else
     unset PYPVUTIL_HOME
+    unset PYPVUTIL_PREFIX
 fi
