@@ -72,6 +72,10 @@ ln_tbu .pypirc
 touch .flake8
 ln_tbu .flake8
 #
+mkdir -p .m2
+touch .m2/settings.xml
+ln_tbu .m2/settings.xml
+#
 vscode_confdir=""
 if [ "$(uname)" = 'Darwin' ]; then
     vscode_confdir="Library/Application Support/Code/User"
