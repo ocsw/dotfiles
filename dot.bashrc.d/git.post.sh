@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
 git-current-branch () {
+    # see also
+    # https://stackoverflow.com/questions/6245570/how-to-get-the-current-branch-name-in-git
     git branch | sed -n '/^\* /  s/^..//p'
 }
 
