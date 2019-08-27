@@ -246,10 +246,21 @@ git-update-repos () (  # subshell
             if [ "$branch" = "master" ] && \
                     git remote -v | \
                     grep '^upstream[ 	].*(fetch)$' > /dev/null; then
+                # can't just do 'git pull upstream' because this isn't the
+                # usual remote:
+                #   You asked to pull from the remote ‘upstream’, but did not
+                #   specify a branch. Because this is not the default configured
+                #   remote for your current branch, you must specify a branch on
+                #   the command line.
                 if [ -n "$git_verb_str" ]; then
-                    git pull upstream "$git_verb_str"
+                    git fetch upstream "$git_verb_str"
                 else
-                    git pull upstream 2>&1 \
+                    git fetch upstream
+                fi
+                if [ -n "$git_verb_str" ]; then
+                    git merge upstream/master "$git_verb_str"
+                else
+                    git merge upstream/master 2>&1 \
                         | grep -v '^Already up to date'
                 fi
             fi
