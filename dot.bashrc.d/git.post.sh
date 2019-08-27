@@ -25,8 +25,8 @@ git-update-repos [-r REPOLIST] [-e EXCLUSIONS] [-s | --silent] [-q | --quiet]
 This tool updates a list of local git repos:
 - 'master' and 'develop' branches will be pulled and pushed if present
 - Forked repos will be detected by the presence of an 'upstream' remote, and
-  the fork's 'master' branch will be updated from the original repo's (pull and
-  push to the fork; the original will not be pushed to)
+  the fork's 'master' branch will be updated from the original repo's (pull
+  from the upstream and push to the fork; the original will not be pushed to)
 - Repos that are not currently quiescent (nothing in git status) will be
   skipped with warnings
 
@@ -247,14 +247,9 @@ git-update-repos () (  # subshell
                     git remote -v | \
                     grep '^upstream[ 	].*(fetch)$' > /dev/null; then
                 if [ -n "$git_verb_str" ]; then
-                    git fetch upstream "$git_verb_str"
+                    git pull upstream "$git_verb_str"
                 else
-                    git fetch upstream
-                fi
-                if [ -n "$git_verb_str" ]; then
-                    git merge upstream/master "$git_verb_str"
-                else
-                    git merge upstream/master 2>&1 \
+                    git pull upstream 2>&1 \
                         | grep -v '^Already up to date'
                 fi
             fi
