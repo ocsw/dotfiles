@@ -238,7 +238,7 @@ git-update-repos () (  # subshell
             if [ -n "$git_verb_str" ]; then
                 git pull "$git_verb_str"
             else
-                git pull 2>&1 | grep -v '^Already up to date'
+                git pull 2>&1 | grep -vE '^Already up to date|is up to date.$'
             fi
 
             # update fork
@@ -261,7 +261,7 @@ git-update-repos () (  # subshell
                     git merge upstream/master "$git_verb_str"
                 else
                     git merge upstream/master 2>&1 \
-                        | grep -v '^Already up to date'
+                        | grep -vE '^Already up to date|is up to date.$'
                 fi
             fi
 
