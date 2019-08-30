@@ -96,12 +96,14 @@ git-update-repos () (  # subshell
     local extra_branches
     local stash_list
 
+    # verbosity constants
     local VERB_SILENT=0
     local VERB_QUIET=1
     local VERB_DEFAULT=2
     local VERB_VERBOSE=3
     local VERB_GITVERBOSE=4
 
+    # process arguments
     repo_entries=("${GIT_REPOS_TO_UPDATE[@]}")
     exclusions=()
     verbosity="$VERB_DEFAULT"
@@ -148,6 +150,7 @@ git-update-repos () (  # subshell
         esac
     done
 
+    # process verbosity
     if [ "$verbosity" -ge "$VERB_GITVERBOSE" ]; then
         git_verb_str="-v"
     elif [ "$verbosity" -ge "$VERB_DEFAULT" ]; then
@@ -156,6 +159,7 @@ git-update-repos () (  # subshell
         git_verb_str="-q"
     fi
 
+    # use $HOME as the basis for relative paths
     cd "${HOME}" || return $?
 
     # expand globs in the input so we can apply flags separately
@@ -185,18 +189,21 @@ git-update-repos () (  # subshell
         fi
     done
 
+    # loop on repos
     for entry in "${filtered_entries[@]}"; do
         repo="${entry%%|*}"
         flags="${entry##*|}"
         read_only="no"
         [ "$flags" = "RO" ] && read_only="yes"
 
+        # check for repo
         if ! [ -d "$repo" ]; then
             echo "WARNING: Repo not found or not a directory; skipping ($repo)." 1>&2
             cd - || return $?
             continue
         fi
 
+        # repo name
         if [ "$verbosity" -ge "$VERB_VERBOSE" ]; then
             printf "%s\n" "Repo: $repo"
             rstr=""
@@ -205,12 +212,15 @@ git-update-repos () (  # subshell
         fi
         cd "$repo" || continue
 
+        # check for quiescence
         if [ -n "$(git status --porcelain)" ]; then
             echo "WARNING: Git status not empty; skipping this repo${rstr}." \
                 1>&2
             cd - || return $?
             continue
         fi
+
+        # save starting branch
         starting_branch=$(git-current-branch)
         if [ -z "$starting_branch" ]; then
             # shellcheck disable=SC2140
@@ -220,7 +230,8 @@ git-update-repos () (  # subshell
             continue
         fi
 
-        for branch in develop master; do
+        # handle master and develop branches specially
+        for branch in master develop; do
             # ignore missing branches
             git branch | \
                 grep "^[* ] ${branch}\$" > /dev/null || continue
@@ -286,7 +297,7 @@ git-update-repos () (  # subshell
         done
 
         if [ "$verbosity" -ge "$VERB_QUIET" ]; then
-            # extra branches
+            # print extra branches
             extra_branches=$(git branch | \
                 grep -vE "^[* ] (develop|master)\$")
             if [ -n "$extra_branches" ]; then
@@ -294,7 +305,7 @@ git-update-repos () (  # subshell
                 printf "%s\n" "$extra_branches"
             fi
 
-            # stashes
+            # print stashes
             stash_list=$(git stash list)
             if [ -n "$stash_list" ]; then
                 echo "Stashes${rstr}:"
