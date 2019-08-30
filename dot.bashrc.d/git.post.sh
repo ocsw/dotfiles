@@ -235,7 +235,11 @@ git-update-repos () (  # subshell
             fi
 
             # pull
-            if [ -n "$git_verb_str" ]; then
+            if [ "$git_verb_str" = "-q" ]; then
+                # even with -q, pulling in rebase mode (via global setting)
+                # prints fast-forward lines, apparently
+                git pull "$git_verb_str" | grep -v '^Fast-forwarded .* to '
+            elif [ -n "$git_verb_str" ]; then
                 git pull "$git_verb_str"
             else
                 git pull 2>&1 | grep -vE '^Already up to date|is up to date.$'
