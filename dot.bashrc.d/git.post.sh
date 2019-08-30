@@ -234,15 +234,11 @@ git-update-repos () (  # subshell
                 continue
             fi
 
-            # pull
-            if [ "$git_verb_str" = "-q" ]; then
-                # even with -q, pulling in rebase mode (via global setting)
-                # prints fast-forward lines, apparently
-                git pull "$git_verb_str" | grep -v '^Fast-forwarded .* to '
-            elif [ -n "$git_verb_str" ]; then
-                git pull "$git_verb_str"
+            # merge from remote-tracking branch
+            if [ -n "$git_verb_str" ]; then
+                git merge "$git_verb_str"
             else
-                git pull 2>&1 | grep -vE '^Already up to date|is up to date.$'
+                git merge 2>&1 | grep -vE '^Already up to date|is up to date.$'
             fi
 
             # update fork
@@ -260,15 +256,13 @@ git-update-repos () (  # subshell
                 #     configured remote for your current branch, you must
                 #     specify a branch on the command line.
                 #   and if we specify a branch, we won't fetch everything
-                # - use pull instead of merging directly so we pick up config
-                #   settings for pull, such as pull.rebase
                 # - the push after this section will update the fork
                 if [ -n "$git_verb_str" ]; then
                     git fetch upstream "$git_verb_str"
-                    git pull upstream master "$git_verb_str"
+                    git merge upstream/master "$git_verb_str"
                 else
                     git fetch upstream
-                    git pull upstream master 2>&1 \
+                    git merge upstream/master 2>&1 \
                         | grep -vE '^Already up to date|is up to date.$'
                 fi
             fi
