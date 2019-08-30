@@ -250,21 +250,25 @@ git-update-repos () (  # subshell
             if [ "$branch" = "master" ] && \
                     git remote -v | \
                     grep '^upstream[ 	].*(fetch)$' > /dev/null; then
-                # can't just do 'git pull upstream' because this isn't the
-                # usual remote:
-                #   You asked to pull from the remote ‘upstream’, but did not
-                #   specify a branch. Because this is not the default configured
-                #   remote for your current branch, you must specify a branch on
-                #   the command line.
+                # - first fetch everything* from upstream, then merge from
+                #   upstream master into local master (which we're on)
+                #   (* assuming the default fetch config)
+                # - can't just do 'git pull upstream' because this isn't the
+                #   usual remote:
+                #     You asked to pull from the remote ‘upstream’, but did not
+                #     specify a branch. Because this is not the default
+                #     configured remote for your current branch, you must
+                #     specify a branch on the command line.
+                #   and if we specify a branch, we won't fetch everything
+                # - use pull instead of merging directly so we pick up config
+                #   settings for pull, such as pull.rebase
+                # - the push after this section will update the fork
                 if [ -n "$git_verb_str" ]; then
                     git fetch upstream "$git_verb_str"
+                    git pull upstream master "$git_verb_str"
                 else
                     git fetch upstream
-                fi
-                if [ -n "$git_verb_str" ]; then
-                    git merge upstream/master "$git_verb_str"
-                else
-                    git merge upstream/master 2>&1 \
+                    git pull upstream master 2>&1 \
                         | grep -vE '^Already up to date|is up to date.$'
                 fi
             fi
