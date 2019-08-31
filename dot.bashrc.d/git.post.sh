@@ -23,12 +23,16 @@ git-update-repos [-r REPOLIST] [-e EXCLUSIONS] [-s | --silent] [-q | --quiet]
                  [-v | --verbose] [-g | --gitverbose] [-h | --help]
 
 This tool updates a list of local git repos:
-- 'master' and 'develop' branches will be pulled and pushed if present
-- Forked repos will be detected by the presence of an 'upstream' remote, and
-  the fork's 'master' branch will be updated from the original repo's (pull
-  from the upstream and push to the fork; the original will not be pushed to)
 - Repos that are not currently quiescent (nothing in git status) will be
-  skipped with warnings
+  skipped with warnings, otherwise:
+- All configured remotes will be fetched
+- Local 'master' and 'develop' branches, if present, will be merged into from
+  their remote-tracking branches
+- Forked repos will be detected by the presence of an 'upstream' remote, and
+  the local 'master' branch, if present, will be merged into from its
+  'upstream'-tracking branch
+- Local 'master' and 'develop' branches, if present, will be pushed back to
+  their remotes
 
 It will also print information about 'extra' branches (not 'master' or
 'develop') and stashes.
@@ -220,6 +224,9 @@ git-update-repos () (  # subshell
             continue
         fi
 
+        # fetch from all remotes
+        git fetch --all $git_verb_str  # no quotes
+
         # save starting branch
         starting_branch=$(git-current-branch)
         if [ -z "$starting_branch" ]; then
@@ -257,22 +264,11 @@ git-update-repos () (  # subshell
             if [ "$branch" = "master" ] && \
                     git remote -v | \
                     grep '^upstream[ 	].*(fetch)$' > /dev/null; then
-                # - first fetch everything* from upstream, then merge from
-                #   upstream master into local master (which we're on)
-                #   (* assuming the default fetch config)
-                # - can't just do 'git pull upstream' because this isn't the
-                #   usual remote:
-                #     You asked to pull from the remote ‘upstream’, but did not
-                #     specify a branch. Because this is not the default
-                #     configured remote for your current branch, you must
-                #     specify a branch on the command line.
-                #   and if we specify a branch, we won't fetch everything
-                # - the push after this section will update the fork
+                # merge upstream master into fork's master (which we're on); the
+                # push after this section will update the fork's remote
                 if [ -n "$git_verb_str" ]; then
-                    git fetch upstream "$git_verb_str"
                     git merge upstream/master "$git_verb_str"
                 else
-                    git fetch upstream
                     git merge upstream/master 2>&1 \
                         | grep -vE '^Already up to date|is up to date.$'
                 fi
