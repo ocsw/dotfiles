@@ -225,7 +225,11 @@ git-update-repos () (  # subshell
         fi
 
         # fetch from all remotes
-        git fetch --all $git_verb_str  # no quotes
+        if [ -n "$git_verb_str" ]; then
+            git fetch --all "$git_verb_str"
+        else
+            git fetch --all | grep -v '^Fetching '
+        fi
 
         # save starting branch
         starting_branch=$(git-current-branch)
