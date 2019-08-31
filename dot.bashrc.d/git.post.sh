@@ -94,6 +94,7 @@ git-update-repos () (  # subshell
     local matched
     local exclusion
     local read_only
+    local msg
     local rstr
     local starting_branch
     local branch
@@ -202,7 +203,8 @@ git-update-repos () (  # subshell
 
         # check for repo
         if ! [ -d "$repo" ]; then
-            echo "WARNING: Repo not found or not a directory; skipping ($repo)." 1>&2
+            msg="WARNING: Repo not found or not a directory; skipping ($repo)."
+            printf "%s\n" "$msg" 1>&2
             cd - || return $?
             continue
         fi
@@ -218,8 +220,8 @@ git-update-repos () (  # subshell
 
         # check for quiescence
         if [ -n "$(git status --porcelain)" ]; then
-            echo "WARNING: Git status not empty; skipping this repo${rstr}." \
-                1>&2
+            msg="WARNING: Git status not empty; skipping this repo${rstr}."
+            printf "%s\n" "$msg" 1>&2
             cd - || return $?
             continue
         fi
@@ -235,8 +237,8 @@ git-update-repos () (  # subshell
         starting_branch=$(git-current-branch)
         if [ -z "$starting_branch" ]; then
             # shellcheck disable=SC2140
-            echo "WARNING: Can't get current branch; skipping this "\
-"repo${rstr}." 1>&2
+            msg="WARNING: Can't get current branch; skipping this repo${rstr}."
+            printf "%s\n" "$msg" 1>&2
             cd - || return $?
             continue
         fi
@@ -301,14 +303,14 @@ git-update-repos () (  # subshell
             extra_branches=$(git branch | \
                 grep -vE "^[* ] (develop|master)\$")
             if [ -n "$extra_branches" ]; then
-                echo "Extra branches${rstr}:"
+                printf "%s\n" "Extra branches${rstr}:"
                 printf "%s\n" "$extra_branches"
             fi
 
             # print stashes
             stash_list=$(git stash list)
             if [ -n "$stash_list" ]; then
-                echo "Stashes${rstr}:"
+                printf "%s\n" "Stashes${rstr}:"
                 printf "%s\n" "$stash_list" | sed 's/^/  /'
             fi
         fi
