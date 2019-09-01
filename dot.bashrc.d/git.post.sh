@@ -234,7 +234,7 @@ git-update-repos () (  # subshell
         fi
 
         # save starting branch
-        if ! starting_branch=$(git symbolic-ref -q HEAD); then
+        if ! starting_branch=$(git symbolic-ref --short -q HEAD); then
             msg="WARNING: Can't get current branch or not on a local branch; "
             msg+="skipping this repo${rstr}."
             printf "%s\n" "$msg" 1>&2
@@ -245,8 +245,10 @@ git-update-repos () (  # subshell
         # handle master and develop branches specially
         for branch in master develop; do
             # ignore missing branches
-            git branch --no-color | \
-                grep "^[* ] ${branch}\$" > /dev/null || continue
+            # note: I think this might be safer than
+            #     git branch --no-color | \
+            #         grep "^[* ] ${branch}\$" > /dev/null
+            git show-ref --verify -q "refs/heads/$branch" || continue
 
             # checkout
             [ "$verbosity" -ge "$VERB_VERBOSE" ] && \
