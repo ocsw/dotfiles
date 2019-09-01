@@ -234,10 +234,9 @@ git-update-repos () (  # subshell
         fi
 
         # save starting branch
-        starting_branch=$(git-current-branch)
-        if [ -z "$starting_branch" ]; then
-            # shellcheck disable=SC2140
-            msg="WARNING: Can't get current branch; skipping this repo${rstr}."
+        if ! starting_branch=$(git symbolic-ref -q HEAD); then
+            msg="WARNING: Can't get current branch or not on a local branch; "
+            msg+="skipping this repo${rstr}."
             printf "%s\n" "$msg" 1>&2
             cd - || return $?
             continue
