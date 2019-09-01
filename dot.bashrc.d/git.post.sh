@@ -3,7 +3,7 @@
 git-current-branch () {
     # see also
     # https://stackoverflow.com/questions/6245570/how-to-get-the-current-branch-name-in-git
-    git branch | sed -n '/^\* /  s/^..//p'
+    git branch --no-color | sed -n '/^\* /  s/^..//p'
 }
 
 # Git repo collection; see _git-update-repos-usage()
@@ -246,7 +246,7 @@ git-update-repos () (  # subshell
         # handle master and develop branches specially
         for branch in master develop; do
             # ignore missing branches
-            git branch | \
+            git branch --no-color | \
                 grep "^[* ] ${branch}\$" > /dev/null || continue
 
             # checkout
@@ -300,7 +300,7 @@ git-update-repos () (  # subshell
 
         if [ "$verbosity" -ge "$VERB_QUIET" ]; then
             # print extra branches
-            extra_branches=$(git branch | \
+            extra_branches=$(git branch --no-color | \
                 grep -vE "^[* ] (develop|master)\$")
             if [ -n "$extra_branches" ]; then
                 printf "%s\n" "Extra branches${rstr}:"
