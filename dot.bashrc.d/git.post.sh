@@ -336,6 +336,10 @@ git-update-repos () (  # subshell
     done
 )
 
+git-update-repo () {
+    git-update-repos -r "$(pwd)" "$@"
+}
+
 git-clone-fork () {
     local fork_url="$1"
     local upstream_url="$2"
@@ -361,8 +365,4 @@ git-clone-fork () {
     git remote add upstream "$upstream_url" || return $?
     # shellcheck disable=SC2164
     cd -
-}
-
-git-update-fork () {
-    git-update-repos -r "$(pwd)" "$@"
 }
