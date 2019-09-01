@@ -1,9 +1,20 @@
 #!/usr/bin/env bash
 
-git-current-branch () {
+git-current () {
+    # NOTE: don't use this if you need a branch name you can checkout back to!
+    # (this can give you things like '(HEAD detached at origin/master)'; use
+    # git-current-branch() instead in that case)
     # see also
     # https://stackoverflow.com/questions/6245570/how-to-get-the-current-branch-name-in-git
     git branch --no-color | sed -n '/^\* /  s/^..//p'
+}
+
+git-current-branch () {
+    # prints the current branch, or fails with no output if we're not on a
+    # local branch (e.g. detached HEAD)
+    # see also
+    # https://stackoverflow.com/questions/6245570/how-to-get-the-current-branch-name-in-git
+    git symbolic-ref --short -q HEAD
 }
 
 # Git repo collection; see _git-update-repos-usage()
