@@ -266,10 +266,8 @@ git-update-repos () (  # subshell
             fi
 
             # update fork
-            # note hardcoded tab
             if [ "$branch" = "master" ] && \
-                    git remote -v | \
-                    grep '^upstream[ 	].*(fetch)$' > /dev/null; then
+                    git config --get remote.upstream.fetch > /dev/null; then
                 # merge upstream master into fork's master (which we're on); the
                 # push after this section will update the fork's remote
                 if [ -n "$git_verb_str" ]; then
