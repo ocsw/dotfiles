@@ -217,7 +217,6 @@ git-update-repos () (  # subshell
         if ! [ -d "$repo" ]; then
             msg="WARNING: Repo not found or not a directory; skipping ($repo)."
             printf "%s\n" "$msg" 1>&2
-            cd - || return $?
             continue
         fi
         cd "$repo" || continue
