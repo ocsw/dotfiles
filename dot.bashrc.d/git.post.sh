@@ -38,10 +38,10 @@ This tool updates a list of local git repos:
   skipped with warnings, otherwise:
 - All configured remotes will be fetched
 - Local 'master' and 'develop' branches, if present, will be merged into from
-  their remote-tracking branches
+  their remote branches, if present
 - Forked repos will be detected by the presence of an 'upstream' remote, and
-  the local 'master' branch, if present, will be merged into from its
-  'upstream'-tracking branch
+  the local 'master' branch, if present, will be merged into from its upstream
+  branch, if present
 - Local 'master' and 'develop' branches, if present, will be pushed back to
   their remotes
 
@@ -109,6 +109,7 @@ git-update-repos () (  # subshell
     local rstr
     local starting_branch
     local branch
+    local bstr
     local extra_branches
     local stash_list
 
@@ -212,13 +213,14 @@ git-update-repos () (  # subshell
         read_only="no"
         [ "$flags" = "RO" ] && read_only="yes"
 
-        # check for repo
+        # check for repo and cd
         if ! [ -d "$repo" ]; then
             msg="WARNING: Repo not found or not a directory; skipping ($repo)."
             printf "%s\n" "$msg" 1>&2
             cd - || return $?
             continue
         fi
+        cd "$repo" || continue
 
         # repo name
         if [ "$verbosity" -ge "$VERB_VERBOSE" ]; then
@@ -227,7 +229,6 @@ git-update-repos () (  # subshell
         else
             rstr=" ($repo)"
         fi
-        cd "$repo" || continue
 
         # check for quiescence
         if [ -n "$(git status --porcelain)" ]; then
@@ -261,32 +262,58 @@ git-update-repos () (  # subshell
             #         grep "^[* ] ${branch}\$" > /dev/null
             git show-ref --verify -q "refs/heads/$branch" || continue
 
-            # checkout
-            [ "$verbosity" -ge "$VERB_VERBOSE" ] && \
+            # branch name
+            if [ "$verbosity" -ge "$VERB_VERBOSE" ]; then
                 printf "%s\n" "Branch: $branch"
-            # only drops stdout because of order
+                bstr=""
+            else
+                bstr=" '$branch'"
+            fi
+
+            # checkout branch
+            # note: only drops stdout because of order
             if git checkout "$branch" 2>&1 > /dev/null | \
                     grep -vE '^(Already on|Switched to branch)'; then
                 continue
             fi
 
             # merge from remote-tracking branch
-            if [ -n "$git_verb_str" ]; then
-                git merge "$git_verb_str"
+            # note: we're assuming that if the branch has remote and merge
+            # configs, they point to something included in the remote's fetch
+            # config
+            if git config --get "branch.${branch}.remote" > /dev/null && \
+                    git config --get "branch.${branch}.merge" > /dev/null; then
+                if [ -n "$git_verb_str" ]; then
+                    git merge "$git_verb_str"
+                else
+                    git merge 2>&1 | \
+                        grep -vE '^Already up to date|is up to date.$'
+                fi
             else
-                git merge 2>&1 | grep -vE '^Already up to date|is up to date.$'
+                msg="WARNING: Branch${bstr} has no remote configured."
+                printf "%s\n" "$msg" 1>&2
             fi
 
             # update fork
+            # note: we're making some assumptions here:
+            # - if there is an upstream fetch config, it includes master
+            # - if upstream/master exists, it's what we want to merge
             if [ "$branch" = "master" ] && \
                     git config --get remote.upstream.fetch > /dev/null; then
-                # merge upstream master into fork's master (which we're on); the
-                # push after this section will update the fork's remote
-                if [ -n "$git_verb_str" ]; then
-                    git merge upstream/master "$git_verb_str"
+                # ok, there's an upstream; is there an upstream/master?
+                if git show-ref --verify -q "refs/remotes/upstream/master"; then
+                    # merge upstream master into fork's master (which we're on);
+                    # the push after this section will update the fork's remote
+                    if [ -n "$git_verb_str" ]; then
+                        git merge upstream/master "$git_verb_str"
+                    else
+                        git merge upstream/master 2>&1 \
+                            | grep -vE '^Already up to date|is up to date.$'
+                    fi
                 else
-                    git merge upstream/master 2>&1 \
-                        | grep -vE '^Already up to date|is up to date.$'
+                    msg="WARNING: There's an upstream remote for this "
+                    msg+="repo${rstr}, but no upstream/master."
+                    printf "%s\n" "$msg" 1>&2
                 fi
             fi
 
