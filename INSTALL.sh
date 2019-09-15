@@ -47,7 +47,7 @@ touch .gnupg/gpg-agent.conf
 ln_tbu .gnupg/gpg-agent.conf
 touch .gnupg/gpg.conf
 ln_tbu .gnupg/gpg.conf
-if [ "$(uname)" = 'Darwin' ]; then
+if [ "$(uname)" = "Darwin" ]; then
     mkdir -p .gnupg_pre_2.1
     touch .gnupg_pre_2.1/dirmngr.conf
     ln_tbu .gnupg_pre_2.1/dirmngr.conf
@@ -78,7 +78,7 @@ touch .m2/settings.xml
 ln_tbu .m2/settings.xml
 #
 vscode_confdir=""
-if [ "$(uname)" = 'Darwin' ]; then
+if [ "$(uname)" = "Darwin" ]; then
     vscode_confdir="Library/Application Support/Code/User"
 fi
 if [ -n "$vscode_confdir" ]; then
