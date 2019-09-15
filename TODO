@@ -1,16 +1,13 @@
 move errorcode_prompt?
 rename all 4+ prompt funcs?
 more modularization?
-umask
 gc in default complete?
 bug in git prompt - v0.0.1.dev (no 5)
-
-gitlast
 
 running pytest?
 pip timeout
 
-brew, gem umask
+brew, gem, gcloud, npm umask
 update-all incl. brew, repos w/ghe check/filter
 
 usage/docs
