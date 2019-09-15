@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-export DOTFILE_REPO="${HOME}/.dotfiles"
-export PYPVUTIL_REPO="${HOME}/.pypvutil"
+DOTFILE_REPO="${HOME}/.dotfiles"
+PYPVUTIL_REPO="${HOME}/.pypvutil"
 git clone git@github.com:ocsw/dotfiles.git "$DOTFILE_REPO"
 git clone git@github.com:ocsw/pypvutil.git "$PYPVUTIL_REPO"
 

@@ -12,17 +12,16 @@ EOF
 
 ln_tbu () {
     local source_path="$1"
+    # check global first
+    local backup_dir="${TBU_DIR:-${HOME}/.to_back_up}"
     local source_path_prefix
     local subtree
 
-    if [ -z "$TBU_DIR" ]; then
-        export TBU_DIR="${HOME}/.to_back_up"
-    fi
-    if ! [ -d "$TBU_DIR" ]; then
-        if ! mkdir -p "$TBU_DIR"; then
+    if ! [ -d "$backup_dir" ]; then
+        if ! mkdir -p "$backup_dir"; then
             echo
             echo "ERROR: Can't create backup directory.  Stopping."
-            echo "    Backup directory: $TBU_DIR"
+            echo "    Backup directory: $backup_dir"
             echo
             return 1
         fi
@@ -55,26 +54,26 @@ ln_tbu () {
         subtree="${source_path_prefix#/}/"
     fi
     if [ -n "$source_path_prefix" ]; then
-        if ! mkdir -p "${TBU_DIR}/${source_path_prefix#/}"; then
+        if ! mkdir -p "${backup_dir}/${source_path_prefix#/}"; then
             echo
             echo "ERROR: Can't create source path in backup directory."
-            echo "    Backup directory: $TBU_DIR"
+            echo "    Backup directory: $backup_dir"
             echo
             return 1
         fi
     fi
-    if [ -e "${TBU_DIR}/${source_path#/}" ]; then
+    if [ -e "${backup_dir}/${source_path#/}" ]; then
         echo "ERROR: Source already exists in backup directory."
-        echo "    Backup directory: $TBU_DIR"
+        echo "    Backup directory: $backup_dir"
         return 1
     fi
 
-    if ! mv "$source_path" "${TBU_DIR}/${subtree}"; then
+    if ! mv "$source_path" "${backup_dir}/${subtree}"; then
         echo
         echo "ERROR: Can't move source to backup directory.  Stopping."
-        echo "    Backup directory: $TBU_DIR"
+        echo "    Backup directory: $backup_dir"
         echo
         return 1
     fi
-    ln -s "${TBU_DIR}/${source_path#/}" "$source_path"
+    ln -s "${backup_dir}/${source_path#/}" "$source_path"
 }
