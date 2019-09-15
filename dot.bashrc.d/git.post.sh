@@ -21,9 +21,7 @@ git-current-branch () {
 GIT_REPOS_TO_UPDATE=(
     ".vim/bundle/*|RO"
     ".vim/vim-pathogen|RO"
-    ".dotfiles"
-    ".pypvutil"
-    "sysadmin-notes"
+    "repos/*"  # includes dotfiles and pypvutil
 )
 
 _git-update-repos-usage () {

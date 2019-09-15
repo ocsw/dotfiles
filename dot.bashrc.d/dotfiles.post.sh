@@ -5,7 +5,7 @@ _add_dotfile () {
     local dotfile="$2"
     local target_dir="$3"
     # check global first
-    local repo="${DOTFILE_REPO:-${HOME}/.dotfiles}"
+    local repo="${DOTFILE_REPO:-${HOME}/repos/dotfiles}"
     local cmd
 
     if ! [ -d "$repo" ]; then

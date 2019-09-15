@@ -38,7 +38,7 @@ fi
 if in_path pyenv-virtualenv-init; then
     eval "$(pyenv virtualenv-init - | grep -v "PATH")"
 fi
-export PYPVUTIL_HOME="${HOME}/.pypvutil"
+export PYPVUTIL_HOME="${HOME}/repos/pypvutil"
 if in_path pyenv && in_path pyenv-virtualenv-init && \
         [ -f "${PYPVUTIL_HOME}/pypvutil_init.sh" ]; then
     export PYPVUTIL_PREFIX="py"

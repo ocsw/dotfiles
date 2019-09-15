@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-DOTFILE_REPO="${HOME}/.dotfiles"
-PYPVUTIL_REPO="${HOME}/.pypvutil"
+mkdir -p "${HOME}/repos"
+DOTFILE_REPO="${HOME}/repos/dotfiles"
+PYPVUTIL_REPO="${HOME}/repos/pypvutil"
 git clone git@github.com:ocsw/dotfiles.git "$DOTFILE_REPO"
 git clone git@github.com:ocsw/pypvutil.git "$PYPVUTIL_REPO"
 
