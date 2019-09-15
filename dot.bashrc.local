@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
+# shellcheck disable=SC2034
 
 # --- overrides to .bash_profile / .bashrc ---
 
@@ -7,4 +8,8 @@
 
 # --- additions ---
 
-# none
+TBU_DIR="${HOME}/.to_back_up"
+
+# repos
+DOTFILE_REPO="${HOME}/repos/dotfiles"
+# pypvutil already taken care of in python.post.sh
