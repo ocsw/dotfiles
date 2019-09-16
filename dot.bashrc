@@ -222,7 +222,7 @@ alias pico="pico -z"
 in_path nano && alias pico=nano
 in_path less && alias more="less -E"
 alias lessx="less -+X"
-if [[ "$OS_UNAME" == CYGWIN* ]]; then
+if [[ $OS_UNAME =~ CYGWIN.* ]]; then
     explorer () { command explorer ${1:+$(cygpath -wl "$1")}; }
     alias mintty="run mintty -t bash -e env SHLVL=0 bash -l"
     alias brmintty="run mintty -c ~/.minttyrc.bigrev -t bash -e env LIGHT_BG=1 SHLVL=0 bash -l"
@@ -404,12 +404,12 @@ gc () {
         return
     fi
 
-    [[ "$OS_UNAME" == CYGWIN* ]] && cygflag=1
+    [[ $OS_UNAME =~ CYGWIN.* ]] && cygflag=1
 
     # trailing : in $PATH is interpreted as .
     # make it :: so the loop will see it
     # (leading : will already show up)
-    [[ "$path" == *: ]] && path="$path:"
+    [[ $path =~ .*: ]] && path="$path:"
 
     i=0
     IFS=":"

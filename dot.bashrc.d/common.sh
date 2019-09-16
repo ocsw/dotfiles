@@ -12,5 +12,5 @@ in_path () {
 
 # check for component of $PATH itself
 is_path_component () {
-    [[ "$PATH" =~ (^|:)$1(:|$) ]]  # no quotes around regex
+    [[ $PATH =~ (^|:)$1(:|$) ]]
 }

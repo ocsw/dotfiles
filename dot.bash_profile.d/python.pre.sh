@@ -14,7 +14,7 @@ if in_path pyenv; then
     fi
 fi
 if in_path pyenv-virtualenv-init; then
-    if ! [[ "$PATH" =~ /pyenv-virtualenv/ ]]; then
+    if ! [[ $PATH =~ /pyenv-virtualenv/ ]]; then
         eval "$(pyenv virtualenv-init - | grep PATH)"
     fi
     export PYENV_VIRTUALENV_DISABLE_PROMPT=1
