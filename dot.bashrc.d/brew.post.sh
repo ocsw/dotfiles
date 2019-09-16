@@ -1,17 +1,12 @@
 #!/usr/bin/env bash
 
-if is_available brew; then
-    brew () {
-        local reset_umask
-        local real_brew
-        reset_umask=$(umask -p)
-        # shellcheck disable=SC2230
-        real_brew=$(which brew)
-        umask 022
-        "$real_brew" "$@"
-        $reset_umask
-    }
+# see common.sh
+brew () {
+    umask_wrap 022 brew "$@"
+}
 
+# can't use is_available() because we just defined a function with the same name
+if in_path brew; then
     brew-up () {
         brew update
         brew upgrade

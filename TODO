@@ -7,7 +7,6 @@ bug in git prompt - v0.0.1.dev (no 5)
 running pytest?
 pip timeout
 
-brew, gem, gcloud, npm umask
 update-all incl. brew, repos w/ghe check/filter
 
 usage/docs
@@ -19,6 +18,5 @@ ctx completions
 ctx aliases if
 ps1
 longlist
-kctx guc1
 kns alf
 https://github.com/derailed/k9s

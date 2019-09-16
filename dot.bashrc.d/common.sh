@@ -33,3 +33,43 @@ in_path () {
 is_path_component () {
     [[ $PATH =~ (^|:)$1(:|$) ]]
 }
+
+# wrap a command in a umask setting;
+# use this from a function instead of an alias so it can't be accidentally
+# disabled with \cmd
+# also, it's generally best to define that function even if the command in
+# question isn't installed; that way, when we install it, we don't have to
+# restart the shell to get the function (or forget to)
+umask_wrap () {
+    local mask="$1"
+    local cmd="$2"
+    local reset_umask
+    local rv
+
+    if [ -z "$mask" ]; then
+        echo "ERROR: No umask value given." 1>&2
+        return 1
+    fi
+    if ! [[ $mask =~ ^[0-7]{1,4}$ ]]; then
+        echo "ERROR: Given umask value '$mask' is invalid." 1>&2
+        return 1
+    fi
+    if [ -z "$cmd" ]; then
+        echo "ERROR: No command name given." 1>&2
+        return 1
+    fi
+    shift
+    shift
+
+    reset_umask=$(umask -p)
+
+    umask "$mask"
+    # since this function is intended to be used in drop-in replacement
+    # functions for commands, we have to bypass aliases and functions when
+    # calling $cmd, or else we might be calling ourself
+    command "$cmd" "$@"
+    rv="$?"
+    $reset_umask
+
+    return "$rv"
+}
