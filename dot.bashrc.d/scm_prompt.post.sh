@@ -112,7 +112,7 @@ _prompt_scm_info () {
         fi
         br="$br$extra"
     elif [ -n "$git" ]; then
-        if in_path __git_ps1; then
+        if is_available __git_ps1; then
             __git_ps1 "$fmt"
         else
             if [ -f "$git/.git/HEAD" ]; then

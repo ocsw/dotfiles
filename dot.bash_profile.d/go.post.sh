@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if in_path go; then
+if is_available go; then
     gopath_tmp="${GOPATH:-$(go env GOPATH)}"
     # don't check for the directory's existence so that we don't need to
     # restart after both installing Go and the creation of the directory

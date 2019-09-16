@@ -91,8 +91,8 @@ shellcheck (except SC1117)
 80 char
 4 spaces
 
-if in_path pip ||
-        in_path pip2 ||
+if is_available pip ||
+        is_available pip2 ||
 
 local prev_venv
 local global_env

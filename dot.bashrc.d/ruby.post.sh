@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if in_path gem; then
+if is_available gem; then
     gem () {
         local reset_umask
         local real_gem

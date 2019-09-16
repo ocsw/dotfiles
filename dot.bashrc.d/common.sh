@@ -5,8 +5,10 @@
 # note: if we define or include these only in .bash_profile, sub-shells won't
 # get them
 
-# check for command in path
-in_path () {
+# check for availability of a command (or commands);
+# searches both the PATH and functions
+# see also https://github.com/koalaman/shellcheck/wiki/SC2230
+is_available () {
     hash "$@" > /dev/null 2>&1
 }
 

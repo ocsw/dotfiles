@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if in_path brew; then
+if is_available brew; then
     brew () {
         local reset_umask
         local real_brew

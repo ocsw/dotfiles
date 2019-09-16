@@ -219,8 +219,8 @@ alias pico="pico -z"
 # shortcuts will give more informative error messages, and control
 # aliases will be in place if the user installs the relevant command
 #
-in_path nano && alias pico=nano
-in_path less && alias more="less -E"
+is_available nano && alias pico=nano
+is_available less && alias more="less -E"
 alias lessx="less -+X"
 if [[ $OS_UNAME =~ CYGWIN.* ]]; then
     explorer () { command explorer ${1:+$(cygpath -wl "$1")}; }
@@ -233,11 +233,11 @@ else
 fi
 if [ "$OS_UNAME" = "Darwin" ]; then
     alias ls="ls -G"
-    if in_path gcp brew && \
+    if is_available gcp brew && \
             [ "$(command -v gcp)" = "$(brew --prefix)/bin/gcp" ]; then
         alias cp="gcp"
     fi
-    if in_path gmv brew && \
+    if is_available gmv brew && \
             [ "$(command -v gmv)" = "$(brew --prefix)/bin/gmv" ]; then
         alias mv="gmv"
     fi
@@ -376,7 +376,7 @@ fg () {
 # -looks for both pattern and pattern.exe
 # -removes *.dll from the results
 #
-# note: uses $OS_UNAME and requires in_path(), find, sed, and sort
+# note: uses $OS_UNAME and requires is_available(), find, sed, and sort
 #
 gc () {
     # note: bash seems to be inconsistent about whether local declarations with
@@ -399,7 +399,7 @@ gc () {
     fi
 
     # before we start doing anything messy or time consuming...
-    if ! in_path find sed sort; then
+    if ! is_available find sed sort; then
         echo "Error: gc requires find, sed, and sort available in the path."
         return
     fi

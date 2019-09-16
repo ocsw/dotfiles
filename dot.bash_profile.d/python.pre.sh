@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if in_path pyenv; then
+if is_available pyenv; then
     if [ -z "$PYENV_ROOT" ] && [ -d "$HOME/.pyenv" ]; then
         export PYENV_ROOT="$HOME/.pyenv"
     fi
@@ -13,7 +13,7 @@ if in_path pyenv; then
         export PATH="$PYENV_ROOT/shims:$PATH"
     fi
 fi
-if in_path pyenv-virtualenv-init; then
+if is_available pyenv-virtualenv-init; then
     if ! [[ $PATH =~ /pyenv-virtualenv/ ]]; then
         eval "$(pyenv virtualenv-init - | grep PATH)"
     fi
