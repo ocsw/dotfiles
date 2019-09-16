@@ -20,7 +20,7 @@ if in_path pip ||
         in_path pip2 ||
         in_path pip3; then
     _pip_completion () {
-        # shellcheck disable=2207
+        # shellcheck disable=SC2207
         COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
                        COMP_CWORD=$COMP_CWORD \
                        PIP_AUTO_COMPLETE=1 $1 ) )

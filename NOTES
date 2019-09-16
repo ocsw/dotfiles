@@ -86,7 +86,7 @@ minimal foo || bar
 
 ! [ ] || ...
 
-shellcheck (except 1117)
+shellcheck (except SC1117)
 
 80 char
 4 spaces
