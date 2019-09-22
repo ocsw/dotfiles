@@ -7,13 +7,6 @@ brew () {
 
 # can't use is_available() because we just defined a function with the same name
 if in_path brew; then
-    brew-up () {
-        brew update
-        brew upgrade
-        brew cleanup
-        brew doctor
-    }
-
     brew-fix-perms () {
         # be conservative; we don't want to include something that really
         # shouldn't be world-accessible
@@ -21,6 +14,14 @@ if in_path brew; then
         find /usr/local/{Cellar,Caskroom} \
             \( -name '__pycache__' -o -name '*.pyc' \) \! -perm -044 \
             -exec chmod -h go=u-w {} +
+    }
+
+    brew-up () {
+        brew update
+        brew upgrade
+        brew-fix-perms
+        brew cleanup
+        brew doctor
     }
 
     brew-keg-only () {
