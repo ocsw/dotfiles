@@ -13,3 +13,13 @@ TBU_DIR="${HOME}/.to_back_up"
 # repos
 DOTFILE_REPO="${HOME}/repos/dotfiles"
 # pypvutil already taken care of in python.post.sh
+
+# Update All The Things
+all-up () {
+    is_available brew-up && brew-up
+    is_available gcloud-up && gcloud-up
+    git-update-repos
+    # shellcheck disable=SC1090
+    source "${HOME}/.bash_profile"
+    chmod -R go-rwx "${HOME}"
+}
