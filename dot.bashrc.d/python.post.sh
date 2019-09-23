@@ -16,18 +16,43 @@ _python_venv_prompt () {
     fi
 }
 
-if is_available pip ||
-        is_available pip2 ||
-        is_available pip3; then
+
+# see common.sh
+_pip_wrapper () {
+    local cmd="$1"
+    # shellcheck disable=SC2230
+    if ! is_available pyenv ||
+            ! [[ "$(which "$cmd")" =~ /shims/ ]] ||
+            [[ "$(pyenv version)" =~ ^system\  ]]; then
+        umask_wrap 022 "$@"
+        return "$?"
+    fi
+    command "$@"
+}
+pip () {
+    _pip_wrapper pip "$@"
+}
+pip2 () {
+    _pip_wrapper pip2 "$@"
+}
+pip3 () {
+    _pip_wrapper pip3 "$@"
+}
+
+
+# can't use is_available() because we just defined functions with the same names
+if in_path pip ||
+        in_path pip2 ||
+        in_path pip3; then
     _pip_completion () {
         # shellcheck disable=SC2207
         COMPREPLY=( $( COMP_WORDS="${COMP_WORDS[*]}" \
                        COMP_CWORD=$COMP_CWORD \
                        PIP_AUTO_COMPLETE=1 $1 ) )
     }
-    is_available pip && complete -o default -F _pip_completion pip
-    is_available pip2 && complete -o default -F _pip_completion pip2
-    is_available pip3 && complete -o default -F _pip_completion pip3
+    in_path pip && complete -o default -F _pip_completion pip
+    in_path pip2 && complete -o default -F _pip_completion pip2
+    in_path pip3 && complete -o default -F _pip_completion pip3
 fi
 
 if is_available pyenv; then
