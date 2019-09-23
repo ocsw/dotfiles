@@ -17,6 +17,7 @@ git-current-branch () {
     git symbolic-ref --short -q HEAD
 }
 
+
 # Git repo collection; see _git-update-repos-usage()
 GIT_REPOS_TO_UPDATE=(
     ".vim/bundle/*|RO"
@@ -363,6 +364,7 @@ git-update-repos () (  # subshell
 git-update-repo () {
     git-update-repos -r "$(pwd)" "$@"
 }
+
 
 git-clone-fork () {
     local fork_url="$1"
