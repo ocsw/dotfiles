@@ -34,6 +34,7 @@ is_path_component () {
     [[ $PATH =~ (^|:)$1(:|$) ]]
 }
 
+
 # wrap a command in a umask setting;
 # use this from a function instead of an alias so it can't be accidentally
 # disabled with \cmd
@@ -73,3 +74,15 @@ umask_wrap () {
 
     return "$rv"
 }
+
+
+# wrap a command in set -x
+xtrace_wrap () {
+    # don't save the current setting, because you wouldn't use this unless it's
+    # currently off
+    set -x
+    "$@"
+    set +x
+}
+# includes commands, functions and aliases
+complete -c xtrace_wrap
