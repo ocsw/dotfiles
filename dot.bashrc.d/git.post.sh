@@ -29,8 +29,10 @@ _git-update-repos-usage () {
     cat 1>&2 <<EOF
 Usage:
 GIT_REPOS_TO_UPDATE=(REPO REPO REPO ...)
-git-update-repos [-r REPOLIST] [-e EXCLUSIONS] [-s | --silent] [-q | --quiet]
-                 [-v | --verbose] [-g | --gitverbose] [-h | --help]
+git-update-repos [-r REPOLIST | --repos REPOLIST]
+                 [-e EXCLUSIONS | --exclude EXCLUSIONS] [-i | --info-only]
+                 [-s | --silent] [-q | --quiet] [-v | --verbose]
+                 [-g | --gitverbose] [-h | --help]
 
 This tool updates a list of local git repos:
 - Repos that are not currently quiescent (nothing in git status) will be
@@ -45,7 +47,8 @@ This tool updates a list of local git repos:
   their remotes
 
 It will also print information about 'extra' branches (not 'master' or
-'develop') and stashes.
+'develop') and stashes.  (Unless --silent is used; see below.  See also
+--info-only.)
 
 By default, it uses the GIT_REPOS_TO_UPDATE array (which should not be exported
 or prepended to the command line) to determine which repos to update.  The
@@ -58,18 +61,22 @@ Each path may also have options appended to it after a '|':
 Globs and pipes ('|') in entries must be quoted or escaped.
 
 Main options:
-    -r REPOLIST
-        Overrides the GIT_REPOS_TO_UPDATE array; REPOLIST is a string of
+    -r REPOLIST | --repos REPOLIST
+        Override the GIT_REPOS_TO_UPDATE array; REPOLIST is a string of
         whitespace-separated repo entries.
 
-    -e EXCLUSIONS
-        Filters out repo names from the GIT_REPOS_TO_UPDATE array or -r
-        REPOLIST; EXCLUSIONS is string of whitespace-separated patterns (basic
-        regexes).  Matching is performed after any globs in the repo list are
-        expanded.
+    -e EXCLUSIONS | --exclude EXCLUSIONS
+        Filter out repo names from the GIT_REPOS_TO_UPDATE array or -r REPOLIST;
+        EXCLUSIONS is string of whitespace-separated patterns (basic regexes).
+        Matching is performed after any globs in the repo list are expanded.
+
+    -i | --info-only
+        Only print information about extra branches and stashes; do no fetching,
+        merging, or pushing.  Implies --quiet (see below).  Does not require
+        repos to be quiescent.
 
     -h | --help
-        Prints this help text.
+        Print this help text.
 
 There are 4 levels of verbosity, which cumulatively add outputs:
     -s | --silent
@@ -123,6 +130,7 @@ git-update-repos () (  # subshell
     repo_entries=("${GIT_REPOS_TO_UPDATE[@]}")
     exclusions=()
     verbosity="$VERB_DEFAULT"
+    info_only="no"
     while [ "$#" -gt 0 ]; do
         case "$1" in
             -r|--repos)
@@ -153,6 +161,10 @@ git-update-repos () (  # subshell
                 verbosity="$VERB_SILENT"
                 shift
                 ;;
+            -i|--info-only)
+                info_only="yes"
+                shift
+                ;;
             -h|--help)
                 _git-update-repos-usage
                 exit 0
@@ -165,6 +177,12 @@ git-update-repos () (  # subshell
                 ;;
         esac
     done
+
+    # --info implies --quiet, regardless of other options that may have come
+    # after it
+    if [ "$info_only" = "yes" ]; then
+        verbosity="$VERB_QUIET"
+    fi
 
     # process verbosity
     if [ "$verbosity" -ge "$VERB_GITVERBOSE" ]; then
@@ -228,110 +246,114 @@ git-update-repos () (  # subshell
             rstr=" ($repo)"
         fi
 
-        # check for quiescence
-        if [ -n "$(git status --porcelain)" ]; then
-            msg="WARNING: Git status not empty; skipping this repo${rstr}."
-            printf "%s\n" "$msg" 1>&2
-            cd - || return $?
-            continue
-        fi
-
-        # fetch from all remotes
-        if [ -n "$git_verb_str" ]; then
-            git fetch --all "$git_verb_str"
-        else
-            git fetch --all | grep -v '^Fetching '
-        fi
-
-        # save starting branch
-        if ! starting_branch=$(git symbolic-ref --short -q HEAD); then
-            msg="WARNING: Can't get current branch or not on a local branch; "
-            msg+="skipping this repo${rstr}."
-            printf "%s\n" "$msg" 1>&2
-            cd - || return $?
-            continue
-        fi
-
-        # handle master and develop branches specially
-        for branch in master develop; do
-            # ignore missing branches
-            # note: I think this might be safer than
-            #     git branch --no-color | \
-            #         grep "^[* ] ${branch}\$" > /dev/null
-            git show-ref --verify -q "refs/heads/$branch" || continue
-
-            # branch name
-            if [ "$verbosity" -ge "$VERB_VERBOSE" ]; then
-                printf "%s\n" "Branch: $branch"
-                bstr=""
-            else
-                bstr=" '$branch'"
-            fi
-
-            # checkout branch
-            # note: only drops stdout because of order
-            if git checkout "$branch" 2>&1 > /dev/null | \
-                    grep -vE '^(Already on|Switched to branch)'; then
+        if [ "$info_only" != "yes" ]; then
+            # check for quiescence
+            if [ -n "$(git status --porcelain)" ]; then
+                msg="WARNING: Git status not empty; skipping this repo${rstr}."
+                printf "%s\n" "$msg" 1>&2
+                cd - || return $?
                 continue
             fi
 
-            # merge from remote-tracking branch
-            # note: we're assuming that if the branch has remote and merge
-            # configs, they point to something included in the remote's fetch
-            # config
-            if git config --get "branch.${branch}.remote" > /dev/null && \
-                    git config --get "branch.${branch}.merge" > /dev/null; then
-                if [ -n "$git_verb_str" ]; then
-                    git merge "$git_verb_str"
-                else
-                    git merge 2>&1 | \
-                        grep -vE '^Already up to date|is up to date.$'
-                fi
+            # fetch from all remotes
+            if [ -n "$git_verb_str" ]; then
+                git fetch --all "$git_verb_str"
             else
-                msg="WARNING: Branch${bstr} has no remote configured."
-                printf "%s\n" "$msg" 1>&2
+                git fetch --all | grep -v '^Fetching '
             fi
 
-            # update fork
-            # note: we're making some assumptions here:
-            # - if there is an upstream fetch config, it includes master
-            # - if upstream/master exists, it's what we want to merge
-            if [ "$branch" = "master" ] && \
-                    git config --get remote.upstream.fetch > /dev/null; then
-                # ok, there's an upstream; is there an upstream/master?
-                if git show-ref --verify -q "refs/remotes/upstream/master"; then
-                    # merge upstream master into fork's master (which we're on);
-                    # the push after this section will update the fork's remote
+            # save starting branch
+            if ! starting_branch=$(git symbolic-ref --short -q HEAD); then
+                msg="WARNING: Can't get current branch or not on a local "
+                msg+="branch; skipping this repo${rstr}."
+                printf "%s\n" "$msg" 1>&2
+                cd - || return $?
+                continue
+            fi
+
+            # handle master and develop branches specially
+            for branch in master develop; do
+                # ignore missing branches
+                # note: I think this might be safer than
+                #     git branch --no-color | \
+                #         grep "^[* ] ${branch}\$" > /dev/null
+                git show-ref --verify -q "refs/heads/$branch" || continue
+
+                # branch name
+                if [ "$verbosity" -ge "$VERB_VERBOSE" ]; then
+                    printf "%s\n" "Branch: $branch"
+                    bstr=""
+                else
+                    bstr=" '$branch'"
+                fi
+
+                # checkout branch
+                # note: only drops stdout because of order
+                if git checkout "$branch" 2>&1 > /dev/null | \
+                        grep -vE '^(Already on|Switched to branch)'; then
+                    continue
+                fi
+
+                # merge from remote-tracking branch
+                # note: we're assuming that if the branch has remote and merge
+                # configs, they point to something included in the remote's
+                # fetch config
+                if git config --get "branch.${branch}.remote" > /dev/null && \
+                        git config --get "branch.${branch}.merge" \
+                        > /dev/null; then
                     if [ -n "$git_verb_str" ]; then
-                        git merge upstream/master "$git_verb_str"
+                        git merge "$git_verb_str"
                     else
-                        git merge upstream/master 2>&1 \
-                            | grep -vE '^Already up to date|is up to date.$'
+                        git merge 2>&1 | \
+                            grep -vE '^Already up to date|is up to date.$'
                     fi
                 else
-                    msg="WARNING: There's an upstream remote for this "
-                    msg+="repo${rstr}, but no upstream/master."
+                    msg="WARNING: Branch${bstr} has no remote configured."
                     printf "%s\n" "$msg" 1>&2
                 fi
-            fi
 
-            # push
-            if [ "$read_only" = "no" ]; then
-                if [ -n "$git_verb_str" ]; then
-                    git push "$git_verb_str"
-                else
-                    git push 2>&1 | grep -v '^Everything up-to-date'
+                # update fork
+                # note: we're making some assumptions here:
+                # - if there is an upstream fetch config, it includes master
+                # - if upstream/master exists, it's what we want to merge
+                if [ "$branch" = "master" ] && \
+                        git config --get remote.upstream.fetch > /dev/null; then
+                    # ok, there's an upstream; is there an upstream/master?
+                    if git show-ref --verify -q \
+                            "refs/remotes/upstream/master"; then
+                        # merge upstream master into fork's master (which we're
+                        # on); the push after this section will update the
+                        # fork's remote
+                        if [ -n "$git_verb_str" ]; then
+                            git merge upstream/master "$git_verb_str"
+                        else
+                            git merge upstream/master 2>&1 \
+                                | grep -vE '^Already up to date|is up to date.$'
+                        fi
+                    else
+                        msg="WARNING: There's an upstream remote for this "
+                        msg+="repo${rstr}, but no upstream/master."
+                        printf "%s\n" "$msg" 1>&2
+                    fi
                 fi
-            fi
 
-            # go back to previous branch
-            # only drops stdout because of order
-            if git checkout "$starting_branch" 2>&1 > /dev/null | \
-                    grep -vE '^(Already on|Switched to branch)'; then
-                continue
-            fi
+                # push
+                if [ "$read_only" = "no" ]; then
+                    if [ -n "$git_verb_str" ]; then
+                        git push "$git_verb_str"
+                    else
+                        git push 2>&1 | grep -v '^Everything up-to-date'
+                    fi
+                fi
 
-        done
+                # go back to previous branch
+                # only drops stdout because of order
+                if git checkout "$starting_branch" 2>&1 > /dev/null | \
+                        grep -vE '^(Already on|Switched to branch)'; then
+                    continue
+                fi
+            done  # end of special-branches loop
+        fi  # end of if-not-info-only conditional
 
         if [ "$verbosity" -ge "$VERB_QUIET" ]; then
             # print extra branches
@@ -358,7 +380,7 @@ git-update-repos () (  # subshell
         fi
 
         cd - || return $?
-    done
+    done  # end of repos loop
 )
 
 git-update-repo () {
