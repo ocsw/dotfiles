@@ -408,9 +408,9 @@ git-clone-fork () {
     fork_repo=$(printf "%s\n" "$fork_url" | awk -F/ '{print $(NF)}' | \
         sed 's/\.git$//')
 
-    git clone "$fork_url" "${fork_user}-${fork_repo}" || return $?
-    cd "${fork_user}-${fork_repo}" || return $?
-    git remote add upstream "$upstream_url" || return $?
-    # shellcheck disable=SC2164
-    cd -
+    (
+        git clone "$fork_url" "${fork_user}-${fork_repo}" && \
+        cd "${fork_user}-${fork_repo}" && \
+        git remote add upstream "$upstream_url"
+    )
 }

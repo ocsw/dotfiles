@@ -330,12 +330,13 @@ h () {
 }
 
 # make cd not print the target directory for "cd -";
-# ||s are to shut up shellcheck
 cd () {
     if [ "$*" = "-" ]; then
-        builtin cd - > /dev/null || return $?
+        # shellcheck disable=SC2164
+        builtin cd - > /dev/null
     else
-        builtin cd "$@" || return $?
+        # shellcheck disable=SC2164
+        builtin cd "$@"
     fi
 }
 
