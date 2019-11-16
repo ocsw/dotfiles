@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-if in_path docker; then
+if is_available docker; then
     docker-ls-all() {
         docker image ls --all
         docker container ls --all
