@@ -16,6 +16,7 @@ ln_dotfile .bashrc.d
 ln_dotfile .inputrc
 cp_dotfile .bashrc.local
 #ln_dotfile .bash_logout  # maybe
+ln_dotfile .hstr_blacklist
 #
 ln_dotfile .vimrc
 ln_dotfile .vimrc.d
@@ -31,6 +32,8 @@ touch .bash_history
 ln_tbu .bash_history
 touch .bashrc.local
 ln_tbu .bashrc.local
+touch .hstr_favorites
+ln_tbu .hstr_favorites
 touch .vimrc.local
 ln_tbu .vimrc.local
 #

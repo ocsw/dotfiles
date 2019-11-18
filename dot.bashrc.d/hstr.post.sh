@@ -6,7 +6,7 @@ if is_available hstr; then
     HSTR_CONFIG="${HSTR_CONFIG},raw-history-view"
     HSTR_CONFIG="${HSTR_CONFIG},duplicates"
     HSTR_CONFIG="${HSTR_CONFIG},verbose-kill"
-    #HSTR_CONFIG="${HSTR_CONFIG},blacklist"
+    HSTR_CONFIG="${HSTR_CONFIG},blacklist"
     HSTR_CONFIG="${HSTR_CONFIG},warning"
     export HSTR_CONFIG
 
@@ -17,7 +17,3 @@ if is_available hstr; then
     alias hh="hstr"
     alias hhn="hstr -n"
 fi
-
-# ~/.hstr_favorites
-# ~/.hstr_blacklist
-# export HISTCONTROL=ignorespace
