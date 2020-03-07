@@ -168,12 +168,10 @@ git-update-repos () (  # subshell
             -h|--help)
                 _git-update-repos-usage
                 exit 0
-                shift
                 ;;
             *)
                 _git-update-repos-usage
                 exit 1
-                shift
                 ;;
         esac
     done
