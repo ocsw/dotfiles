@@ -78,11 +78,17 @@ umask_wrap () {
 
 # wrap a command in set -x
 xtrace_wrap () {
+    if [ -z "$1" ]; then
+        echo "ERROR: No command given to wrap." 1>&2
+        return 1
+    fi
     # don't save the current setting, because you wouldn't use this unless it's
     # currently off
     set -x
     "$@"
+    rv="$?"
     set +x
+    return "$rv"
 }
 # includes commands, functions and aliases
 complete -c xtrace_wrap
