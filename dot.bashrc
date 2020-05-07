@@ -343,7 +343,11 @@ cd () {
 # move up the directory tree; partly from Simon Elmir
 up () {
     local updir
-    updir=$(printf "../%.0s" $(seq 1 "$1"))  # no quotes
+    if [ -z "$1" ]; then
+        updir=".."
+    else
+        updir=$(printf "../%.0s" $(seq 1 "$1"))
+    fi
     if [ -t 1 ]; then
         # shellcheck disable=SC2164
         cd "$updir"
