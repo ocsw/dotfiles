@@ -244,8 +244,13 @@ git-update-repos () (  # subshell
             rstr=" ($repo)"
         fi
 
-        if [ "$info_only" != "yes" ]; then
-            # check for quiescence
+        if [ "$info_only" == "yes" ]; then
+            # check for quiescence, just as information
+            if [ -n "$(git status --porcelain)" ]; then
+                printf "%s\n" "Git status not empty${rstr}"
+            fi
+        else
+            # check for quiescence and warn / skip
             if [ -n "$(git status --porcelain)" ]; then
                 msg="WARNING: Git status not empty; skipping this repo${rstr}."
                 printf "%s\n" "$msg" 1>&2
@@ -351,7 +356,7 @@ git-update-repos () (  # subshell
                     continue
                 fi
             done  # end of special-branches loop
-        fi  # end of if-not-info-only conditional
+        fi  # end of if-info-only conditional
 
         if [ "$verbosity" -ge "$VERB_QUIET" ]; then
             # print extra branches
