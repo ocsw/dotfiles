@@ -251,8 +251,6 @@ d () { ls -l   "@" 2>&1 | $DIRPAGER; }
 s () { ls -laR "@" 2>&1 | $DIRPAGER; }
 a () { ls -la  "@" 2>&1 | $DIRPAGER; }
 case "$OS_UNAME" in
-    # for some unknown reason, this started breaking on OSX without the function
-    # keyword
     CYGWIN*)
         # note: /a is for ASCII; no way to exclude dotfiles
         # dirs, incl. dots

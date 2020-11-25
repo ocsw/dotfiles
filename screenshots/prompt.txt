@@ -27,7 +27,7 @@ My prompt has many cool and useful features:
 - The ending mark is $ for a non-root user, # for root.
 
 - ***RAINBOWS*** (ahem)  Having separate colors for each section makes them
-  easier to identify quickly.  The screenshot is from iTerm2 on OSX, with the
+  easier to identify quickly.  The screenshot is from iTerm2 on macOS, with the
   Tango Dark colorset.
 
 Source is in dot.bashrc (prompt section) and
