@@ -30,25 +30,25 @@ _git-update-repos-usage () {
 Usage:
 GIT_REPOS_TO_UPDATE=(REPO REPO REPO ...)
 git-update-repos [-r REPOLIST | --repos REPOLIST]
-                 [-e EXCLUSIONS | --exclude EXCLUSIONS] [-i | --info-only]
+                 [-e EXCLUSIONS | --exclude EXCLUSIONS]
+                 [-k KEYBRANCHLIST | --key KEYBRANCHLIST] [-i | --info-only]
                  [-s | --silent] [-q | --quiet] [-v | --verbose]
                  [-g | --gitverbose] [-h | --help]
 
-This tool updates a list of local git repos:
-- Repos that are not currently quiescent (nothing in git status) will be
-  skipped with warnings, otherwise:
-- All configured remotes will be fetched
-- Local 'master' and 'develop' branches, if present, will be merged into from
-  their remote branches, if present
-- Forked repos will be detected by the presence of an 'upstream' remote, and
-  the local 'master' branch, if present, will be merged into from its upstream
-  branch, if present
-- Local 'master' and 'develop' branches, if present, will be pushed back to
-  their remotes
+This tool updates a list of local git repos, with special treatment of
+particular 'key' branches.  Repos that are not currently quiescent (nothing in
+git status) will be skipped with warnings, otherwise:
 
-It will also print information about 'extra' branches (not 'master' or
-'develop') and stashes.  (Unless --silent is used; see below.  See also
---info-only.)
+- All configured remotes will be fetched
+- Local key branches, if present, will be merged into from their remote
+  branches, if present
+- Forked repos will be detected by the presence of an 'upstream' remote, and
+  the local key branches, if present, will be merged into from their upstream
+  branches, if present
+- Local key branches, if present, will be pushed back to their remotes
+
+It will also print information about 'extra' (non-'key') branches and stashes.
+(Unless --silent is used; see below.  See also --info-only.)
 
 By default, it uses the GIT_REPOS_TO_UPDATE array (which should not be exported
 or prepended to the command line) to determine which repos to update.  The
@@ -70,6 +70,11 @@ Main options:
         EXCLUSIONS is string of whitespace-separated patterns (basic regexes).
         Matching is performed after any globs in the repo list are expanded.
 
+    -k KEYBRANCHLIST | --key KEYBRANCHLIST
+        Specify which branches get special treatment; KEYBRANCHLIST is a string
+        of whitespace-separated branch names.  It defaults to:
+            "master main develop"
+
     -i | --info-only
         Only print information about extra branches and stashes; do no fetching,
         merging, or pushing.  Implies --quiet (see below).  Does not require
@@ -88,7 +93,7 @@ There are 4 levels of verbosity, which cumulatively add outputs:
     -v | --verbose
         Also print repo and branch headers even if not doing anything
     -g | --gitverbose
-        Also tell git to be verbose for pull, fetch, merge, and push
+        Also tell git to be verbose for fetch, merge, and push
 EOF
 }
 
@@ -100,7 +105,10 @@ git-update-repos () (  # subshell
 
     local repo_entries
     local exclusions
+    local key_branches
     local verbosity
+    local info_only
+    local key_branches_grep
     local git_verb_str
     local expanded_entries
     local entry
@@ -129,6 +137,7 @@ git-update-repos () (  # subshell
     # process arguments
     repo_entries=("${GIT_REPOS_TO_UPDATE[@]}")
     exclusions=()
+    key_branches=("master" "main" "develop")
     verbosity="$VERB_DEFAULT"
     info_only="no"
     while [ "$#" -gt 0 ]; do
@@ -142,6 +151,12 @@ git-update-repos () (  # subshell
             -e|--exclude)
                 # shellcheck disable=SC2206
                 exclusions=($2)  # no quotes so we get word splitting
+                shift
+                shift
+                ;;
+            -k|--key)
+                # shellcheck disable=SC2206
+                key_branches=($2)  # no quotes so we get word splitting
                 shift
                 shift
                 ;;
@@ -175,6 +190,13 @@ git-update-repos () (  # subshell
                 ;;
         esac
     done
+
+    # put together a string of |-separated key-branch names, for use with grep
+    key_branches_grep=""
+    for branch in "${key_branches[@]}"; do
+        key_branches_grep="${key_branches_grep}|${branch}"
+    done
+    key_branches_grep="${key_branches_grep##|}"
 
     # --info implies --quiet, regardless of other options that may have come
     # after it
@@ -274,8 +296,8 @@ git-update-repos () (  # subshell
                 continue
             fi
 
-            # handle master and develop branches specially
-            for branch in master develop; do
+            # handle key branches specially
+            for branch in "${key_branches[@]}"; do
                 # ignore missing branches
                 # note: I think this might be safer than
                 #     git branch --no-color | \
@@ -317,25 +339,24 @@ git-update-repos () (  # subshell
 
                 # update fork
                 # note: we're making some assumptions here:
-                # - if there is an upstream fetch config, it includes master
-                # - if upstream/master exists, it's what we want to merge
-                if [ "$branch" = "master" ] && \
-                        git config --get remote.upstream.fetch > /dev/null; then
-                    # ok, there's an upstream; is there an upstream/master?
+                # - if there is an upstream fetch config, it includes $branch
+                # - if upstream/$branch exists, we want to merge it
+                if git config --get remote.upstream.fetch > /dev/null; then
+                    # ok, there's an upstream; is there an upstream/$branch?
                     if git show-ref --verify -q \
-                            "refs/remotes/upstream/master"; then
-                        # merge upstream master into fork's master (which we're
+                            "refs/remotes/upstream/${branch}"; then
+                        # merge upstream branch into fork's branch (which we're
                         # on); the push after this section will update the
                         # fork's remote
                         if [ -n "$git_verb_str" ]; then
-                            git merge upstream/master "$git_verb_str"
+                            git merge "upstream/${branch}" "$git_verb_str"
                         else
-                            git merge upstream/master 2>&1 \
+                            git merge "upstream/${branch}" 2>&1 \
                                 | grep -vE '^Already up to date|is up to date.$'
                         fi
                     else
                         msg="WARNING: There's an upstream remote for this "
-                        msg+="repo${rstr}, but no upstream/master."
+                        msg+="repo${rstr}, but no upstream/${branch}."
                         printf "%s\n" "$msg" 1>&2
                     fi
                 fi
@@ -355,7 +376,7 @@ git-update-repos () (  # subshell
                         grep -vE '^(Already on|Switched to branch)'; then
                     continue
                 fi
-            done  # end of special-branches loop
+            done  # end of key-branches loop
         fi  # end of if-info-only conditional
 
         if [ "$verbosity" -ge "$VERB_QUIET" ]; then
@@ -364,11 +385,12 @@ git-update-repos () (  # subshell
             # will just print more than intended)
             # an alternative (but slower) approach would be:
             #   extra_branches=$(git show-ref --heads | awk '{print $2}' | \
-            #       sed 's|^refs/heads/||' | grep -vE '^(master|develop)$')
+            #       sed 's|^refs/heads/||' | \
+            #       grep -vE '^(${key_branches_grep})$')
             # and then more processing to add the * to the current branch, and
             # the leading spaces
             extra_branches=$(git branch --no-color | \
-                grep -vE "^[* ] (develop|master)\$")
+                grep -vE "^[* ] (${key_branches_grep})\$")
             if [ -n "$extra_branches" ]; then
                 printf "%s\n" "Extra branches${rstr}:"
                 printf "%s\n" "$extra_branches"
