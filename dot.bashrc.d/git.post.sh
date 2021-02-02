@@ -327,9 +327,9 @@ git-update-repos () (  # subshell
                         git config --get "branch.${branch}.merge" \
                         > /dev/null; then
                     if [ -n "$git_verb_str" ]; then
-                        git merge "$git_verb_str"
+                        git merge --ff-only "$git_verb_str"
                     else
-                        git merge 2>&1 | \
+                        git merge --ff-only 2>&1 | \
                             grep -vE '^Already up to date|is up to date.$'
                     fi
                 else
@@ -349,9 +349,10 @@ git-update-repos () (  # subshell
                         # on); the push after this section will update the
                         # fork's remote
                         if [ -n "$git_verb_str" ]; then
-                            git merge "upstream/${branch}" "$git_verb_str"
+                            git merge --ff-only "upstream/${branch}" \
+                                "$git_verb_str"
                         else
-                            git merge "upstream/${branch}" 2>&1 \
+                            git merge --ff-only "upstream/${branch}" 2>&1 \
                                 | grep -vE '^Already up to date|is up to date.$'
                         fi
                     else
