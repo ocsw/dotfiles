@@ -371,6 +371,12 @@ git-update-repos () (  # subshell
                 fi
 
                 # go back to previous branch
+                #
+                # (should probably be outside the key-branches loop, but this
+                # way, you're never more than a 'git checkout -' away from where
+                # you were, no matter at what point in the script it might be
+                # killed)
+                #
                 # only drops stdout because of order
                 if git checkout "$starting_branch" 2>&1 > /dev/null | \
                         grep -vE '^(Already on|Switched to branch)'; then
