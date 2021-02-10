@@ -83,7 +83,7 @@ Main options:
     -h | --help
         Print this help text.
 
-There are 4 levels of verbosity, which cumulatively add outputs:
+There are 5 levels of verbosity, which cumulatively add outputs:
     -s | --silent
         Print only errors and warnings
     -q | --quiet
