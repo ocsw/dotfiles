@@ -78,12 +78,10 @@ else
 fi
 
 # are we in mosh, tmux, and/or screen?
-# shellcheck disable=SC2009
-SELF_PPID=$(ps -eo pid,ppid | grep "^[ 	]*$$[ 	]*" | awk '{print $2}')
-# shellcheck disable=SC2009
+SELF_PPID=$(ps -eo pid,ppid | awk "\$1 == $$ {print \$2}")
 SELF_PARENT=$(
-    ps -eo pid,comm | grep "^[ 	]*${SELF_PPID}[ 	]*" | \
-    sed "s/^[ 	]*${SELF_PPID}[ 	]*//"
+    ps -eo pid,comm | awk "\$1 == $SELF_PPID {print \$0}" | \
+    sed 's/^[ 	]*[0-9]*[ 	][ 	]*//'
 )
 [ "$SELF_PARENT" = "mosh-server" ] && export _IN_MOSH="yes"
 [ -n "$TMUX" ] && export _IN_TMUX="yes"
