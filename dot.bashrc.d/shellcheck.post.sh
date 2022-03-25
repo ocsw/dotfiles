@@ -1,3 +1,4 @@
 #!/usr/bin/env bash
 
-export SHELLCHECK_OPTS="-e SC1117"
+# doesn't seem to be necessary anymore?
+#export SHELLCHECK_OPTS="-e SC1117"
