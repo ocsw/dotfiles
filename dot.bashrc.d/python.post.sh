@@ -20,7 +20,6 @@ _python_venv_prompt () {
 # see common.sh
 _pip_wrapper () {
     local cmd="$1"
-    # shellcheck disable=SC2230
     if ! is_available pyenv ||
             ! [[ "$(which "$cmd")" =~ /shims/ ]] ||
             [[ "$(pyenv version)" =~ ^system\  ]]; then
@@ -65,7 +64,7 @@ export PYPVUTIL_HOME="${HOME}/repos/pypvutil"
 if is_available pyenv pyenv-virtualenv-init && \
         [ -f "${PYPVUTIL_HOME}/pypvutil_init.sh" ]; then
     export PYPVUTIL_PREFIX="py"
-    # shellcheck disable=SC1090
+    # shellcheck disable=SC1091
     . "${PYPVUTIL_HOME}/pypvutil_init.sh"
 else
     unset PYPVUTIL_HOME

@@ -6,7 +6,7 @@ PYPVUTIL_REPO="${HOME}/repos/pypvutil"
 git clone git@github.com:ocsw/dotfiles.git "$DOTFILE_REPO"
 git clone git@github.com:ocsw/pypvutil.git "$PYPVUTIL_REPO"
 
-# shellcheck disable=SC1090
+# shellcheck disable=SC1091
 . "${DOTFILE_REPO}/dot.bashrc.d/dotfiles.post.sh"
 
 ln_dotfile .bash_profile
@@ -24,7 +24,7 @@ cp_dotfile .vimrc.local
 #
 #ln_dotfile .muttrc  # maybe
 
-# shellcheck disable=SC1090
+# shellcheck disable=SC1091
 . "${DOTFILE_REPO}/dot.bashrc.d/to_back_up.post.sh"
 cd "$HOME" || exit 1
 

@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2012
 
 # --- setup ---
 
@@ -16,7 +15,7 @@ OS_UNAME=$(uname)
 unset PROMPT_COMMAND
 
 # tools needed for both main body and sub-scripts
-# shellcheck disable=SC1090
+# shellcheck disable=SC1091
 . "${HOME}/.bashrc.d/common.sh"
 
 
@@ -245,8 +244,11 @@ fi
 #
 DIRPAGER="${DIRPAGER:-less -E}"  # don't use with quotes
 alias l="ls -alF"  # from OpenBSD defaults
+# shellcheck disable=SC2012
 d () { ls -l   "@" 2>&1 | $DIRPAGER; }
+# shellcheck disable=SC2012
 s () { ls -laR "@" 2>&1 | $DIRPAGER; }
+# shellcheck disable=SC2012
 a () { ls -la  "@" 2>&1 | $DIRPAGER; }
 case "$OS_UNAME" in
     CYGWIN*)
@@ -328,11 +330,9 @@ h () {
 # make cd not print the target directory for "cd -";
 cd () {
     if [ "$*" = "-" ]; then
-        # shellcheck disable=SC2164
-        builtin cd - > /dev/null
+        builtin cd - > /dev/null || return $?
     else
-        # shellcheck disable=SC2164
-        builtin cd "$@"
+        builtin cd "$@" || return $?
     fi
 }
 
@@ -345,8 +345,7 @@ up () {
         updir=$(printf "../%.0s" $(seq 1 "$1"))
     fi
     if [ -t 1 ]; then
-        # shellcheck disable=SC2164
-        cd "$updir"
+        cd "$updir" || return $?
     else
         printf "%s\n" "$updir"
     fi
@@ -461,5 +460,5 @@ fi
 
 # --- machine-specific settings, overrides, aliases, etc. ---
 
-# shellcheck disable=SC1090
+# shellcheck disable=SC1091
 [ -e "${HOME}/.bashrc.local" ] && . "${HOME}/.bashrc.local"

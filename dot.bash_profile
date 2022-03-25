@@ -2,7 +2,8 @@
 
 # --- tools needed for both main body and sub-scripts ---
 
-# shellcheck disable=SC1090  # seems to cover the whole file?
+:  # noop; prevents shellcheck disable from covering the whole file
+# shellcheck disable=SC1091
 . "${HOME}/.bashrc.d/common.sh"
 
 
@@ -56,5 +57,5 @@ fi
 
 
 # --- source .bashrc ---
-# shellcheck disable=SC1090
+# shellcheck disable=SC1091
 [ -e "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"

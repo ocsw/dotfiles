@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-# shellcheck disable=SC2034
 
 # --- overrides to .bash_profile / .bashrc ---
 
@@ -8,9 +7,12 @@
 
 # --- additions ---
 
+:  # noop; prevents shellcheck disable from covering the whole file
+# shellcheck disable=SC2034
 TBU_DIR="${HOME}/.to_back_up"
 
 # repos
+# shellcheck disable=SC2034
 DOTFILE_REPO="${HOME}/repos/dotfiles"
 # pypvutil already taken care of in python.post.sh
 
@@ -19,7 +21,7 @@ all-up () {
     is_available brew-up && brew-up
     is_available gcloud-up && gcloud-up
     git-update-repos
-    # shellcheck disable=SC1090
+    # shellcheck disable=SC1091
     source "${HOME}/.bash_profile"
     chmod -R go-rwx "${HOME}"
 }
