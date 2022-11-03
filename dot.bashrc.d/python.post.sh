@@ -55,7 +55,7 @@ if in_path pip ||
 fi
 
 if is_available pyenv; then
-    eval "$(pyenv init - | grep -v "PATH")"
+    eval "$(pyenv init - | grep -vi 'path' | grep -v '^fi; done; $')"
 fi
 if is_available pyenv-virtualenv-init; then
     eval "$(pyenv virtualenv-init - | grep -v "PATH")"
