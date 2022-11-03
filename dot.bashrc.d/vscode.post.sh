@@ -10,9 +10,9 @@ Usage:
     vscode-setting -u|--unset SETTING_NAME
     vscode-setting -g|--get SETTING_NAME
 
-Sets, unsets, or gets a VSCode setting using jq.
+Sets, unsets, or gets a VSCode workspace setting using jq.
 
-Must be run from the root of the VSCode project directory.
+Must be run from the root of the VSCode workspace directory.
 EOF
 }
 
