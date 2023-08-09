@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+mkdir -p "${HOME}/bin"
+
 mkdir -p "${HOME}/repos"
 DOTFILE_REPO="${HOME}/repos/dotfiles"
 PYPVUTIL_REPO="${HOME}/repos/pypvutil"
