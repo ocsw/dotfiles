@@ -39,7 +39,7 @@ pip3 () {
 }
 
 
-# can't use is_available() because we just defined functions with the same names
+# can't use is_available() because we defined functions with the same names
 if in_path pip ||
         in_path pip2 ||
         in_path pip3; then

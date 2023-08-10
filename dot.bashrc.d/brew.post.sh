@@ -5,7 +5,7 @@ brew () {
     umask_wrap 022 brew "$@"
 }
 
-# can't use is_available() because we just defined a function with the same name
+# can't use is_available() because we defined a function with the same name
 if in_path brew; then
     brew-fix-perms () {
         if [ -d /usr/local/Cellar ]; then
