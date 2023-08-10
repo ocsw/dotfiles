@@ -142,7 +142,7 @@ endif
 " ***************
 
 " Flake8
-let g:flake8_cmd="/usr/local/bin/flake8"
+let g:flake8_cmd = $HOME . "/bin/flake8"
 autocmd FileType python autocmd BufWritePost <buffer> call Flake8()
 let g:flake8_show_in_gutter=1
 let g:flake8_show_in_file=1
