@@ -22,10 +22,15 @@ npm () {
 
 if [ -d "$HOME/.nvm" ]; then
     export NVM_DIR="$HOME/.nvm"
-    # shellcheck disable=SC1091
-    [ -s "/usr/local/opt/nvm/nvm.sh" ] && \
-        . "/usr/local/opt/nvm/nvm.sh"
-    # shellcheck disable=SC1091
-    [ -s "/usr/local/opt/nvm/etc/bash_completion.d/nvm" ] && \
-        . "/usr/local/opt/nvm/etc/bash_completion.d/nvm"
+
+    # can't use is_available() for brew because we defined a function with the
+    # same name
+    if in_path brew; then
+        # shellcheck disable=SC1091
+        [ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && \
+            . "$(brew --prefix)/opt/nvm/nvm.sh"
+        # shellcheck disable=SC1091
+        [ -s "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" ] && \
+            . "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm"
+    fi
 fi
