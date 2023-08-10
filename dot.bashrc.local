@@ -15,13 +15,57 @@ TBU_DIR="${HOME}/.to_back_up"
 # shellcheck disable=SC2034
 DOTFILE_REPO="${HOME}/repos/dotfiles"
 # pypvutil already taken care of in python.post.sh
+SYSTEM_SETUP="${HOME}/repos/system-setup"
 
 # Update All The Things
+_all-up-header () {
+    local color="1;36"  # bright cyan
+    printf "%s\n" $'\e'"[${color}m*** $1 ***"$'\e[0m'
+}
 all-up () {
-    is_available brew-up && brew-up
-    is_available gcloud-up && gcloud-up
+    echo
+
+    if is_available brew-up; then
+        _all-up-header "brew"
+        brew-up
+        echo
+    fi
+
+    if is_available gcloud-up; then
+        _all-up-header "gcloud"
+        echo "y" | gcloud-up
+        echo
+    fi
+
+    if is_available gke-up; then
+        _all-up-header "GKE"
+        gke-up
+        echo
+    fi
+
+    _all-up-header "repos"
     git-update-repos
+    echo
+
+    _all-up-header "repo branches and stashes"
+    git-update-repos -i
+    echo
+
+    _all-up-header ".bash_profile"
     # shellcheck disable=SC1091
     source "${HOME}/.bash_profile"
-    chmod -R go-rwx "${HOME}"
+    echo
+
+    _all-up-header ".gitconfig"
+    "${SYSTEM_SETUP}/unix-common/git-config.sh"
+    "${SYSTEM_SETUP}/unix-common/git-check.sh"
+    echo
+
+    _all-up-header "perms"
+    chmod -R go-rwx "${HOME}" 2>/dev/null
+    chmod -h go-rwx ~/.[a-zA-Z0-9]* ~/.ssh/config ~/.gnupg*/* ~/.m2/* \
+        ~/Library/Application\ Support/Code/User/* \
+        ~/.vim/autoload/pathogen.vim \
+        ~/bin/*
+    echo
 }

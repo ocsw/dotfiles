@@ -5,8 +5,10 @@ mkdir -p "${HOME}/bin"
 mkdir -p "${HOME}/repos"
 DOTFILE_REPO="${HOME}/repos/dotfiles"
 PYPVUTIL_REPO="${HOME}/repos/pypvutil"
+SYSTEM_SETUP="${HOME}/repos/system-setup"
 git clone git@github.com:ocsw/dotfiles.git "$DOTFILE_REPO"
 git clone git@github.com:ocsw/pypvutil.git "$PYPVUTIL_REPO"
+git clone git@github.com:ocsw/system-setup.git "$SYSTEM_SETUP"
 
 # shellcheck disable=SC1091
 . "${DOTFILE_REPO}/dot.bashrc.d/dotfiles.post.sh"
