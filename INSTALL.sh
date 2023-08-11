@@ -97,3 +97,4 @@ if [ -n "$vscode_confdir" ]; then
     mkdir -p "$vscode_confdir/snippets"
     ln_tbu "$vscode_confdir/snippets"
 fi
+unset vscode_confdir
