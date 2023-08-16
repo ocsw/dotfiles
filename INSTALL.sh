@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+umask 077
+
 mkdir -p "${HOME}/bin"
 
 mkdir -p "${HOME}/repos"
@@ -33,6 +35,7 @@ cp_dotfile .vimrc.local
 cd "$HOME" || exit 1
 
 touch .bash_history
+chmod 600 .bash_history
 ln_tbu .bash_history
 touch .bashrc.local
 ln_tbu .bashrc.local
@@ -46,6 +49,9 @@ chmod 700 .ssh
 touch .ssh/config
 chmod 600 .ssh/config
 ln_tbu .ssh/config
+touch .ssh/known_hosts
+chmod 600 .ssh/known_hosts
+ln_tbu .ssh/known_hosts
 #
 mkdir -p .gnupg
 touch .gnupg/dirmngr.conf
@@ -54,15 +60,15 @@ touch .gnupg/gpg-agent.conf
 ln_tbu .gnupg/gpg-agent.conf
 touch .gnupg/gpg.conf
 ln_tbu .gnupg/gpg.conf
-if [ "$(uname)" = "Darwin" ]; then
-    mkdir -p .gnupg_pre_2.1
-    touch .gnupg_pre_2.1/dirmngr.conf
-    ln_tbu .gnupg_pre_2.1/dirmngr.conf
-    touch .gnupg_pre_2.1/gpg-agent.conf
-    ln_tbu .gnupg_pre_2.1/gpg-agent.conf
-    touch .gnupg_pre_2.1/gpg.conf
-    ln_tbu .gnupg_pre_2.1/gpg.conf
-fi
+# if [ "$(uname)" = "Darwin" ]; then
+#     mkdir -p .gnupg_pre_2.1
+#     touch .gnupg_pre_2.1/dirmngr.conf
+#     ln_tbu .gnupg_pre_2.1/dirmngr.conf
+#     touch .gnupg_pre_2.1/gpg-agent.conf
+#     ln_tbu .gnupg_pre_2.1/gpg-agent.conf
+#     touch .gnupg_pre_2.1/gpg.conf
+#     ln_tbu .gnupg_pre_2.1/gpg.conf
+# fi
 #
 touch .gitconfig
 ln_tbu .gitconfig
@@ -70,8 +76,10 @@ touch .gitignore_global
 ln_tbu .gitignore_global
 #
 mkdir -p .ipython
+chmod 700 .ipython
 ln_tbu .ipython
 touch .python_history
+chmod 600 .python_history
 ln_tbu .python_history
 mkdir -p .pip
 ln_tbu .pip
