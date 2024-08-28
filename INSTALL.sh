@@ -92,6 +92,9 @@ mkdir -p .m2
 touch .m2/settings.xml
 ln_tbu .m2/settings.xml
 #
+touch .bazelrc
+ln_tbu .bazelrc
+#
 vscode_confdir=""
 if [ "$(uname)" = "Darwin" ]; then
     vscode_confdir="Library/Application Support/Code/User"
