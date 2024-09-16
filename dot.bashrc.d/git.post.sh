@@ -59,6 +59,7 @@ elements in this array are local filesystem paths.  Each path:
 Each path may also have options appended to it after a '|':
 - '|RO' to skip push
 Globs and pipes ('|') in entries must be quoted or escaped.
+If a path ends with '/*', non-directories will be ignored when expanding it.
 
 Main options:
     -r REPOLIST | --repos REPOLIST
@@ -114,6 +115,7 @@ git-update-repos () (  # subshell
     local entry
     local repo
     local flags
+    local has_star
     local exp_repo
     local filtered_entries
     local matched
@@ -221,7 +223,14 @@ git-update-repos () (  # subshell
     for entry in "${repo_entries[@]}"; do
         repo="${entry%%|*}"  # might actually be a pattern
         flags="${entry##*|}"
+        has_star="no"
+        if [ "$repo" != "${repo%/\*}" ]; then
+            has_star="yes"
+        fi
         for exp_repo in $repo; do  # no quotes so it expands
+            if [ "$has_star" = "yes" ] && ! [ -d "$exp_repo" ]; then
+                continue
+            fi
             expanded_entries+=("${exp_repo}|${flags}")
         done
     done
