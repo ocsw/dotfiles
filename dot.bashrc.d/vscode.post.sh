@@ -12,26 +12,27 @@ Usage:
 
 Sets, unsets, or gets a VSCode workspace setting using jq.
 
-Must be run from the root of the VSCode workspace directory.
+Must be run from the root of the VSCode project directory.  Alternatively,
+specify '-f|--file PATH_TO_SETTINGS_FILE'; this is useful for workspace files.
 EOF
 }
 
 vscode-setting () {
-    local argc
     local mode
     local jq_arg
     local setting_name
     local setting_value
+    local missing_value
     local vsc_dir=".vscode"
     local vsc_settings_file="${vsc_dir}/settings.json"
     local cur_setting
     local new_file_contents
 
-    argc="$#"
     mode=""
     jq_arg=""
     setting_name=""
     setting_value=""
+    missing_value="no"
     while [ "$#" -gt 0 ]; do
         case "$1" in
             -s|--set|--set-string)
@@ -39,6 +40,10 @@ vscode-setting () {
                 jq_arg="--arg"
                 setting_name="$2"
                 setting_value="$3"
+                # allow for explicit "" but not a lack of argument
+                if [ "$#" -lt 3 ]; then
+                    missing_value=yes
+                fi
                 shift
                 shift
                 shift
@@ -48,6 +53,10 @@ vscode-setting () {
                 jq_arg="--argjson"
                 setting_name="$2"
                 setting_value="$3"
+                # allow for explicit "" but not a lack of argument
+                if [ "$#" -lt 3 ]; then
+                    missing_value=yes
+                fi
                 shift
                 shift
                 shift
@@ -61,6 +70,12 @@ vscode-setting () {
             -g|--get)
                 mode="get"
                 setting_name="$2"
+                shift
+                shift
+                ;;
+            -f|--file)
+                vsc_settings_file="$2"
+                vsc_dir=$(dirname "$vsc_settings_file")
                 shift
                 shift
                 ;;
@@ -82,7 +97,7 @@ vscode-setting () {
         return 1
     fi
     # check for unsupplied value; explicit empty string is ok
-    if [ "$mode" = "set" ] && [ "$argc" -ne 3 ]; then
+    if [ "$mode" = "set" ] && [ "$missing_value" = "yes" ]; then
         _vscode-setting-usage
         echo 1>&2
         echo "ERROR: No setting value supplied (use \"\" for empty strings)." \
