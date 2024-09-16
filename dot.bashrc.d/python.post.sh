@@ -58,7 +58,7 @@ if is_available pyenv; then
     eval "$(pyenv init - | grep -vi 'path' | grep -v '^fi; done; $')"
 fi
 if is_available pyenv-virtualenv-init; then
-    eval "$(pyenv virtualenv-init - | grep -v "PATH")"
+    eval "$(pyenv virtualenv-init - | grep -v 'export PATH=')"
 fi
 export PYPVUTIL_HOME="${HOME}/repos/pypvutil"
 if is_available pyenv pyenv-virtualenv-init && \

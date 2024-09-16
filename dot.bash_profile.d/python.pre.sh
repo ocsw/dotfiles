@@ -15,7 +15,7 @@ if is_available pyenv; then
 fi
 if is_available pyenv-virtualenv-init; then
     if ! [[ $PATH =~ /pyenv-virtualenv/ ]]; then
-        eval "$(pyenv virtualenv-init - | grep PATH)"
+        eval "$(pyenv virtualenv-init - | grep 'export PATH=')"
     fi
     export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 fi
