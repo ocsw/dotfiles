@@ -223,6 +223,9 @@ git-update-repos () (  # subshell
     for entry in "${repo_entries[@]}"; do
         repo="${entry%%|*}"  # might actually be a pattern
         flags="${entry##*|}"
+        if [ "$flags" = "$entry" ]; then  # no | in the entry
+            flags=""
+        fi
         has_star="no"
         if [ "$repo" != "${repo%/\*}" ]; then
             has_star="yes"
@@ -239,7 +242,7 @@ git-update-repos () (  # subshell
     filtered_entries=()
     for entry in "${expanded_entries[@]}"; do
         repo="${entry%%|*}"
-        flags="${entry##*|}"
+        flags="${entry##*|}"  # there will always be a | at this point
         matched="no"
         for exclusion in "${exclusions[@]}"; do
             if printf "%s\n" "$repo" | grep "$exclusion" > /dev/null; then
@@ -255,7 +258,7 @@ git-update-repos () (  # subshell
     # loop on repos
     for entry in "${filtered_entries[@]}"; do
         repo="${entry%%|*}"
-        flags="${entry##*|}"
+        flags="${entry##*|}"  # there will always be a | at this point
         read_only="no"
         [ "$flags" = "RO" ] && read_only="yes"
 
