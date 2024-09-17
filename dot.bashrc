@@ -334,6 +334,11 @@ cd () {
     else
         builtin cd "$@" || return $?
     fi
+
+    # for VSCode, iTerm, probably others; from MongoDB
+    if  [ -t 1 ]; then
+        printf "%s" $'\e]1337;CurrentDir=$PWD\a'
+    fi
 }
 
 # move up the directory tree; partly from Simon Elmir
