@@ -53,7 +53,7 @@ It will also print information about 'extra' (non-'key') branches and stashes.
 By default, it uses the GIT_REPOS_TO_UPDATE array (which should not be exported
 or prepended to the command line) to determine which repos to update.  The
 elements in this array are local filesystem paths.  Each path:
-- Must be either absolute or relative to $HOME
+- Must be either absolute or relative to your home directory
 - Must not contain whitespace
 - Can contain shell patterns (globs)
 Each path may also have options appended to it after a '|':
