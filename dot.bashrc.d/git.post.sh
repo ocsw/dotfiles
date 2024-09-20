@@ -18,6 +18,28 @@ git-current-branch () {
 }
 
 
+# for use in loops, when there might be non-repos present
+# dir defaults to .
+git-repos-in-dir () {
+    local dir
+    local repos
+    local i
+
+    dir="${1:-.}"
+    repos=()
+    for i in "$dir"/*; do  # let it expand
+        if [ ! -d "$i" ] || [ ! -d "${i}/.git" ]; then
+            continue
+        fi
+        repos+=("$i")
+    done
+
+    if [ "${#repos}" -ne 0 ]; then
+        printf "%s\n" "${repos[@]}"
+    fi
+}
+
+
 # Git repo collection; see _git-update-repos-usage()
 GIT_REPOS_TO_UPDATE=(
     ".vim/bundle/*|RO"
