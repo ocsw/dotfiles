@@ -63,9 +63,5 @@ all-up () {
 
     _all-up-header "perms"
     chmod -R go-rwx "${HOME}" 2>/dev/null
-    chmod -h go-rwx ~/.[a-zA-Z0-9]* ~/.ssh/* ~/.gnupg*/* ~/.m2/* \
-        ~/Library/Application\ Support/Code/User/* \
-        ~/.vim/autoload/pathogen.vim \
-        ~/bin/*
     echo
 }
