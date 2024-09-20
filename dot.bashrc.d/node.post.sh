@@ -20,8 +20,8 @@ npm () {
     command npm "$@"
 }
 
-if [ -d "$HOME/.nvm" ]; then
-    export NVM_DIR="$HOME/.nvm"
+if [ -d "${HOME}/.nvm" ]; then
+    export NVM_DIR="${HOME}/.nvm"
 
     # can't use is_available() for brew because we defined a function with the
     # same name

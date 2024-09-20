@@ -8,11 +8,11 @@ if [ "$(uname)" = "Darwin" ] && [ -d "/opt/homebrew" ]; then
     if ! is_path_component "${HOMEBREW_PREFIX}/bin"; then
         export PATH="${HOMEBREW_PREFIX}/bin:${HOMEBREW_PREFIX}/sbin:${PATH}"
     fi
-    if ! [[ $MANPATH =~ (^|:)$HOMEBREW_PREFIX/share/man(:|$) ]]; then
+    if ! [[ $MANPATH =~ (^|:)${HOMEBREW_PREFIX}/share/man(:|$) ]]; then
         # need the trailing : if there is no MANPATH
         export MANPATH="${HOMEBREW_PREFIX}/share/man:${MANPATH}"
     fi
-    if ! [[ $INFOPATH =~ (^|:)$HOMEBREW_PREFIX/share/info(:|$) ]]; then
+    if ! [[ $INFOPATH =~ (^|:)${HOMEBREW_PREFIX}/share/info(:|$) ]]; then
         export INFOPATH="${HOMEBREW_PREFIX}/share/info:${INFOPATH}"
     fi
 fi
