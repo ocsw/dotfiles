@@ -11,7 +11,8 @@ if in_path brew; then
         if [ -d /usr/local/Cellar ]; then
             # be conservative; we don't want to include something that really
             # shouldn't be world-accessible
-            # brew implies macOS, on which find has -exec + (and chmod has -h)
+            # the path implies macOS, on which find has -exec + (and chmod has
+            # -h)
             find /usr/local/{Cellar,Caskroom} \
                 \( -name '__pycache__' -o -name '*.pyc' \) \! -perm -044 \
                 -exec chmod -h go=u-w {} +
