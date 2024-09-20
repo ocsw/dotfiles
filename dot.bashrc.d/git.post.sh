@@ -239,7 +239,7 @@ git-update-repos () (  # subshell
     fi
 
     # use $HOME as the basis for relative paths
-    cd "${HOME}" || return $?
+    cd "$HOME" || return $?
 
     # expand globs in the input so we can apply flags separately
     expanded_entries=()

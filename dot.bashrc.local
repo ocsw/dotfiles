@@ -62,6 +62,6 @@ all-up () {
     echo
 
     _all-up-header "perms"
-    chmod -R go-rwx "${HOME}" 2>&1 | grep -v '/Library/'  # macOS annoyance
+    chmod -R go-rwx "$HOME" 2>&1 | grep -v '/Library/'  # macOS annoyance
     echo
 }
