@@ -270,6 +270,11 @@ git-update-repos () (  # subshell
             printf "%s\n" "$msg" 1>&2
             continue
         fi
+        if ! [ -d "${repo}/.git" ]; then
+            msg="WARNING: Repo does not contain a .git directory; skipping ($repo)."
+            printf "%s\n" "$msg" 1>&2
+            continue
+        fi
         cd "$repo" || continue
 
         # repo name
