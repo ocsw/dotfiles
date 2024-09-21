@@ -61,6 +61,12 @@ all-up () {
     "${SYSTEM_SETUP}/unix-common/git-check.sh"
     echo
 
+    if [ -d "${HOME}/.vscode" ]; then
+        _all-up-header "VSCode"
+        vscode-check-config
+        echo
+    fi
+
     _all-up-header "perms"
     chmod -R go-rwx "$HOME" 2>&1 | grep -v '/Library/'  # macOS annoyance
     echo
