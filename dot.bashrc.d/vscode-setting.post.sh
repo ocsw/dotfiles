@@ -215,3 +215,49 @@ vscode-setting () {
         printf "%s\n" "$new_file_contents" >| "$vsc_settings_file"
     fi
 }
+
+_vscode-setting-complete () {
+    local cur_word="${COMP_WORDS[$COMP_CWORD]}"
+    local prev_word=""
+    local prevprev_word=""
+
+    if [ "$COMP_CWORD" -ge 1 ]; then
+        prev_word="${COMP_WORDS[$COMP_CWORD-1]}"
+    fi
+    if [ "$COMP_CWORD" -ge 2 ]; then
+        prevprev_word="${COMP_WORDS[$COMP_CWORD-2]}"
+    fi
+
+    COMPREPLY=()
+
+    case "$prevprev_word" in
+        -s|--set|--set-string|-j|--set-json)
+            return 0
+            ;;
+    esac
+
+    case "$prev_word" in
+        -s|--set|--set-string|-j|--set-json|-u|--unset|-g|--get)
+            return 0
+            ;;
+        -f|--file)
+            while read -r line; do
+                COMPREPLY+=("$line")
+            done < <(compgen -o default "$cur_word")
+            return 0
+            ;;
+        -i|--indent)
+            # jq only allows 0-7
+            COMPREPLY=(0 1 2 3 4 5 6 7)
+            return 0
+            ;;
+    esac
+
+    while read -r line; do
+        COMPREPLY+=("$line")
+    done < <(compgen -W "
+            -s --set --set-string -j --set-json -u --unset -g --get -f --file
+            -w --workspace -i --indent -h --help
+        " -- "$cur_word")
+}
+complete -F _vscode-setting-complete vscode-setting
