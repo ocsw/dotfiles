@@ -163,7 +163,7 @@ vscode-setting () {
     fi
 
     if [ "$mode" = "get" ]; then
-        if ! cur_setting=$(jq --indent 4 "$setting_path" \
+        if ! cur_setting=$(jq -r --indent 4 "$setting_path" \
                 < "$vsc_settings_file"); then
             echo "ERROR: Can't process VSCode settings file." 1>&2
             return 1
@@ -172,9 +172,6 @@ vscode-setting () {
                 [ "$cur_setting" = "null" ]; then  # JSON null
             return 0
         fi
-        # remove JSON quotes
-        cur_setting="${cur_setting#\"}"
-        cur_setting="${cur_setting%\"}"
         printf "%s\n" "$cur_setting"
     elif [ "$mode" = "unset" ]; then
         if ! new_file_contents=$(jq --indent 4 "del($setting_path)" \
