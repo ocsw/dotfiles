@@ -137,27 +137,30 @@ vscode-setting () {
     fi
 
     if [ "$mode" = "get" ]; then
-        if ! [ -f "$vsc_settings_file" ]; then
-            return 0
+        if ! [ -e "$vsc_settings_file" ]; then
+            echo "ERROR: VSCode settings file not found." 1>&2
+            return 1
         fi
         setting_path=".\"${setting_name}\""
         if [ "$workspace_mode" = "yes" ]; then
             setting_path=".settings.\"${setting_name}\""
         fi
         if ! cur_setting=$(jq "$setting_path" < "$vsc_settings_file"); then
-            echo "ERROR: Can't process VSCode settings file."
+            echo "ERROR: Can't process VSCode settings file." 1>&2
             return 1
+        fi
+        if [ -z "$cur_setting" ] || [ "$cur_setting" = '""' ] || \
+                [ "$cur_setting" = "null" ]; then  # JSON null
+            return 0
         fi
         # remove JSON quotes
         cur_setting="${cur_setting#\"}"
         cur_setting="${cur_setting%\"}"
-        if [ -z "$cur_setting" ] || [ "$cur_setting" = "null" ]; then
-            return 0
-        fi
         printf "%s\n" "$cur_setting"
     elif [ "$mode" = "unset" ]; then
-        if ! [ -f "$vsc_settings_file" ]; then
-            return 0
+        if ! [ -e "$vsc_settings_file" ]; then
+            echo "ERROR: VSCode settings file not found." 1>&2
+            return 1
         fi
         setting_path=".\"${setting_name}\""
         if [ "$workspace_mode" = "yes" ]; then
@@ -165,7 +168,7 @@ vscode-setting () {
         fi
         if ! new_file_contents=$(jq --indent 4 "del($setting_path)" \
                 < "$vsc_settings_file"); then
-            echo "ERROR: Can't process VSCode settings file."
+            echo "ERROR: Can't process VSCode settings file." 1>&2
             return 1
         fi
         # this isn't ideal, but it's portable, unlike something like mktemp,
@@ -191,7 +194,7 @@ vscode-setting () {
                 "$jq_arg" new_val "$setting_value" \
                 "$settings_root += {\"${setting_name}\": \$new_val}" \
                 < "$vsc_settings_file"); then
-            echo "ERROR: Can't process VSCode settings file."
+            echo "ERROR: Can't process VSCode settings file." 1>&2
             return 1
         fi
         # see note above, in the unset section
