@@ -34,8 +34,7 @@ vscode-setting () {
     local setting_name
     local setting_value
     local missing_value
-    local vsc_dir=".vscode"
-    local vsc_settings_file="${vsc_dir}/settings.json"
+    local vsc_settings_file=".vscode/settings.json"
     local workspace_mode
     local indent
     local settings_root
@@ -95,7 +94,6 @@ vscode-setting () {
                 ;;
             -f|--file)
                 vsc_settings_file="$2"
-                vsc_dir=$(dirname "$vsc_settings_file")
                 shift
                 shift
                 ;;
@@ -197,7 +195,7 @@ vscode-setting () {
         # https://stackoverflow.com/questions/19354870/bash-command-line-and-input-limit
         printf "%s\n" "$new_file_contents" >| "$vsc_settings_file"
     elif [ "$mode" = "set" ]; then
-        mkdir -p "$vsc_dir"
+        mkdir -p "$(dirname "$vsc_settings_file")"
         # the jq addition won't work on a blank file
         null_arg=""
         source="$vsc_settings_file"
