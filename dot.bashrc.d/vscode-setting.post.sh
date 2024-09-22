@@ -122,14 +122,14 @@ vscode-setting () {
     if [ -z "$setting_name" ]; then
         _vscode-setting-usage
         echo 1>&2
-        echo "ERROR: No setting name supplied." 1>&2
+        echo "ERROR: No setting name specified." 1>&2
         return 1
     fi
-    # check for unsupplied value; explicit empty string is ok
+    # check for unspecified value; explicit empty string is ok
     if [ "$mode" = "set" ] && [ "$missing_value" = "yes" ]; then
         _vscode-setting-usage
         echo 1>&2
-        echo "ERROR: No setting value supplied (use \"\" for empty strings)." \
+        echo "ERROR: No setting value specified (use \"\" for empty strings)." \
             1>&2
         return 1
     fi
