@@ -163,7 +163,8 @@ vscode-setting () {
     fi
 
     if [ "$mode" = "get" ]; then
-        if ! cur_setting=$(jq "$setting_path" < "$vsc_settings_file"); then
+        if ! cur_setting=$(jq --indent 4 "$setting_path" \
+                < "$vsc_settings_file"); then
             echo "ERROR: Can't process VSCode settings file." 1>&2
             return 1
         fi
