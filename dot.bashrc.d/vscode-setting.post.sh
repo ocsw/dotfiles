@@ -23,7 +23,7 @@ The file will be formatted with 4-space indents when setting or unsetting a
 value; to change this, specify '-i|--indent NUM'.  This also applies when
 getting JSON-valued settings.
 
-Options can appear in any order.
+Options can appear in any order.  Later options override earlier ones.
 EOF
 }
 
