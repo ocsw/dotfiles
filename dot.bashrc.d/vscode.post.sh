@@ -20,10 +20,10 @@ vscode-check-config () {
 _vscode-setting-usage () {
     cat 1>&2 <<EOF
 Usage:
-    vscode-setting -s|--set|--set-string SETTING_NAME SETTING_VALUE
-    vscode-setting -j|--set-json SETTING_NAME SETTING_JSON
-    vscode-setting -u|--unset SETTING_NAME
-    vscode-setting -g|--get SETTING_NAME
+    vscode-setting -s|--set|--set-string SETTING_NAME SETTING_VALUE [ OPTIONS ]
+    vscode-setting -j|--set-json SETTING_NAME SETTING_JSON [ OPTIONS ]
+    vscode-setting -u|--unset SETTING_NAME [ OPTIONS ]
+    vscode-setting -g|--get SETTING_NAME [ OPTIONS ]
 
 Sets, unsets, or gets a VSCode workspace setting using jq.
 
@@ -34,6 +34,8 @@ puts the settings under the 'settings' section of the file (rather than at the
 top level, as in regular config files).
 
 Output uses 4-space indents; to change this, specify '-i|--indent NUM'.
+
+Options can appear in any order.
 EOF
 }
 
