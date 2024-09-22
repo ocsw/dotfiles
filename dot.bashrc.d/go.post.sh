@@ -3,22 +3,42 @@
 _vscode-golang-settings-usage () {
     cat 1>&2 <<EOF
 Usage:
-    vscode-golang-settings [ -f|--file PATH_TO_SETTINGS_FILE ] [ -t TAGS ]
+    vscode-golang-settings [ -t|--tags TAGS ] [ OPTIONS ]
 
-Adds Go settings to a VSCode project.
+Adds Go settings to a VSCode project.  To include build tags, use -t or --tags.
 
-Must be run from the root of the VSCode project directory unless a path is given with -f / --file.  That option is particularly useful for workspace files.
+Must be run from the root of the VSCode project directory.  Alternatively,
+specify '-f|--file PATH_TO_SETTINGS_FILE'; this is particularly useful for
+workspace files.  Additionally, for workspace files use '-w|--workspace', which
+puts the settings under the 'settings' section of the file (rather than at the
+top level, as in regular config files).
+
+Output uses 4-space indents; to change this, specify '-i|--indent NUM'.
+
+Options can appear in any order.
 EOF
 }
 
 # (see vscode.post.sh)
 vscode-golang-settings () {
     local vsc_settings_file=".vscode/settings.json"
+    local workspace_arg=""
+    local indent=4
     local tags=""
+
     while [ "$#" -gt 0 ]; do
         case "$1" in
             -f|--file)
                 vsc_settings_file="$2"
+                shift
+                shift
+                ;;
+            -w|--workspace)
+                workspace_arg="-w"
+                shift
+                ;;
+            -i|--indent)
+                indent="$2"
                 shift
                 shift
                 ;;
@@ -28,11 +48,11 @@ vscode-golang-settings () {
                 shift
                 ;;
             -h|--help)
-                _vscode-setting-usage
+                _vscode-golang-settings-usage
                 return 0
                 ;;
             *)
-                _vscode-setting-usage
+                _vscode-golang-settings-usage
                 return 1
                 ;;
         esac
@@ -40,15 +60,15 @@ vscode-golang-settings () {
 
     # this removes highlighting of tabs (there doesn't seem to be a way to do it
     # only for .go files)
-    vscode-setting -f "$vsc_settings_file" -j \
+    vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" -j \
         "highlight-bad-chars.additionalUnicodeChars" '[""]'
 
     if [ -n "$tags" ]; then
-        vscode-setting -f "$vsc_settings_file" -j \
+        vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" -j \
             "go.buildFlags" "[\"-tags=${tags}\"]"
-        vscode-setting -f "$vsc_settings_file" -j \
+        vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" -j \
             "go.toolsEnvVars" "{\"GOTAGS\": \"${tags}\"}"
-        vscode-setting -f "$vsc_settings_file" -j \
+        vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" -j \
             "go.lintFlags" "[
                 \"-E\", \"exportloopref,goimports,lll,revive,whitespace\",
                 \"-E\", \"stylecheck\",
