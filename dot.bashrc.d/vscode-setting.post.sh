@@ -5,10 +5,10 @@
 _vscode-setting-usage () {
     cat 1>&2 <<EOF
 Usage:
-    vscode-setting -s|--set|--set-string SETTING_NAME SETTING_VALUE [ OPTIONS ]
-    vscode-setting -j|--set-json SETTING_NAME SETTING_JSON [ OPTIONS ]
-    vscode-setting -u|--unset SETTING_NAME [ OPTIONS ]
-    vscode-setting -g|--get SETTING_NAME [ OPTIONS ]
+    vscode-setting -s|--set|--set-string SETTING_NAME SETTING_VALUE [OPTIONS]
+    vscode-setting -j|--set-json SETTING_NAME SETTING_JSON [OPTIONS]
+    vscode-setting -u|--unset SETTING_NAME [OPTIONS]
+    vscode-setting -g|--get SETTING_NAME [OPTIONS]
 
 Sets, unsets, or gets a VSCode workspace setting.
 

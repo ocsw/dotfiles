@@ -3,7 +3,7 @@
 _vscode-golang-settings-usage () {
     cat 1>&2 <<EOF
 Usage:
-    vscode-golang-settings [ -t|--tags TAGS ] [ OPTIONS ]
+    vscode-golang-settings [-t|--tags TAGS] [OPTIONS]
 
 Adds Go settings to a VSCode workspace.  To include build tags, use -t or
 --tags.
