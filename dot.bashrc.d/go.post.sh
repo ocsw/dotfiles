@@ -24,13 +24,18 @@ EOF
 
 # (see vscode-setting.post.sh)
 vscode-golang-settings () {
+    local tags=""
     local vsc_settings_file=".vscode/settings.json"
     local workspace_arg=""
     local indent=4
-    local tags=""
 
     while [ "$#" -gt 0 ]; do
         case "$1" in
+            -t|--tags)
+                tags="$2"
+                shift
+                shift
+                ;;
             -f|--file)
                 vsc_settings_file="$2"
                 shift
@@ -42,11 +47,6 @@ vscode-golang-settings () {
                 ;;
             -i|--indent)
                 indent="$2"
-                shift
-                shift
-                ;;
-            -t|--tags)
-                tags="$2"
                 shift
                 shift
                 ;;
