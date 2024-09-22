@@ -128,7 +128,7 @@ vscode-setting () {
         return 1
     fi
 
-    if ! hash jq > /dev/null 2>&1; then
+    if ! jq --version > /dev/null 2>&1; then  # maximally portable test
         echo "ERROR: The jq utility isn't available." 1>&2
         return 1
     fi
