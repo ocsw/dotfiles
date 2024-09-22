@@ -39,6 +39,8 @@ vscode-setting () {
     local cur_setting
     local present
     local new_file_contents
+    local null_arg
+    local source
 
     mode=""
     jq_arg=""
@@ -186,14 +188,17 @@ vscode-setting () {
     elif [ "$mode" = "set" ]; then
         mkdir -p "$vsc_dir"
         # the jq addition won't work on a blank file
-        if ! [ -f "$vsc_settings_file" ] || \
-                ! grep '{' "$vsc_settings_file" > /dev/null 2>&1; then
-            echo "{}" >| "$vsc_settings_file"
+        null_arg=""
+        source="$vsc_settings_file"
+        if ! [ -s "$vsc_settings_file" ]; then
+            null_arg="--null-input"
+            source="/dev/null"
         fi
-        if ! new_file_contents=$(jq --indent "$indent" \
+        # shellcheck disable=SC2086
+        if ! new_file_contents=$(jq $null_arg --indent "$indent" \
                 "$jq_arg" new_val "$setting_value" \
                 "$settings_root += {\"${setting_name}\": \$new_val}" \
-                < "$vsc_settings_file"); then
+                < "$source"); then
             echo "ERROR: Can't process VSCode settings file." 1>&2
             return 1
         fi
