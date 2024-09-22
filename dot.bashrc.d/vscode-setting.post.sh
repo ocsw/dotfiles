@@ -10,20 +10,24 @@ Usage:
     vscode-setting -u|--unset SETTING_NAME [ OPTIONS ]
     vscode-setting -g|--get SETTING_NAME [ OPTIONS ]
 
-Sets, unsets, or gets a VSCode workspace setting using jq.
+Sets, unsets, or gets a VSCode workspace setting.
 
-Must be run from the root of the VSCode project directory.  Alternatively,
-specify '-f|--file PATH_TO_SETTINGS_FILE'; this is particularly useful for
-workspace files.  Additionally, for workspace files use '-w|--workspace', which
-puts the settings under the 'settings' section of the file (rather than at the
-top level, as in regular config files).
+The command must be run from the root of the VSCode project directory.
+Alternatively, specify '-f|--file PATH_TO_SETTINGS_FILE'; this is particularly
+useful for multi-folder workspace files.  Additionally, for multi-folder
+workspace files use '-w|--workspace', which puts the settings under the
+'settings' section of the file (rather than at the top level, as in regular
+config files).
 
-Output uses 4-space indents; to change this, specify '-i|--indent NUM'.
+The file will be formatted with 4-space indents when setting or unsetting a
+value; to change this, specify '-i|--indent NUM'.  This also applies when
+getting JSON-valued settings.
 
 Options can appear in any order.
 EOF
 }
 
+# uses jq
 vscode-setting () {
     local mode
     local jq_arg
