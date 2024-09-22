@@ -119,6 +119,13 @@ vscode-setting () {
         esac
     done
 
+    if [ -z "$mode" ]; then
+        _vscode-setting-usage
+        echo 1>&2
+        echo "ERROR: No action (set/unset/get) specified." 1>&2
+        return 1
+    fi
+
     if [ -z "$setting_name" ]; then
         _vscode-setting-usage
         echo 1>&2
