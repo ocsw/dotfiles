@@ -29,6 +29,9 @@ Sets, unsets, or gets a VSCode workspace setting using jq.
 
 Must be run from the root of the VSCode project directory.  Alternatively,
 specify '-f|--file PATH_TO_SETTINGS_FILE'; this is useful for workspace files.
+Additionally, for workspace files use '-w|--workspace', which puts the settings
+under the 'settings' section of the file (rather than at the top level, as in
+regular config files).
 EOF
 }
 
@@ -40,6 +43,9 @@ vscode-setting () {
     local missing_value
     local vsc_dir=".vscode"
     local vsc_settings_file="${vsc_dir}/settings.json"
+    local workspace_mode
+    local setting_path
+    local settings_root
     local cur_setting
     local new_file_contents
 
@@ -48,6 +54,7 @@ vscode-setting () {
     setting_name=""
     setting_value=""
     missing_value="no"
+    workspace_mode="no"
     while [ "$#" -gt 0 ]; do
         case "$1" in
             -s|--set|--set-string)
@@ -94,6 +101,10 @@ vscode-setting () {
                 shift
                 shift
                 ;;
+            -w|--workspace)
+                workspace_mode="yes"
+                shift
+                ;;
             -h|--help)
                 _vscode-setting-usage
                 return 0
@@ -129,8 +140,11 @@ vscode-setting () {
         if ! [ -f "$vsc_settings_file" ]; then
             return 0
         fi
-        if ! cur_setting=$(jq ".\"${setting_name}\"" < "$vsc_settings_file" \
-                2>/dev/null); then
+        setting_path=".\"${setting_name}\""
+        if [ "$workspace_mode" = "yes" ]; then
+            setting_path=".settings.\"${setting_name}\""
+        fi
+        if ! cur_setting=$(jq "$setting_path" < "$vsc_settings_file"); then
             echo "ERROR: Can't process VSCode settings file."
             return 1
         fi
@@ -145,7 +159,11 @@ vscode-setting () {
         if ! [ -f "$vsc_settings_file" ]; then
             return 0
         fi
-        if ! new_file_contents=$(jq --indent 4 "del(.\"${setting_name}\")" \
+        setting_path=".\"${setting_name}\""
+        if [ "$workspace_mode" = "yes" ]; then
+            setting_path=".settings.\"${setting_name}\""
+        fi
+        if ! new_file_contents=$(jq --indent 4 "del($setting_path)" \
                 < "$vsc_settings_file"); then
             echo "ERROR: Can't process VSCode settings file."
             return 1
@@ -165,9 +183,13 @@ vscode-setting () {
                 ! grep '{' "$vsc_settings_file" > /dev/null 2>&1; then
             echo "{}" >| "$vsc_settings_file"
         fi
+        settings_root="."
+        if [ "$workspace_mode" = "yes" ]; then
+            settings_root=".settings"
+        fi
         if ! new_file_contents=$(jq --indent 4 \
                 "$jq_arg" new_val "$setting_value" \
-                ". + {\"${setting_name}\": \$new_val}" \
+                "$settings_root += {\"${setting_name}\": \$new_val}" \
                 < "$vsc_settings_file"); then
             echo "ERROR: Can't process VSCode settings file."
             return 1
