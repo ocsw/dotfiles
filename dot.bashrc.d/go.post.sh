@@ -19,7 +19,7 @@ Options can appear in any order.
 EOF
 }
 
-# (see vscode.post.sh)
+# (see vscode-setting.post.sh)
 vscode-golang-settings () {
     local vsc_settings_file=".vscode/settings.json"
     local workspace_arg=""
