@@ -28,10 +28,12 @@ Usage:
 Sets, unsets, or gets a VSCode workspace setting using jq.
 
 Must be run from the root of the VSCode project directory.  Alternatively,
-specify '-f|--file PATH_TO_SETTINGS_FILE'; this is useful for workspace files.
-Additionally, for workspace files use '-w|--workspace', which puts the settings
-under the 'settings' section of the file (rather than at the top level, as in
-regular config files).
+specify '-f|--file PATH_TO_SETTINGS_FILE'; this is particularly useful for
+workspace files.  Additionally, for workspace files use '-w|--workspace', which
+puts the settings under the 'settings' section of the file (rather than at the
+top level, as in regular config files).
+
+Output uses 4-space indents; to change this, specify '-i|--indent NUM'.
 EOF
 }
 
@@ -44,6 +46,7 @@ vscode-setting () {
     local vsc_dir=".vscode"
     local vsc_settings_file="${vsc_dir}/settings.json"
     local workspace_mode
+    local indent
     local settings_root
     local setting_path
     local cur_setting
@@ -56,6 +59,7 @@ vscode-setting () {
     setting_value=""
     missing_value="no"
     workspace_mode="no"
+    indent=4
     while [ "$#" -gt 0 ]; do
         case "$1" in
             -s|--set|--set-string)
@@ -104,6 +108,11 @@ vscode-setting () {
                 ;;
             -w|--workspace)
                 workspace_mode="yes"
+                shift
+                ;;
+            -i|--indent)
+                indent="$2"
+                shift
                 shift
                 ;;
             -h|--help)
@@ -163,7 +172,7 @@ vscode-setting () {
     fi
 
     if [ "$mode" = "get" ]; then
-        if ! cur_setting=$(jq -r --indent 4 "$setting_path" \
+        if ! cur_setting=$(jq -r --indent "$indent" "$setting_path" \
                 < "$vsc_settings_file"); then
             echo "ERROR: Can't process VSCode settings file." 1>&2
             return 1
@@ -174,7 +183,7 @@ vscode-setting () {
         fi
         printf "%s\n" "$cur_setting"
     elif [ "$mode" = "unset" ]; then
-        if ! new_file_contents=$(jq --indent 4 "del($setting_path)" \
+        if ! new_file_contents=$(jq --indent "$indent" "del($setting_path)" \
                 < "$vsc_settings_file"); then
             echo "ERROR: Can't process VSCode settings file." 1>&2
             return 1
@@ -194,7 +203,7 @@ vscode-setting () {
                 ! grep '{' "$vsc_settings_file" > /dev/null 2>&1; then
             echo "{}" >| "$vsc_settings_file"
         fi
-        if ! new_file_contents=$(jq --indent 4 \
+        if ! new_file_contents=$(jq --indent "$indent" \
                 "$jq_arg" new_val "$setting_value" \
                 "$settings_root += {\"${setting_name}\": \$new_val}" \
                 < "$vsc_settings_file"); then
