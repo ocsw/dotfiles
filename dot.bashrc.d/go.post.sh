@@ -8,6 +8,9 @@ Usage:
 Adds Go settings to a VSCode workspace.  To include build tags, use -t or
 --tags.
 
+If the settings file does not exist, it will be created (as will the path to
+it).
+
 The command must be run from the root of the VSCode project directory.
 Alternatively, specify '-f|--file PATH_TO_SETTINGS_FILE'; this is particularly
 useful for multi-folder workspace files.  Additionally, for multi-folder
