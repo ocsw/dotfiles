@@ -74,6 +74,9 @@ touch .gitconfig
 ln_tbu .gitconfig
 touch .gitignore_global
 ln_tbu .gitignore_global
+while read -r line; do
+    ln_tbu "$line"
+done < <(compgen -G '.gitconfig_*' 2>/dev/null)
 #
 mkdir -p .ipython
 chmod 700 .ipython
