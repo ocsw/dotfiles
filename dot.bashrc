@@ -21,12 +21,10 @@ unset PROMPT_COMMAND
 
 # --- pre-rc sub-scripts ---
 
-if compgen -G "${HOME}/.bashrc.d/*.pre.sh" > /dev/null 2>&1; then
-    for i in "${HOME}"/.bashrc.d/*.pre.sh; do
-        # shellcheck disable=SC1090
-        . "$i"
-    done
-fi
+while read -r line; do
+    # shellcheck disable=SC1090
+    . "$line"
+done < <(compgen -G "${HOME}/.bashrc.d/*.pre.sh" 2>/dev/null)
 
 
 # --- shell options ---
@@ -455,12 +453,10 @@ gc () {
 
 # --- post-rc sub-scripts ---
 
-if compgen -G "${HOME}/.bashrc.d/*.post.sh" > /dev/null 2>&1; then
-    for i in "${HOME}"/.bashrc.d/*.post.sh; do
-        # shellcheck disable=SC1090
-        . "$i"
-    done
-fi
+while read -r line; do
+    # shellcheck disable=SC1090
+    . "$line"
+done < <(compgen -G "${HOME}/.bashrc.d/*.post.sh" 2>/dev/null)
 
 
 # --- machine-specific settings, overrides, aliases, etc. ---

@@ -9,12 +9,10 @@
 
 # --- pre-profile sub-scripts ---
 
-if compgen -G "${HOME}/.bash_profile.d/*.pre.sh" > /dev/null 2>&1; then
-    for i in "${HOME}"/.bash_profile.d/*.pre.sh; do
-        # shellcheck disable=SC1090
-        . "$i"
-    done
-fi
+while read -r line; do
+    # shellcheck disable=SC1090
+    . "$line"
+done < <(compgen -G "${HOME}/.bash_profile.d/*.pre.sh" 2>/dev/null)
 
 
 # --- global environment settings ---
@@ -48,12 +46,10 @@ fi
 
 # --- post-profile sub-scripts ---
 
-if compgen -G "${HOME}/.bash_profile.d/*.post.sh" > /dev/null 2>&1; then
-    for i in "${HOME}"/.bash_profile.d/*.post.sh; do
-        # shellcheck disable=SC1090
-        . "$i"
-    done
-fi
+while read -r line; do
+    # shellcheck disable=SC1090
+    . "$line"
+done < <(compgen -G "${HOME}/.bash_profile.d/*.post.sh" 2>/dev/null)
 
 
 # --- source .bashrc ---
