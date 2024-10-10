@@ -12,7 +12,7 @@
 while read -r line; do
     # shellcheck disable=SC1090
     . "$line"
-done < <(compgen -G "${HOME}/.bash_profile.d/*.pre.sh" 2>/dev/null)
+done < <(compgen -G "${HOME}/.bash_profile.d/*.pre.sh")
 
 
 # --- global environment settings ---
@@ -49,7 +49,7 @@ fi
 while read -r line; do
     # shellcheck disable=SC1090
     . "$line"
-done < <(compgen -G "${HOME}/.bash_profile.d/*.post.sh" 2>/dev/null)
+done < <(compgen -G "${HOME}/.bash_profile.d/*.post.sh")
 
 
 # --- source .bashrc ---

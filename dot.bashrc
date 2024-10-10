@@ -24,7 +24,7 @@ unset PROMPT_COMMAND
 while read -r line; do
     # shellcheck disable=SC1090
     . "$line"
-done < <(compgen -G "${HOME}/.bashrc.d/*.pre.sh" 2>/dev/null)
+done < <(compgen -G "${HOME}/.bashrc.d/*.pre.sh")
 
 
 # --- shell options ---
@@ -456,7 +456,7 @@ gc () {
 while read -r line; do
     # shellcheck disable=SC1090
     . "$line"
-done < <(compgen -G "${HOME}/.bashrc.d/*.post.sh" 2>/dev/null)
+done < <(compgen -G "${HOME}/.bashrc.d/*.post.sh")
 
 
 # --- machine-specific settings, overrides, aliases, etc. ---
