@@ -27,18 +27,39 @@ bash:
 - I'm going to use '' for sed, awk, single-character delimiters, and tr, unless
   there's a specific reason not to
 - old note, kept for reference:
-  (aliases used \more)
-  - any later aliasing of 'more' ordinarily wouldn't affect these because
-    aliases are expanded when functions are defined, not executed
-  - but re-sourcing this file afterwards _would_ change the definitions
-  - so, use backslashes
-  - however, making 'more' a function will still change these
+    (aliases used \more)
+    - any later aliasing of 'more' ordinarily wouldn't affect these because
+      aliases are expanded when functions are defined, not executed
+    - but re-sourcing this file afterwards _would_ change the definitions
+    - so, use backslashes
+    - however, making 'more' a function will still change these
 - https://www.in-ulm.de/~mascheck/
 - re find + instead of xargs: https://www.in-ulm.de/~mascheck/various/find/
 - re ${1+"$@"}: https://www.in-ulm.de/~mascheck/various/bourne_args/
 - http://mywiki.wooledge.org/BashFAQ
 - re populating an array from $(): http://mywiki.wooledge.org/BashFAQ/005
 - http://mywiki.wooledge.org/BashPitfalls
+
+
+- $# $% vs $## $%% -> affects how much * matches
+- ! &&, ! || -> ! tighter than &&, ||
+- && and || same precedence, left assoc, short circuit
+    - mixing them doesn't always do what you expect
+- can use [ ! ... ] but ! [] is technically more portable if using bash
+- while-read keeps internal spaces, but removes from beginning and end unless
+  IFS=
+    - always use IFS= for while-read so can't forget, e.g. with
+      compgen -o default and filename with spaces
+- while-read needs || [ -n "$line" ] if the last line might not have a newline
+    - don't add it everywhere because it's rarely needed and makes code harder
+      to read
+- compgen with $cur_word needs --
+- compgen -W gets word splitting applied to it; might need a workaround like
+  grep '^${cur_word}' instead for e.g. testing with the output of a function
+- subshells inherit set -eo pipefail
+- | loop runs the loop in a subshell (as does | anything)
+- <() runs in a subshell but the return value is ignored (which also means it
+  won't trigger set -e in the invoking shell)
 
 
 quoting
