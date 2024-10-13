@@ -74,7 +74,7 @@ touch .gitconfig
 ln_tbu .gitconfig
 touch .gitignore_global
 ln_tbu .gitignore_global
-while read -r file; do
+while IFS= read -r file; do
     ln_tbu "$file"
 done < <(compgen -G ".gitconfig_*")
 #

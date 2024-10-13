@@ -9,7 +9,7 @@
 
 # --- pre-profile sub-scripts ---
 
-while read -r file; do
+while IFS= read -r file; do
     # shellcheck disable=SC1090
     . "$file"
 done < <(compgen -G "${HOME}/.bash_profile.d/*.pre.sh")
@@ -46,7 +46,7 @@ fi
 
 # --- post-profile sub-scripts ---
 
-while read -r file; do
+while IFS= read -r file; do
     # shellcheck disable=SC1090
     . "$file"
 done < <(compgen -G "${HOME}/.bash_profile.d/*.post.sh")

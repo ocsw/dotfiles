@@ -21,7 +21,7 @@ unset PROMPT_COMMAND
 
 # --- pre-rc sub-scripts ---
 
-while read -r file; do
+while IFS= read -r file; do
     # shellcheck disable=SC1090
     . "$file"
 done < <(compgen -G "${HOME}/.bashrc.d/*.pre.sh")
@@ -453,7 +453,7 @@ gc () {
 
 # --- post-rc sub-scripts ---
 
-while read -r file; do
+while IFS= read -r file; do
     # shellcheck disable=SC1090
     . "$file"
 done < <(compgen -G "${HOME}/.bashrc.d/*.post.sh")

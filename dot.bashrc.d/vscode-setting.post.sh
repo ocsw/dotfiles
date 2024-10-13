@@ -244,7 +244,7 @@ _vscode-setting-complete () {
             return 0
             ;;
         -f|--file)
-            while read -r comp; do
+            while IFS= read -r comp; do
                 COMPREPLY+=("$comp")
             done < <(compgen -o default "$cur_word")
             return 0
@@ -256,7 +256,7 @@ _vscode-setting-complete () {
             ;;
     esac
 
-    while read -r comp; do
+    while IFS= read -r comp; do
         COMPREPLY+=("$comp")
     done < <(compgen -W "
             -s --set --set-string -j --set-json -u --unset -g --get -f --file
