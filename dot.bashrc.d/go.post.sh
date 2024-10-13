@@ -103,7 +103,7 @@ _vscode-golang-settings-complete () {
         -f|--file)
             while IFS= read -r comp; do
                 COMPREPLY+=("$comp")
-            done < <(compgen -o default "$cur_word")
+            done < <(compgen -o default -- "$cur_word")
             return 0
             ;;
         -i|--indent)
