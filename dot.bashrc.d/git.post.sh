@@ -28,7 +28,7 @@ git-repos-in-dir () {
     dir="${1:-.}"
     repos=()
     for i in "$dir"/*; do  # let it expand
-        if [ ! -d "$i" ] || [ ! -d "${i}/.git" ]; then
+        if ! [ -d "$i" ] || ! [ -d "${i}/.git" ]; then
             continue
         fi
         repos+=("$i")
@@ -255,7 +255,7 @@ git-update-repos () (  # subshell
         fi
         for exp_repo in $repo; do  # no quotes so it expands
             if [ "$has_star" = "yes" ] &&
-                { [ ! -d "$exp_repo" ] || [ ! -d "${exp_repo}/.git" ]; }; then
+                { ! [ -d "$exp_repo" ] || ! [ -d "${exp_repo}/.git" ]; }; then
                 continue
             fi
             expanded_entries+=("${exp_repo}|${flags}")
