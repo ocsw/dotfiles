@@ -21,6 +21,9 @@ config files).
 The file will be formatted with 4-space indents; to change this, specify
 '-i|--indent NUM'.
 
+When overwriting an existing setting, a warning will be printed to stderr with
+the setting's previous value.  This can be suppressed with -q|--quiet.
+
 Options can appear in any order.  Later options override earlier ones.
 EOF
 }
@@ -31,6 +34,7 @@ vscode-golang-settings () {
     local vsc_settings_file=".vscode/settings.json"
     local workspace_arg=""
     local indent=4
+    local quiet_arg=""
 
     while [ "$#" -gt 0 ]; do
         case "$1" in
@@ -53,6 +57,10 @@ vscode-golang-settings () {
                 shift
                 shift
                 ;;
+            -q|--quiet)
+                quiet_arg="-q"
+                shift
+                ;;
             -h|--help)
                 _vscode-golang-settings-usage
                 return 0
@@ -66,15 +74,19 @@ vscode-golang-settings () {
 
     # this removes highlighting of tabs (there doesn't seem to be a way to do it
     # only for .go files)
-    vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" -j \
+    vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" \
+        $quiet_arg -j \
         "highlight-bad-chars.additionalUnicodeChars" '[]'
 
     if [ -n "$tags" ]; then
-        vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" -j \
+        vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" \
+            $quiet_arg -j \
             "go.buildFlags" "[\"-tags=${tags}\"]"
-        vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" -j \
+        vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" \
+            $quiet_arg -j \
             "go.toolsEnvVars" "{\"GOTAGS\": \"${tags}\"}"
-        vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" -j \
+        vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" \
+            $quiet_arg -j \
             "go.lintFlags" "[
                 \"-E\", \"exportloopref,goimports,lll,revive,whitespace\",
                 \"-E\", \"stylecheck\",
@@ -116,7 +128,7 @@ _vscode-golang-settings-complete () {
     while IFS= read -r comp; do
         COMPREPLY+=("$comp")
     done < <(compgen -W "
-            -t --tags -f --file -w --workspace -i --indent -h --help
+            -t --tags -f --file -w --workspace -i --indent -q --quiet -h --help
         " -- "$cur_word")
 }
 complete -F _vscode-golang-settings-complete vscode-golang-settings

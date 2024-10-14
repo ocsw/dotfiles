@@ -26,6 +26,9 @@ The file will be formatted with 4-space indents when setting or unsetting a
 value; to change this, specify '-i|--indent NUM'.  This also applies when
 getting JSON-valued settings.
 
+When overwriting an existing setting, a warning will be printed to stderr with
+the setting's previous value.  This can be suppressed with -q|--quiet.
+
 Options can appear in any order.  Later options override earlier ones.
 EOF
 }
@@ -40,6 +43,7 @@ vscode-setting () {
     local vsc_settings_file=".vscode/settings.json"
     local workspace_mode
     local indent
+    local quiet
     local settings_root
     local setting_path
     local cur_setting
@@ -55,6 +59,7 @@ vscode-setting () {
     missing_value="no"
     workspace_mode="no"
     indent=4
+    quiet="no"
     while [ "$#" -gt 0 ]; do
         case "$1" in
             -s|--set|--set-string)
@@ -107,6 +112,10 @@ vscode-setting () {
             -i|--indent)
                 indent="$2"
                 shift
+                shift
+                ;;
+            -q|--quiet)
+                quiet="yes"
                 shift
                 ;;
             -h|--help)
@@ -206,6 +215,25 @@ vscode-setting () {
             null_arg="--null-input"
             source="/dev/null"
         fi
+
+        # warn on overwrite
+        if [ "$quiet" != "yes" ]; then
+            if ! present=$(jq "$settings_root | has(\"${setting_name}\")" \
+                    < "$source"); then
+                echo "ERROR: Can't process VSCode settings file." 1>&2
+                return 1
+            fi
+            if [ "$present" == "true" ]; then
+                if ! cur_setting=$(jq -r --indent "$indent" "$setting_path" \
+                        < "$source"); then
+                    echo "ERROR: Can't process VSCode settings file." 1>&2
+                    return 1
+                fi
+                echo "Warning: overwriting previous setting for $setting_path, which was:" 1>&2
+                printf "%s\n" "$cur_setting" 1>&2
+            fi
+        fi
+
         # shellcheck disable=SC2086
         if ! new_file_contents=$(jq $null_arg --indent "$indent" \
                 "$jq_arg" new_val "$setting_value" \
@@ -260,7 +288,7 @@ _vscode-setting-complete () {
         COMPREPLY+=("$comp")
     done < <(compgen -W "
             -s --set --set-string -j --set-json -u --unset -g --get -f --file
-            -w --workspace -i --indent -h --help
+            -w --workspace -i --indent -q --quiet -h --help
         " -- "$cur_word")
 }
 complete -F _vscode-setting-complete vscode-setting
