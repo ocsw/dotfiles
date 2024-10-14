@@ -67,7 +67,7 @@ vscode-golang-settings () {
     # this removes highlighting of tabs (there doesn't seem to be a way to do it
     # only for .go files)
     vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" -j \
-        "highlight-bad-chars.additionalUnicodeChars" '[""]'
+        "highlight-bad-chars.additionalUnicodeChars" '[]'
 
     if [ -n "$tags" ]; then
         vscode-setting -f "$vsc_settings_file" $workspace_arg -i "$indent" -j \
