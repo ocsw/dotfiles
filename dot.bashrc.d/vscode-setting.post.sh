@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# (see also go.post.sh)
+# (see also vscode-go.post.sh)
 
 _vscode-setting-usage () {
     cat 1>&2 <<EOF
