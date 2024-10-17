@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # See also vscode-setting.post.sh, which was pulled out for ease of external
-# reference
+# reference, and vscode-go.post.sh
 
 vscode-check-config () {
     diff "${SYSTEM_SETUP}/vscode/extensions.txt" \
