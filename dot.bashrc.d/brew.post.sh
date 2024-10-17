@@ -35,4 +35,10 @@ if in_path brew; then
             jq "map(select(.keg_only == true)) | map(.name)" | grep '"' | \
             sed -e 's/^ *"//' -e 's/",$//' -e 's/"$//'
     }
+
+    # for the brew bash-completion package
+    if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
+        # shellcheck disable=SC1091
+        . "$(brew --prefix)/etc/bash_completion"
+    fi
 fi
