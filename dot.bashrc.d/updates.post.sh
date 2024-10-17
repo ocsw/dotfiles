@@ -25,9 +25,9 @@ all-up () {
         echo
     fi
 
-    if is_available gke-up; then
-        _all-up-header "GKE"
-        gke-up
+    if is_available kube-up; then
+        _all-up-header "Kubernetes"
+        kube-up
         echo
     fi
 
