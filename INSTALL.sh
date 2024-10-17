@@ -3,11 +3,13 @@
 umask 077
 
 mkdir -p "${HOME}/bin"
-
 mkdir -p "${HOME}/repos"
-DOTFILE_REPO="${HOME}/repos/dotfiles"
-PYPVUTIL_REPO="${HOME}/repos/pypvutil"
-SYSTEM_SETUP="${HOME}/repos/system-setup"
+
+DOTFILE_REPO="${DOTFILE_REPO:-${HOME}/repos/dotfiles}"
+PYPVUTIL_REPO="${PYPVUTIL_REPO:-${HOME}/repos/pypvutil}"
+SYSTEM_SETUP="${SYSTEM_SETUP:-${HOME}/repos/system-setup}"
+TBU_DIR="${TBU_DIR:-${HOME}/.to_back_up}"
+
 git clone git@github.com:ocsw/dotfiles.git "$DOTFILE_REPO"
 git clone git@github.com:ocsw/pypvutil.git "$PYPVUTIL_REPO"
 git clone git@github.com:ocsw/system-setup.git "$SYSTEM_SETUP"

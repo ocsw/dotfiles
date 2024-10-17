@@ -4,15 +4,18 @@
 # reference, and vscode-go.post.sh
 
 vscode-check-config () {
-    diff "${SYSTEM_SETUP}/vscode/extensions.txt" \
+    # check global first
+    local setup_repo="${SYSTEM_SETUP:-${HOME}/repos/system-setup}"
+
+    diff "${setup_repo}/vscode/extensions.txt" \
         <(jq -r '.[].identifier.id' < \
             "${HOME}/.vscode/extensions/extensions.json" | sort -t. -k2 -u)
 
     if [ "$(uname)" = "Darwin" ]; then
-        local USER_CONFIG_DIR="${HOME}/Library/Application Support/Code/User"
-        diff "${SYSTEM_SETUP}/vscode/settings.json" \
-            "${USER_CONFIG_DIR}/settings.json"
-        diff "${SYSTEM_SETUP}/vscode/keybindings.json" \
-            "${USER_CONFIG_DIR}/keybindings.json"
+        local user_config_dir="${HOME}/Library/Application Support/Code/User"
+        diff "${setup_repo}/vscode/settings.json" \
+            "${user_config_dir}/settings.json"
+        diff "${setup_repo}/vscode/keybindings.json" \
+            "${user_config_dir}/keybindings.json"
     fi
 }

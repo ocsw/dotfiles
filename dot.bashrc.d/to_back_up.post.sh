@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+TBU_DIR="${HOME}/.to_back_up"
+
 _ln_tbu_usage () {
     cat <<EOF
 Usage: ln_tbu SOURCE_PATH

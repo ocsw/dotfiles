@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+DOTFILE_REPO="${HOME}/repos/dotfiles"
+
 _add_dotfile () {
     local operation="$1"
     local dotfile="$2"
