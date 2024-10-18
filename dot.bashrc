@@ -243,11 +243,11 @@ fi
 DIRPAGER="${DIRPAGER:-less -E}"  # don't use with quotes
 alias l="ls -alF"  # from OpenBSD defaults
 # shellcheck disable=SC2012
-d () { ls -l   "@" 2>&1 | $DIRPAGER; }
+d () { ls -l   "$@" 2>&1 | $DIRPAGER; }
 # shellcheck disable=SC2012
-s () { ls -laR "@" 2>&1 | $DIRPAGER; }
+s () { ls -laR "$@" 2>&1 | $DIRPAGER; }
 # shellcheck disable=SC2012
-a () { ls -la  "@" 2>&1 | $DIRPAGER; }
+a () { ls -la  "$@" 2>&1 | $DIRPAGER; }
 case "$OS_UNAME" in
     CYGWIN*)
         # note: /a is for ASCII; no way to exclude dotfiles
@@ -263,16 +263,16 @@ case "$OS_UNAME" in
         }
         ;;
     OpenBSD)
-        t ()   { tree -s -d    "@" 2>&1 | $DIRPAGER; }  # dirs,  no dots
-        tf ()  { tree -s       "@" 2>&1 | $DIRPAGER; }  # files, no dots
-        ta ()  { tree -s -d -a "@" 2>&1 | $DIRPAGER; }  # dirs,  incl. dots
-        tfa () { tree -s    -a "@" 2>&1 | $DIRPAGER; }  # files, incl. dots
+        t ()   { tree -s -d    "$@" 2>&1 | $DIRPAGER; }  # dirs,  no dots
+        tf ()  { tree -s       "$@" 2>&1 | $DIRPAGER; }  # files, no dots
+        ta ()  { tree -s -d -a "$@" 2>&1 | $DIRPAGER; }  # dirs,  incl. dots
+        tfa () { tree -s    -a "$@" 2>&1 | $DIRPAGER; }  # files, incl. dots
         ;;
     *)
-        t ()   { tree --noreport -d    "@" 2>&1 | $DIRPAGER; }  # d, no .
-        tf ()  { tree --noreport       "@" 2>&1 | $DIRPAGER; }  # f, no .
-        ta ()  { tree --noreport -d -a "@" 2>&1 | $DIRPAGER; }  # d, incl. .
-        tfa () { tree --noreport    -a "@" 2>&1 | $DIRPAGER; }  # f, incl. .
+        t ()   { tree --noreport -d    "$@" 2>&1 | $DIRPAGER; }  # d, no .
+        tf ()  { tree --noreport       "$@" 2>&1 | $DIRPAGER; }  # f, no .
+        ta ()  { tree --noreport -d -a "$@" 2>&1 | $DIRPAGER; }  # d, incl. .
+        tfa () { tree --noreport    -a "$@" 2>&1 | $DIRPAGER; }  # f, incl. .
         ;;
 esac
 
