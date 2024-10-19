@@ -74,11 +74,13 @@ ln_tbu .gnupg/gpg.conf
 #
 touch .gitconfig
 ln_tbu .gitconfig
-touch .gitignore_global
-ln_tbu .gitignore_global
+touch .gitconfig_rewrites
+ln_tbu .gitconfig_rewrites
 while IFS= read -r file; do
     ln_tbu "$file"
 done < <(compgen -G ".gitconfig_*")
+touch .gitignore_global
+ln_tbu .gitignore_global
 #
 mkdir -p .ipython
 chmod 700 .ipython
