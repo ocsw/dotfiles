@@ -10,6 +10,10 @@ PYPVUTIL_REPO="${PYPVUTIL_REPO:-${HOME}/repos/pypvutil}"
 SYSTEM_SETUP="${SYSTEM_SETUP:-${HOME}/repos/system-setup}"
 TBU_DIR="${TBU_DIR:-${HOME}/.to_back_up}"
 
+# Note: This requires setting up GitHub access first; see
+# https://github.com/ocsw/system-setup/blob/main/unix-common/git.psh.
+# Alternatively, use https://github.com/ocsw/REPO.git for read-only access.
+#
 # See https://github.com/ocsw/dotfiles, https://github.com/ocsw/pypvutil, and
 # https://github.com/ocsw/system-setup
 git clone git@github.com:ocsw/dotfiles.git "$DOTFILE_REPO"
