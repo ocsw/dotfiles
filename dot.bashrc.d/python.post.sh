@@ -1,7 +1,5 @@
 #!/usr/bin/env bash
 
-# bash 3.1+ required
-
 _python_venv_prompt () {
     # Note: 'pyenv activate' uses $PYENV_VERSION, which pyenv checks first.
     # In order for a .python_version to take effect (which uses
