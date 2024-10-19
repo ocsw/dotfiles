@@ -38,7 +38,6 @@ pip3 () {
     _pip_wrapper pip3 "$@"
 }
 
-
 # can't use is_available() because we defined functions with the same names
 if in_path pip ||
         in_path pip2 ||
@@ -54,12 +53,15 @@ if in_path pip ||
     in_path pip3 && complete -o default -F _pip_completion pip3
 fi
 
+
 if is_available pyenv; then
     eval "$(pyenv init - | grep -vi 'path' | grep -v '^fi; done; $')"
 fi
 if is_available pyenv-virtualenv-init; then
     eval "$(pyenv virtualenv-init - | grep -v 'export PATH=')"
 fi
+
+# See https://github.com/ocsw/pypvutil
 export PYPVUTIL_HOME="${HOME}/repos/pypvutil"
 if is_available pyenv pyenv-virtualenv-init && \
         [ -f "${PYPVUTIL_HOME}/pypvutil_init.sh" ]; then

@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# (See vscode-setting.post.sh)
+
 _vscode-golang-settings-usage () {
     cat 1>&2 <<EOF
 Usage:
@@ -28,7 +30,6 @@ Options can appear in any order.  Later options override earlier ones.
 EOF
 }
 
-# (see vscode-setting.post.sh)
 vscode-golang-settings () {
     local tags=""
     local vsc_settings_file=".vscode/settings.json"

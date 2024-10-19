@@ -10,10 +10,13 @@ PYPVUTIL_REPO="${PYPVUTIL_REPO:-${HOME}/repos/pypvutil}"
 SYSTEM_SETUP="${SYSTEM_SETUP:-${HOME}/repos/system-setup}"
 TBU_DIR="${TBU_DIR:-${HOME}/.to_back_up}"
 
+# See https://github.com/ocsw/dotfiles, https://github.com/ocsw/pypvutil, and
+# https://github.com/ocsw/system-setup
 git clone git@github.com:ocsw/dotfiles.git "$DOTFILE_REPO"
 git clone git@github.com:ocsw/pypvutil.git "$PYPVUTIL_REPO"
 git clone git@github.com:ocsw/system-setup.git "$SYSTEM_SETUP"
 
+# See https://github.com/ocsw/dotfiles/blob/main/dot.bashrc.d/dotfiles.post.sh
 # shellcheck disable=SC1091
 . "${DOTFILE_REPO}/dot.bashrc.d/dotfiles.post.sh"
 
@@ -32,6 +35,7 @@ cp_dotfile .vimrc.local
 #
 #ln_dotfile .muttrc  # maybe
 
+# See https://github.com/ocsw/dotfiles/blob/main/dot.bashrc.d/to_back_up.post.sh
 # shellcheck disable=SC1091
 . "${DOTFILE_REPO}/dot.bashrc.d/to_back_up.post.sh"
 cd "$HOME" || exit 1

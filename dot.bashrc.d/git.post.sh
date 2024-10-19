@@ -44,7 +44,7 @@ git-repos-in-dir () {
 GIT_REPOS_TO_UPDATE=(
     ".vim/bundle/*|RO"
     ".vim/vim-pathogen|RO"
-    "repos/*"  # includes dotfiles and pypvutil
+    "repos/*"  # includes dotfiles (this repo), system-setup, and pypvutil
 )
 
 _git-update-repos-usage () {

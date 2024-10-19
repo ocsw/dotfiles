@@ -48,6 +48,10 @@ all-up () {
 
     if [ -d "$setup_repo" ]; then
         _all-up-header ".gitconfig"
+        # See
+        # https://github.com/ocsw/system-setup/blob/main/unix-common/git-config.sh
+        # and
+        # https://github.com/ocsw/system-setup/blob/main/unix-common/git-check.sh
         "${setup_repo}/unix-common/git-config.sh"
         "${setup_repo}/unix-common/git-check.sh"
         echo
