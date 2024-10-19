@@ -277,12 +277,13 @@ case "$OS_UNAME" in
 esac
 
 # misc shortcuts
-wintitle () {
-    printf "\033]0;%s\a" "$*"
-}
+wintitle () { printf "\033]0;%s\a" "$*"; }
 alias m=mutt  # mailreader; if mutt isn't installed, override in .bashrc.local
 alias p=clear
 alias j="jobs -l"
+# see
+# https://stackoverflow.com/questions/17998978/removing-colors-from-output/51141872#51141872
+alias decolorize="sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g'"
 
 # history list shortcut, with additions
 #
