@@ -2,13 +2,20 @@
 
 # Update All The Things
 
-fix-homedir-perms () {
+
+_fix-homedir-perms () {
     if [ "$(uname)" = "Darwin" ]; then
         chmod -R go-rwx "$HOME" 2>&1 | grep -v '/Library/'  # macOS annoyance
     else
         chmod -R go-rwx "$HOME"
     fi
 }
+
+# wrapper for ease of overriding / adding to behavior
+fix-homedir-perms () {
+    _fix-homedir-perms
+}
+
 
 _all-up-header () {
     local color="1;36"  # bright cyan
