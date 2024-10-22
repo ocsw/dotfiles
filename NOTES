@@ -5,8 +5,8 @@ bash:
 - $() / `` strip trailing \n
 - http://wiki.bash-hackers.org/scripting/bashchanges
 - https://wiki.ubuntu.com/DashAsBinSh
-- https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.69/html_node/Portable-Shell.html#Portable-Shell
-- https://www.gnu.org/software/bash/manual/bashref.html#Top
+- https://www.gnu.org/savannah-checkouts/gnu/autoconf/manual/autoconf-2.72/html_node/Portable-Shell.html
+- https://www.gnu.org/savannah-checkouts/gnu/bash/manual/bash.html
 - I'm going to use [] and = unless specifically using bash features (and
   quote variables)
 - I'm going to quote all variables including in assignments to build the habit
