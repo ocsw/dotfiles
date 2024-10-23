@@ -31,6 +31,11 @@ set tabstop=4       " spaces per tab when displaying
 set softtabstop=4   " spaces per tab when inserting
 set expandtab       " substitute spaces for tabs
 set smarttab        " tab inserts indents instead of tabs at begining of line
+set textwidth=79    " for wrapping; e.g. gggqG
+
+if has("autocmd")
+    autocmd FileType make setl noexpandtab
+endif
 
 
 " ****************************
