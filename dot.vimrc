@@ -34,7 +34,13 @@ set smarttab        " tab inserts indents instead of tabs at begining of line
 set textwidth=79    " for wrapping; e.g. gggqG
 
 if has("autocmd")
-    autocmd FileType make setl noexpandtab
+    autocmd BufNewFile,BufRead go.mod setf gosum
+    autocmd FileType make  setl noexpandtab
+    autocmd FileType go    setl textwidth=119
+    autocmd FileType go    setl noexpandtab
+    autocmd FileType gosum setl textwidth=119
+    autocmd FileType gosum setl noexpandtab
+    autocmd FileType rego  setl noexpandtab
 endif
 
 
