@@ -74,6 +74,7 @@ autocmd BufReadPost *.go     let b:comment_prefix = "//"
 autocmd BufReadPost go.mod   let b:comment_prefix = "//"
 autocmd BufReadPost go.sum   let b:comment_prefix = "//"
 autocmd BufReadPost *.sh     let b:comment_prefix = "# "
+autocmd BufReadPost *.psh    let b:comment_prefix = "# "
 autocmd BufReadPost Makefile let b:comment_prefix = "# "
 autocmd BufReadPost *.mk     let b:comment_prefix = "# "
 

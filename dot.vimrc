@@ -35,6 +35,7 @@ set textwidth=79    " for wrapping; e.g. gggqG
 
 if has("autocmd")
     autocmd BufNewFile,BufRead go.mod setf gosum
+    autocmd BufNewFile,BufRead *.psh call dist#ft#SetFileTypeSH(getline(1))
     autocmd FileType make  setl noexpandtab
     autocmd FileType go    setl textwidth=119
     autocmd FileType go    setl noexpandtab
