@@ -1,5 +1,21 @@
 #!/usr/bin/env bash
 
+# See https://github.com/ocsw/system-setup/blob/main/unix-common/git-config.sh
+git-config-refresh () {
+    # check global first
+    local setup_repo="${SYSTEM_SETUP:-${HOME}/repos/system-setup}"
+    "${setup_repo}/unix-common/git-config.sh"
+
+}
+
+# See https://github.com/ocsw/system-setup/blob/main/unix-common/git-check.sh
+git-config-check () {
+    # check global first
+    local setup_repo="${SYSTEM_SETUP:-${HOME}/repos/system-setup}"
+    "${setup_repo}/unix-common/git-check.sh"
+}
+
+
 git-current () {
     # NOTE: don't use this if you need a branch name you can checkout back to!
     # (this can give you things like '(HEAD detached at origin/master)'; use
