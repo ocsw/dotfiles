@@ -229,7 +229,7 @@ vscode-setting () {
                     echo "ERROR: Can't process VSCode settings file." 1>&2
                     return 1
                 fi
-                echo "Warning: overwriting previous setting for $setting_path, which was:" 1>&2
+                printf "%s\n" "Warning: overwriting previous setting for $setting_path, which was:" 1>&2
                 printf "%s\n" "$cur_setting" 1>&2
             fi
         fi

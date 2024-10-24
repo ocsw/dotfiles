@@ -52,7 +52,7 @@ umask_wrap () {
         return 1
     fi
     if ! [[ $mask =~ ^[0-7]{1,4}$ ]]; then
-        echo "ERROR: Given umask value '$mask' is invalid." 1>&2
+        printf "%s\n" "ERROR: Given umask value '$mask' is invalid." 1>&2
         return 1
     fi
     if [ -z "$cmd" ]; then

@@ -20,7 +20,7 @@ _add_dotfile () {
         return 1
     fi
     if [ -z "$dotfile" ]; then
-        echo "Usage: ${operation}_dotfile DOTFILE TARGET_DIR"
+        printf "%s\n" "Usage: ${operation}_dotfile DOTFILE TARGET_DIR"
         echo "Specify DOTFILE without the 'dot' prefix, e.g. '.bashrc'."
         echo "If TARGET_DIR isn't given, it defaults to \$HOME."
         echo

@@ -23,7 +23,7 @@ ln_tbu () {
         if ! mkdir -p "$backup_dir"; then
             echo
             echo "ERROR: Can't create backup directory.  Stopping."
-            echo "    Backup directory: $backup_dir"
+            printf "%s\n" "    Backup directory: $backup_dir"
             echo
             return 1
         fi
@@ -59,21 +59,21 @@ ln_tbu () {
         if ! mkdir -p "${backup_dir}/${source_path_prefix#/}"; then
             echo
             echo "ERROR: Can't create source path in backup directory."
-            echo "    Backup directory: $backup_dir"
+            printf "%s\n" "    Backup directory: $backup_dir"
             echo
             return 1
         fi
     fi
     if [ -e "${backup_dir}/${source_path#/}" ]; then
         echo "ERROR: Source already exists in backup directory."
-        echo "    Backup directory: $backup_dir"
+        printf "%s\n" "    Backup directory: $backup_dir"
         return 1
     fi
 
     if ! mv "$source_path" "${backup_dir}/${subtree}"; then
         echo
         echo "ERROR: Can't move source to backup directory.  Stopping."
-        echo "    Backup directory: $backup_dir"
+        printf "%s\n" "    Backup directory: $backup_dir"
         echo
         return 1
     fi
