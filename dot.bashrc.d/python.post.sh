@@ -19,8 +19,8 @@ _python_venv_prompt () {
 _pip_wrapper () {
     local cmd="$1"
     if ! is_available pyenv ||
-            ! [[ "$(which "$cmd")" =~ /shims/ ]] ||
-            [[ "$(pyenv version)" =~ ^system\  ]]; then
+            ! [[ $(which "$cmd") =~ /shims/ ]] ||
+            [[ $(pyenv version) =~ ^system\  ]]; then
         umask_wrap 022 "$@"
         return "$?"
     fi
