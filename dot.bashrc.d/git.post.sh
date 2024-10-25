@@ -473,7 +473,7 @@ git-update-repos () (  # subshell
 )
 
 git-update-repo () {
-    git-update-repos -r "$(pwd)" "$@"
+    git-update-repos -r "$PWD" "$@"
 }
 
 
