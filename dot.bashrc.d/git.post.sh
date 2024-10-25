@@ -387,7 +387,7 @@ git-update-repos () (  # subshell
                         git merge --ff-only "$git_verb_str"
                     else
                         git merge --ff-only 2>&1 | \
-                            grep -vE '^Already up to date|is up to date.$'
+                            grep -vE '^Already up to date|is up to date\.$'
                     fi
                 else
                     msg="WARNING: Branch${bstr} has no remote configured."
@@ -409,8 +409,8 @@ git-update-repos () (  # subshell
                             git merge --ff-only "upstream/${branch}" \
                                 "$git_verb_str"
                         else
-                            git merge --ff-only "upstream/${branch}" 2>&1 \
-                                | grep -vE '^Already up to date|is up to date.$'
+                            git merge --ff-only "upstream/${branch}" 2>&1 | \
+                                grep -vE '^Already up to date|is up to date\.$'
                         fi
                     else
                         msg="WARNING: There's an upstream remote for this "

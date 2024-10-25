@@ -15,8 +15,8 @@ _fix-homedir-perms () {
     # parent/ancestor directories should be enough protection.
     ### chmod -R go-rwx "$HOME" 2>&1 | \
     ###     grep -v \
-    ###         -e "^chmod: Unable to change file mode on ${HOME}/Library/.*: Operation not permitted$" \
-    ###         -e "^chmod: ${HOME}/Library/.*: Permission denied$"
+    ###         -e "^chmod: Unable to change file mode on ${HOME}/Library/.*: Operation not permitted\$" \
+    ###         -e "^chmod: ${HOME}/Library/.*: Permission denied\$"
 
     # However, as of Sonoma (macOS 14), that's not enough.  There's some kind
     # of issue with one of the protection systems that makes searching
@@ -36,8 +36,8 @@ _fix-homedir-perms () {
             \! -regex "Library/.*Containers" -print0 |
         xargs -0 chmod -R go-rwx 2>&1 |
         grep -v \
-            -e "^chmod: Unable to change file mode on Library/.*: Operation not permitted$" \
-            -e "^chmod: Library/.*: Permission denied$"
+            -e '^chmod: Unable to change file mode on Library/.*: Operation not permitted$' \
+            -e '^chmod: Library/.*: Permission denied$'
     )
 }
 
