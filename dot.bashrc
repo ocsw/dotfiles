@@ -77,8 +77,8 @@ fi
 # are we in mosh, tmux, and/or screen?
 SELF_PPID=$(ps -eo pid,ppid | awk "\$1 == $$ {print \$2}")
 SELF_PARENT=$(
-    ps -eo pid,comm | awk "\$1 == $SELF_PPID {print \$0}" | \
-    sed 's/^[ 	]*[0-9]*[ 	][ 	]*//'
+    ps -eo pid,comm | awk "\$1 == $SELF_PPID {print \$0}" |
+        sed 's/^[ 	]*[0-9]*[ 	][ 	]*//'
 )
 [ "$SELF_PARENT" = "mosh-server" ] && export _IN_MOSH="yes"
 [ -n "$TMUX" ] && export _IN_TMUX="yes"
@@ -228,11 +228,11 @@ else
 fi
 if [ "$OS_UNAME" = "Darwin" ]; then
     alias ls="ls -G"
-    if is_available gcp brew && \
+    if is_available gcp brew &&
             [ "$(command -v gcp)" = "$(brew --prefix)/bin/gcp" ]; then
         alias cp="gcp"
     fi
-    if is_available gmv brew && \
+    if is_available gmv brew &&
             [ "$(command -v gmv)" = "$(brew --prefix)/bin/gmv" ]; then
         alias mv="gmv"
     fi
@@ -253,12 +253,12 @@ case "$OS_UNAME" in
         # note: /a is for ASCII; no way to exclude dotfiles
         # dirs, incl. dots
         t () {
-            tree.com /a    ${1+"$(cygpath -ml "$1" | sed 's|/$||')"} | \
+            tree.com /a    ${1+"$(cygpath -ml "$1" | sed 's|/$||')"} |
                 sed -e '1,2d' -e 's/^[A-Z]:\.$/./' | $DIRPAGER
         }
         # files, incl. dots
         tf () {
-            tree.com /a /f ${1+"$(cygpath -ml "$1" | sed 's|/$||')"} | \
+            tree.com /a /f ${1+"$(cygpath -ml "$1" | sed 's|/$||')"} |
                 sed -e '1,2d' -e 's/^[A-Z]:\.$/./' | $DIRPAGER
         }
         ;;
@@ -434,7 +434,7 @@ gc () {
         #
         IFS=" "
         f=$(find -H "$d" -maxdepth 1 -mindepth 1 \
-            \( -name "$1" ${cygflag:+-o -name "$1.exe"} \) 2>/dev/null | \
+            \( -name "$1" ${cygflag:+-o -name "$1.exe"} \) 2>/dev/null |
             sed -e "s:^${d}::" -e "s:^/::" ${cygflag:+-e '/\.dll$/d'})
         IFS=":"
         [ -n "$f" ] && list["$i"]="$f"

@@ -31,8 +31,8 @@ if in_path brew; then
     }
 
     brew-keg-only () {
-        brew info --installed --json=v1 | \
-            jq "map(select(.keg_only == true)) | map(.name)" | grep '"' | \
+        brew info --installed --json=v1 |
+            jq "map(select(.keg_only == true)) | map(.name)" | grep '"' |
             sed -e 's/^ *"//' -e 's/",$//' -e 's/"$//'
     }
 

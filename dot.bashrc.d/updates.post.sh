@@ -13,7 +13,7 @@ _fix-homedir-perms () {
     # ~/Library either as root, or with deeply screwy permissions.  The safest
     # thing to do is just ignore them.  The permissions on their
     # parent/ancestor directories should be enough protection.
-    ### chmod -R go-rwx "$HOME" 2>&1 | \
+    ### chmod -R go-rwx "$HOME" 2>&1 |
     ###     grep -v \
     ###         -e "^chmod: Unable to change file mode on ${HOME}/Library/.*: Operation not permitted\$" \
     ###         -e "^chmod: ${HOME}/Library/.*: Permission denied\$"
@@ -33,11 +33,11 @@ _fix-homedir-perms () {
     (
         cd "$HOME" &&
         find . Library -depth 1 -prune \! -path ./Library \
-            \! -regex "Library/.*Containers" -print0 |
-        xargs -0 chmod -R go-rwx 2>&1 |
-        grep -v \
-            -e '^chmod: Unable to change file mode on Library/.*: Operation not permitted$' \
-            -e '^chmod: Library/.*: Permission denied$'
+                \! -regex "Library/.*Containers" -print0 |
+            xargs -0 chmod -R go-rwx 2>&1 |
+            grep -v \
+                -e '^chmod: Unable to change file mode on Library/.*: Operation not permitted$' \
+                -e '^chmod: Library/.*: Permission denied$'
     )
 }
 

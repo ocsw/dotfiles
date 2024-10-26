@@ -72,8 +72,8 @@ _prompt_scm_info () {
             extra="|MERGE"
         fi
         local dirstate
-        dirstate=$(test -f "$hg/.hg/dirstate" && \
-            hexdump -vn 20 -e '1/1 "%02x"' "$hg/.hg/dirstate" || \
+        dirstate=$(test -f "$hg/.hg/dirstate" &&
+            hexdump -vn 20 -e '1/1 "%02x"' "$hg/.hg/dirstate" ||
             echo "empty")
         local current="$hg/.hg/bookmarks.current"
         if  [ -f "$current" ]; then
@@ -85,7 +85,7 @@ _prompt_scm_info () {
             fi
             if [ -z "$extra" ] && [ -f "$marks" ]; then
                 local markstate
-                markstate=$(grep --color=never " ${br}\$" "$marks" | \
+                markstate=$(grep --color=never " ${br}\$" "$marks" |
                     cut -f 1 -d ' ')
                 if [ "$markstate" != "$dirstate" ]; then
                     extra="|UPDATE_NEEDED"
@@ -97,7 +97,7 @@ _prompt_scm_info () {
         local remote="$hg/.hg/remotenames"
         if [ -f "$remote" ]; then
             local marks
-            marks=$(grep --color=never "^${dirstate} bookmarks" "$remote" | \
+            marks=$(grep --color=never "^${dirstate} bookmarks" "$remote" |
                 cut -f 3 -d ' ' | tr '\n' '|' | sed 's/.$//')
             if [ -n "$marks" ]; then
                 br="$br|$marks"

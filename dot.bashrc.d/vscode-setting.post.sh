@@ -187,7 +187,7 @@ vscode-setting () {
             echo "ERROR: Can't process VSCode settings file." 1>&2
             return 1
         fi
-        if [ -z "$cur_setting" ] || [ "$cur_setting" = '""' ] || \
+        if [ -z "$cur_setting" ] || [ "$cur_setting" = '""' ] ||
                 [ "$cur_setting" = "null" ]; then  # JSON null
             return 0
         fi

@@ -61,7 +61,7 @@ fi
 
 # See https://github.com/ocsw/pypvutil
 export PYPVUTIL_HOME="${HOME}/repos/pypvutil"
-if is_available pyenv pyenv-virtualenv-init && \
+if is_available pyenv pyenv-virtualenv-init &&
         [ -f "${PYPVUTIL_HOME}/pypvutil_init.sh" ]; then
     export PYPVUTIL_PREFIX="py"
     # shellcheck disable=SC1091

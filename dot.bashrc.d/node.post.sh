@@ -27,10 +27,10 @@ if [ -d "${HOME}/.nvm" ]; then
     # same name
     if in_path brew; then
         # shellcheck disable=SC1091
-        [ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] && \
+        [ -s "$(brew --prefix)/opt/nvm/nvm.sh" ] &&
             . "$(brew --prefix)/opt/nvm/nvm.sh"
         # shellcheck disable=SC1091
-        [ -s "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" ] && \
+        [ -s "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm" ] &&
             . "$(brew --prefix)/opt/nvm/etc/bash_completion.d/nvm"
     fi
 fi

@@ -357,7 +357,7 @@ git-update-repos () (  # subshell
             for branch in "${key_branches[@]}"; do
                 # ignore missing branches
                 # note: I think this might be safer than
-                #     git branch --no-color | \
+                #     git branch --no-color |
                 #         grep "^[* ] ${branch}\$" > /dev/null
                 git show-ref --verify -q "refs/heads/$branch" || continue
 
@@ -371,7 +371,7 @@ git-update-repos () (  # subshell
 
                 # checkout branch
                 # note: only drops stdout because of order
-                if git checkout "$branch" 2>&1 > /dev/null | \
+                if git checkout "$branch" 2>&1 > /dev/null |
                         grep -vE '^(Already on|Switched to branch)'; then
                     continue
                 fi
@@ -380,13 +380,13 @@ git-update-repos () (  # subshell
                 # note: we're assuming that if the branch has remote and merge
                 # configs, they point to something included in the remote's
                 # fetch config
-                if git config --get "branch.${branch}.remote" > /dev/null && \
+                if git config --get "branch.${branch}.remote" > /dev/null &&
                         git config --get "branch.${branch}.merge" \
                         > /dev/null; then
                     if [ -n "$git_verb_str" ]; then
                         git merge --ff-only "$git_verb_str"
                     else
-                        git merge --ff-only 2>&1 | \
+                        git merge --ff-only 2>&1 |
                             grep -vE '^Already up to date|is up to date\.$'
                     fi
                 else
@@ -409,7 +409,7 @@ git-update-repos () (  # subshell
                             git merge --ff-only "upstream/${branch}" \
                                 "$git_verb_str"
                         else
-                            git merge --ff-only "upstream/${branch}" 2>&1 | \
+                            git merge --ff-only "upstream/${branch}" 2>&1 |
                                 grep -vE '^Already up to date|is up to date\.$'
                         fi
                     else
@@ -436,7 +436,7 @@ git-update-repos () (  # subshell
                 # killed)
                 #
                 # only drops stdout because of order
-                if git checkout "$starting_branch" 2>&1 > /dev/null | \
+                if git checkout "$starting_branch" 2>&1 > /dev/null |
                         grep -vE '^(Already on|Switched to branch)'; then
                     continue
                 fi
@@ -448,12 +448,12 @@ git-update-repos () (  # subshell
             # note: this will fail "open" if the format ever changes (i.e. it
             # will just print more than intended)
             # an alternative (but slower) approach would be:
-            #   extra_branches=$(git show-ref --heads | awk '{print $2}' | \
-            #       sed 's|^refs/heads/||' | \
+            #   extra_branches=$(git show-ref --heads | awk '{print $2}' |
+            #       sed 's|^refs/heads/||' |
             #       grep -vE "^(${key_branches_grep})\$")
             # and then more processing to add the * to the current branch, and
             # the leading spaces
-            extra_branches=$(git branch --no-color | \
+            extra_branches=$(git branch --no-color |
                 grep -vE "^[* ] (${key_branches_grep})\$")
             if [ -n "$extra_branches" ]; then
                 printf "%s\n" "Extra branches${rstr}:"
@@ -492,14 +492,15 @@ git-clone-fork () {
         return 1
     fi
 
-    fork_user=$(printf "%s\n" "$fork_url" | awk -F/ '{print $(NF-1)}' | \
+    fork_user=$(printf "%s\n" "$fork_url" | awk -F/ '{print $(NF-1)}' |
         sed 's/^.*://')
-    fork_repo=$(printf "%s\n" "$fork_url" | awk -F/ '{print $(NF)}' | \
+    fork_repo=$(printf "%s\n" "$fork_url" | awk -F/ '{print $(NF)}' |
         sed 's/\.git$//')
 
     (
-        git clone "$fork_url" "${fork_user}-${fork_repo}" && \
-        cd "${fork_user}-${fork_repo}" && \
+        set -e
+        git clone "$fork_url" "${fork_user}-${fork_repo}"
+        cd "${fork_user}-${fork_repo}"
         git remote add upstream "$upstream_url"
     )
 }
