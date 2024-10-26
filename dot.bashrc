@@ -435,7 +435,7 @@ gc () {
         IFS=" "
         f=$(find -H "$d" -maxdepth 1 -mindepth 1 \
             \( -name "$1" ${cygflag:+-o -name "$1.exe"} \) 2>/dev/null | \
-            sed -e "s:^$d::" -e "s:^/::" ${cygflag:+-e '/\.dll$/d'})
+            sed -e "s:^${d}::" -e "s:^/::" ${cygflag:+-e '/\.dll$/d'})
         IFS=":"
         [ -n "$f" ] && list["$i"]="$f"
 

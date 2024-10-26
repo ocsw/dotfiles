@@ -450,7 +450,7 @@ git-update-repos () (  # subshell
             # an alternative (but slower) approach would be:
             #   extra_branches=$(git show-ref --heads | awk '{print $2}' | \
             #       sed 's|^refs/heads/||' | \
-            #       grep -vE '^(${key_branches_grep})$')
+            #       grep -vE "^(${key_branches_grep})\$")
             # and then more processing to add the * to the current branch, and
             # the leading spaces
             extra_branches=$(git branch --no-color | \
