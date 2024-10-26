@@ -60,6 +60,9 @@ bash:
 - | loop runs the loop in a subshell (as does | anything)
 - <() runs in a subshell but the return value is ignored (which also means it
   won't trigger set -e in the invoking shell)
+- backslashes aren't actually necessary to continue a line following \, ||, or
+  && (see e.g.
+  https://stackoverflow.com/questions/3871332/how-to-tell-bash-that-the-line-continues-on-the-next-line/35931689#35931689)
 
 
 quoting
