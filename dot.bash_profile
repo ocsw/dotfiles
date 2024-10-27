@@ -7,7 +7,21 @@
 . "${HOME}/.bashrc.d/common.sh"
 
 
+# --- first-step sub-scripts ---
+
+# Brew, in particular, needs to come before anything else so that some of the
+# tests in pre-profile scripts have their commands available
+
+while IFS= read -r file; do
+    # shellcheck disable=SC1090
+    . "$file"
+done < <(compgen -G "${HOME}/.bash_profile.d/*.first.sh")
+
+
 # --- pre-profile sub-scripts ---
+
+# In particular, anything that prepends to the $PATH should be in here, so that
+# ~/bin goes before it later
 
 while IFS= read -r file; do
     # shellcheck disable=SC1090
