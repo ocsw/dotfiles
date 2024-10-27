@@ -7,11 +7,14 @@ _add_dotfile () {
     local operation="$1"
     local dotfile="$2"
     local target_dir="$3"
-    # check global first
-    local repo_dir="${DOTFILE_REPO:-${HOME}/repos/dotfiles}"
     local cmd
 
-    if ! [ -d "$repo_dir" ]; then
+    if [ -z "$DOTFILE_REPO" ]; then
+        echo "ERROR: DOTFILE_REPO is unset; where is the dotfiles repo?"
+        return 1
+    fi
+
+    if ! [ -d "$DOTFILE_REPO" ]; then
         echo "ERROR: Dotfile repo missing."
         return 1
     fi
@@ -27,7 +30,7 @@ _add_dotfile () {
         echo "ERROR: No dotfile given."
         return 1
     fi
-    if ! [ -e "${repo_dir}/dot${dotfile}" ]; then
+    if ! [ -e "${DOTFILE_REPO}/dot${dotfile}" ]; then
         echo "ERROR: No such dotfile in the repo."
         return 1
     fi
@@ -51,7 +54,7 @@ _add_dotfile () {
             ;;
     esac
 
-    $cmd "${repo_dir}/dot${dotfile}" "${target_dir}/${dotfile}"
+    $cmd "${DOTFILE_REPO}/dot${dotfile}" "${target_dir}/${dotfile}"
 }
 
 ln_dotfile () {

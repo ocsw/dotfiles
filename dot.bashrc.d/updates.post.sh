@@ -53,9 +53,6 @@ _all-up-header () {
 }
 
 all-up () {
-    # check global first
-    local setup_repo="${SYSTEM_SETUP:-${HOME}/repos/system-setup}"
-
     echo
 
     if is_available brew-up; then
@@ -91,7 +88,8 @@ all-up () {
     source "${HOME}/.bash_profile"
     echo
 
-    if [ -d "$setup_repo" ]; then
+    # See system_setup.post.sh
+    if [ -d "$SYSTEM_SETUP" ]; then
         _all-up-header ".gitconfig"
         git-config-refresh
         git-config-check

@@ -4,11 +4,15 @@
 # reference, and vscode-go.post.sh
 
 vscode-check-config () {
-    # check global first
-    local setup_repo="${SYSTEM_SETUP:-${HOME}/repos/system-setup}"
+    # See system_setup.post.sh
+    if [ -z "$SYSTEM_SETUP" ]; then
+        echo "ERROR: SYSTEM_SETUP is unset; where is the system-setup repo?" \
+            1>&2
+        return 1
+    fi
 
     # See https://github.com/ocsw/system-setup/blob/main/vscode/extensions.txt
-    diff "${setup_repo}/vscode/extensions.txt" \
+    diff "${SYSTEM_SETUP}/vscode/extensions.txt" \
         <(jq -r '.[].identifier.id' < \
             "${HOME}/.vscode/extensions/extensions.json" | sort -t. -k2 -u)
 
@@ -16,9 +20,9 @@ vscode-check-config () {
     # and https://github.com/ocsw/system-setup/blob/main/vscode/keybindings.json
     if [ "$(uname)" = "Darwin" ]; then
         local user_config_dir="${HOME}/Library/Application Support/Code/User"
-        diff "${setup_repo}/vscode/settings.json" \
+        diff "${SYSTEM_SETUP}/vscode/settings.json" \
             "${user_config_dir}/settings.json"
-        diff "${setup_repo}/vscode/keybindings.json" \
+        diff "${SYSTEM_SETUP}/vscode/keybindings.json" \
             "${user_config_dir}/keybindings.json"
     fi
 }

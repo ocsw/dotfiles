@@ -2,17 +2,25 @@
 
 # See https://github.com/ocsw/system-setup/blob/main/unix-common/git-config.sh
 git-config-refresh () {
-    # check global first
-    local setup_repo="${SYSTEM_SETUP:-${HOME}/repos/system-setup}"
-    "${setup_repo}/unix-common/git-config.sh"
+    # See system_setup.post.sh
+    if [ -z "$SYSTEM_SETUP" ]; then
+        echo "ERROR: SYSTEM_SETUP is unset; where is the system-setup repo?" \
+            1>&2
+        return 1
+    fi
+    "${SYSTEM_SETUP}/unix-common/git-config.sh"
 
 }
 
 # See https://github.com/ocsw/system-setup/blob/main/unix-common/git-check.sh
 git-config-check () {
-    # check global first
-    local setup_repo="${SYSTEM_SETUP:-${HOME}/repos/system-setup}"
-    "${setup_repo}/unix-common/git-check.sh"
+    # See system_setup.post.sh
+    if [ -z "$SYSTEM_SETUP" ]; then
+        echo "ERROR: SYSTEM_SETUP is unset; where is the system-setup repo?" \
+            1>&2
+        return 1
+    fi
+    "${SYSTEM_SETUP}/unix-common/git-check.sh"
 }
 
 
