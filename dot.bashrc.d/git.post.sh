@@ -146,7 +146,7 @@ EOF
 }
 
 git-update-repos () (  # subshell
-    # Originally, I saved the starting directory, and went pack to it with a
+    # Originally, I saved the starting directory, and went back to it with a
     # trap.  But the trap command is global, and resetting it from within the
     # trap handler doesn't seem to work.  Running within a subshell avoids all
     # of that.
