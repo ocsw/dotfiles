@@ -4,7 +4,7 @@
 git-config-refresh () {
     # See system_setup.post.sh
     if [ -z "$SYSTEM_SETUP" ]; then
-        echo "ERROR: SYSTEM_SETUP is unset; where is the system-setup repo?" \
+        echo "ERROR: SYSTEM_SETUP must contain the path to the 'system-setup' repo." \
             1>&2
         return 1
     fi
@@ -16,7 +16,7 @@ git-config-refresh () {
 git-config-check () {
     # See system_setup.post.sh
     if [ -z "$SYSTEM_SETUP" ]; then
-        echo "ERROR: SYSTEM_SETUP is unset; where is the system-setup repo?" \
+        echo "ERROR: SYSTEM_SETUP must contain the path to the 'system-setup' repo." \
             1>&2
         return 1
     fi

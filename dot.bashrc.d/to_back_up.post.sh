@@ -18,7 +18,7 @@ ln_tbu () {
     local subtree
 
     if [ -z "$TBU_DIR" ]; then
-        echo "ERROR: TBU_DIR is unset; where is the backup directory?"
+        echo "ERROR: TBU_DIR must contain the path to the backup directory."
         return 1
     fi
 

@@ -10,7 +10,7 @@ _add_dotfile () {
     local cmd
 
     if [ -z "$DOTFILE_REPO" ]; then
-        echo "ERROR: DOTFILE_REPO is unset; where is the dotfiles repo?"
+        echo "ERROR: DOTFILE_REPO must contain the path to the 'dotfiles' repo."
         return 1
     fi
 
