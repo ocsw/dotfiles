@@ -33,8 +33,7 @@ done < <(compgen -G "${HOME}/.bash_profile.d/*.pre.sh")
 
 umask 077
 
-if ! is_path_component "${HOME}/bin"; then
-    # should probably be at the end, but...
+if ! is_path_component "${HOME}/bin" && [ -d "${HOME}/bin" ]; then
     export PATH="${HOME}/bin:${PATH}"
 fi
 
