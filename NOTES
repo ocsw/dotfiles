@@ -45,7 +45,7 @@ bash:
 - ! &&, ! || -> ! tighter than &&, ||
 - && and || same precedence, left assoc, short circuit
     - mixing them doesn't always do what you expect
-- can use [ ! ... ] but ! [] is technically more portable if using bash
+- can use [ ! ... ] but ! [] is arguably more readable
 - while-read keeps internal spaces, but removes from beginning and end unless
   IFS=
     - always use IFS= for while-read so can't forget, e.g. with
