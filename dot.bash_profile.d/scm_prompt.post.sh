@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# See ../dot.bashrc.d/scm_prompt.post.sh
+
 export GIT_PS1_STATESEPARATOR=" "
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWSTASHSTATE=1

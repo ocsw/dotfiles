@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 # [from the Facebook dotfile collection, tweaked and modified to add __git_ps1]
+# [see also ../dot.bash_profile.d/scm_prompt.post.sh]
 # [used in PS1 in ../dot.bashrc]
 
 # Determines the "branch" of the current repo and emits it.
