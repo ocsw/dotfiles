@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Used in PS1 in ../dot.bashrc
 _errorcode_prompt () {
     # first copy the status array in case we do something that changes it as we
     # go along

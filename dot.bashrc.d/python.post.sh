@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# Used in PS1 in ../dot.bashrc
 _python_venv_prompt () {
     # Note: 'pyenv activate' uses $PYENV_VERSION, which pyenv checks first.
     # In order for a .python_version to take effect (which uses
@@ -15,7 +16,7 @@ _python_venv_prompt () {
 }
 
 
-# see common.sh
+# See common.sh
 _pip_wrapper () {
     local cmd="$1"
     if ! is_available pyenv ||
@@ -36,7 +37,7 @@ pip3 () {
     _pip_wrapper pip3 "$@"
 }
 
-# can't use is_available() because we defined functions with the same names
+# Can't use is_available() because we defined functions with the same names
 if in_path pip ||
         in_path pip2 ||
         in_path pip3; then
