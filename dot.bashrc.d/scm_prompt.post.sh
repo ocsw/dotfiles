@@ -17,12 +17,12 @@
 #
 #  . /path/to/scm-prompt.rc
 #  setopt PROMPT_SUBST
-#  export PS1='$(_prompt_scm_info)$USER@%m:%~%% '
+#  PS1='$(_prompt_scm_info)$USER@%m:%~%% '
 
 # To use from bash:
 #
 #  . /path/to/scm-prompt.rc
-#  export PS1="\$(_prompt_scm_info)\u@\h:\W\$ "
+#  PS1="\$(_prompt_scm_info)\u@\h:\W\$ "
 #
 # NOTE! You *EITHER* need to single-quote the whole thing *OR* back-slash
 # the $(...) (as above), but not both. Which one you use depends on if
