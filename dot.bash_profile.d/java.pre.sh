@@ -11,4 +11,5 @@ if is_available jenv; then
             [ -d "${HOME}/.jenv/shims" ]; then
         export PATH="${HOME}/.jenv/shims:${PATH}"
     fi
+    eval "$(jenv init - | grep '^export ' | grep -v '^export PATH=')"
 fi
