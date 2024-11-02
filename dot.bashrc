@@ -80,13 +80,13 @@ SELF_PARENT=$(
     ps -eo pid,comm | awk "\$1 == $SELF_PPID {print \$0}" |
         sed 's/^[ 	]*[0-9]*[ 	][ 	]*//'
 )
-[ "$SELF_PARENT" = "mosh-server" ] && export _IN_MOSH="yes"
-[ -n "$TMUX" ] && export _IN_TMUX="yes"
-[ -z "$TMUX" ] && [ "$TERM" = "screen" ] && export _IN_SCREEN="yes"
+[ "$SELF_PARENT" = "mosh-server" ] && IN_MOSH="yes"
+[ -n "$TMUX" ] && IN_TMUX="yes"
+[ -z "$TMUX" ] && [ "$TERM" = "screen" ] && IN_SCREEN="yes"
 
 # string of marks, 1 for each level of shell nesting, with corrections
 MARKLVL="$SHLVL"
-for i in $_IN_MOSH $_IN_TMUX $_IN_SCREEN; do  # no quotes
+for i in $IN_MOSH $IN_TMUX $IN_SCREEN; do  # no quotes
     MARKLVL=$((MARKLVL - 1))
 done
 PS1_MARKS=""
@@ -95,9 +95,9 @@ for ((i=MARKLVL; i > 0; i--)); do
 done
 
 # add mosh/tmux/screen markers, in order
-[ -n "$_IN_SCREEN" ] && PS1_MARKS="S$PS1_MARKS"
-[ -n "$_IN_TMUX" ] && PS1_MARKS="T$PS1_MARKS"
-[ -n "$_IN_MOSH" ] && PS1_MARKS="M$PS1_MARKS"
+[ -n "$IN_SCREEN" ] && PS1_MARKS="S$PS1_MARKS"
+[ -n "$IN_TMUX" ] && PS1_MARKS="T$PS1_MARKS"
+[ -n "$IN_MOSH" ] && PS1_MARKS="M$PS1_MARKS"
 
 # if there are jobs (stopped or running), add a symbol to the prompt
 jobs_flag () {
