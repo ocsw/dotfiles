@@ -82,7 +82,7 @@ SELF_PARENT=$(
 )
 [ "$SELF_PARENT" = "mosh-server" ] && IN_MOSH="yes"
 [ -n "$TMUX" ] && IN_TMUX="yes"
-[ -z "$TMUX" ] && [ "$TERM" = "screen" ] && IN_SCREEN="yes"
+[ -z "$TMUX" ] && [[ $TERM =~ ^screen(\.|$) ]] && IN_SCREEN="yes"
 
 # string of marks, 1 for each level of shell nesting, with corrections
 MARKLVL="$SHLVL"
