@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# See also ../dot.bashrc.d/python.post.sh
+
 if is_available pyenv; then
     if [ -z "$PYENV_ROOT" ] && [ -d "${HOME}/.pyenv" ]; then
         export PYENV_ROOT="${HOME}/.pyenv"

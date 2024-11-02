@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# See also ../dot.bashrc.d/go.post.sh
+
 if is_available go; then
     gopath_tmp="${GOPATH:-$(go env GOPATH)}"
     # don't check for the directory's existence so that we don't need to

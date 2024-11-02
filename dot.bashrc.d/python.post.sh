@@ -1,5 +1,8 @@
 #!/usr/bin/env bash
 
+# See also ../dot.bash_profile.d/python.pre.sh
+
+
 # Used in PS1 in ../dot.bashrc
 _python_venv_prompt () {
     # Note: 'pyenv activate' uses $PYENV_VERSION, which pyenv checks first.

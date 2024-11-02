@@ -1,17 +1,19 @@
 #!/usr/bin/env bash
 
-# see common.sh
+# See also ../dot.bash_profile.d/brew.first.sh
+
+# See common.sh
 brew () {
     umask_wrap 022 brew "$@"
 }
 
-# can't use is_available() because we defined a function with the same name
+# Can't use is_available() because we defined a function with the same name
 if in_path brew; then
     brew-fix-perms () {
         if [ -d /usr/local/Cellar ]; then
-            # be conservative; we don't want to include something that really
+            # Be conservative; we don't want to include something that really
             # shouldn't be world-accessible
-            # the path implies macOS, on which find has -exec + (and chmod has
+            # The path implies macOS, on which find has -exec + (and chmod has
             # -h)
             find /usr/local/{Cellar,Caskroom} \
                 \( -name '__pycache__' -o -name '*.pyc' \) \! -perm -044 \
@@ -36,7 +38,7 @@ if in_path brew; then
             sed -e 's/^ *"//' -e 's/",$//' -e 's/"$//'
     }
 
-    # for the brew bash-completion package
+    # For the brew bash-completion package
     if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
         # shellcheck disable=SC1091
         . "$(brew --prefix)/etc/bash_completion"

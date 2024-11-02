@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-# paths on Apple Silicon
+# See also ../dot.bashrc.d/brew.post.sh
+
+# Paths on Apple Silicon
 if [ "$(uname)" = "Darwin" ] && [ -d "/opt/homebrew" ]; then
     export HOMEBREW_PREFIX="/opt/homebrew"
     export HOMEBREW_CELLAR="/opt/homebrew/Cellar"

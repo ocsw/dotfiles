@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 
-# (See also vscode-go.post.sh)
+# See also ../dot.bash_profile.d/go.post.sh and vscode-go.post.sh
 
 #
 # Notes about GOPRIVATE components:
