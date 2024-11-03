@@ -63,14 +63,8 @@ if is_available pyenv-virtualenv-init; then
     eval "$(pyenv virtualenv-init - | grep -v '^export ')"
 fi
 
-# See https://github.com/ocsw/pypvutil
-export PYPVUTIL_HOME="${HOME}/repos/pypvutil"
-if is_available pyenv pyenv-virtualenv-init &&
-        [ -f "${PYPVUTIL_HOME}/pypvutil_init.sh" ]; then
-    export PYPVUTIL_PREFIX="py"
+# See ../dot.bash_profile.d/python.pre.sh and https://github.com/ocsw/pypvutil
+if [ -n "${PYPVUTIL_HOME}" ]; then
     # shellcheck disable=SC1091
     . "${PYPVUTIL_HOME}/pypvutil_init.sh"
-else
-    unset PYPVUTIL_HOME
-    unset PYPVUTIL_PREFIX
 fi

@@ -24,3 +24,10 @@ if is_available pyenv-virtualenv-init; then
     fi
     export PYENV_VIRTUALENV_DISABLE_PROMPT=1
 fi
+
+# See https://github.com/ocsw/pypvutil
+if is_available pyenv pyenv-virtualenv-init &&
+        [ -f "${HOME}/repos/pypvutil/pypvutil_init.sh" ]; then
+    export PYPVUTIL_HOME="${HOME}/repos/pypvutil"
+    export PYPVUTIL_PREFIX="py"
+fi
