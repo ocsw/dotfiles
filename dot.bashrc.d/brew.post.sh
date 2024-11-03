@@ -10,16 +10,14 @@ brew () {
 # Can't use is_available() because we defined a function with the same name
 if in_path brew; then
     brew-fix-perms () {
-        if [ -d /usr/local/Cellar ]; then
-            # Be conservative; we don't want to include something that really
-            # shouldn't be world-accessible
-            # The path implies macOS, on which find has -exec + (and chmod has
-            # -h)
-            find /usr/local/{Cellar,Caskroom} \
-                \( -name '__pycache__' -o -name '*.pyc' \) \! -perm -044 \
-                -exec chmod -h go=u-w {} +
+        if [ -e /usr/local/Cellar ]; then
+            # Only include directories we know are brew-related
+            for i in Caskroom Cellar Homebrew lib/node_modules \
+                    share/google-cloud-sdk var/homebrew; do
+                [ -e "/usr/local/${i}" ] && chmod -R go=u-w "/usr/local/${i}"
+            done
         fi
-        if [ -d /opt/homebrew ]; then
+        if [ -e /opt/homebrew ]; then
             chmod -R go=u-w /opt/homebrew
         fi
     }
