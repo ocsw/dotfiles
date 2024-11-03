@@ -39,7 +39,7 @@ if in_path brew; then
     }
 
     # For the brew bash-completion package
-    if [ -f "$(brew --prefix)/etc/bash_completion" ]; then
+    if [ -e "$(brew --prefix)/etc/bash_completion" ]; then
         # shellcheck disable=SC1091
         . "$(brew --prefix)/etc/bash_completion"
     fi
