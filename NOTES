@@ -65,6 +65,12 @@ bash:
   https://stackoverflow.com/questions/3871332/how-to-tell-bash-that-the-line-continues-on-the-next-line/35931689#35931689)
 - (()) is false when it evaluates to 0; use $(()) substitution for arithmetic,
   and : $(()) to ignore the result (e.g. for i++)
+- re [ -f ] vs [ -e ]:
+    - when you're about to use the target, e.g. source it, use the most general
+      test, and you'll find out if e.g. a file is actually a directory when you
+      try to use it
+    - when testing if e.g. something has been installed, use the most specific
+      test, to be as sure as possible your result means what you think it means
 
 
 quoting
