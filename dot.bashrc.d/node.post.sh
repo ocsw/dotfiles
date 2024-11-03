@@ -1,6 +1,8 @@
 #!/usr/bin/env bash
 
-# see common.sh
+# See also ../dot.bash_profile.d/node.post.sh
+
+# See common.sh
 npm () {
     local arg
     local is_install="no"
@@ -20,10 +22,9 @@ npm () {
     command npm "$@"
 }
 
-if [ -d "${HOME}/.nvm" ]; then
-    export NVM_DIR="${HOME}/.nvm"
-
-    # can't use is_available() for brew because we defined a function with the
+# See ../dot.bash_profile.d/node.post.sh
+if [ -n "$NVM_DIR" ]; then
+    # Can't use is_available() for brew because we defined a function with the
     # same name
     if in_path brew; then
         # shellcheck disable=SC1091
