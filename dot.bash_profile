@@ -21,7 +21,7 @@ done < <(compgen -G "${HOME}/.bash_profile.d/*.first.sh")
 # --- pre-profile sub-scripts ---
 
 # In particular, anything that prepends to the $PATH should be in here, so that
-# ~/bin goes before it later
+# ~/bin goes before it (see below)
 
 while IFS= read -r file; do
     # shellcheck disable=SC1090
