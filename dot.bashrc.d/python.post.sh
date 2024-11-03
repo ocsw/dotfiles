@@ -57,7 +57,7 @@ fi
 
 
 if is_available pyenv; then
-    eval "$(pyenv init - | grep -vi 'path' | grep -v '^fi; done; $')"
+    eval "$(pyenv init - | grep -vi -e '^export ' -e 'path' -e '^fi; done; $')"
 fi
 if is_available pyenv-virtualenv-init; then
     eval "$(pyenv virtualenv-init - | grep -v '^export ')"

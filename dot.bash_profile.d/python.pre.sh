@@ -3,9 +3,12 @@
 # See also ../dot.bashrc.d/python.post.sh
 
 if is_available pyenv; then
+    export PYENV_SHELL=bash
+
     if [ -z "$PYENV_ROOT" ] && [ -d "${HOME}/.pyenv" ]; then
         export PYENV_ROOT="${HOME}/.pyenv"
     fi
+
     if [ -n "$PYENV_ROOT" ]; then
         if ! is_path_component "${PYENV_ROOT}/bin" &&
                 [ -d "${PYENV_ROOT}/bin" ]; then
