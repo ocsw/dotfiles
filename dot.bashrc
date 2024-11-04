@@ -335,8 +335,8 @@ cd () {
     fi
 
     # for VSCode, iTerm, probably others; from MongoDB
-    if  [ -t 1 ]; then
-        printf "%s" $'\e]1337;CurrentDir=$PWD\a'
+    if [ -t 1 ]; then
+        printf '\e]1337;CurrentDir=%s\a' "$PWD"
     fi
 }
 
