@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
-# [from the Facebook dotfile collection, tweaked and modified to add __git_ps1]
+# [from the Facebook dotfile collection, tweaked and modified to add __git_ps1;
+# see https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh]
 # [see also ../dot.bash_profile.d/scm_prompt.post.sh]
 # [used in PS1 in ../dot.bashrc]
 

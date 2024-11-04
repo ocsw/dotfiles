@@ -1,7 +1,8 @@
 #!/usr/bin/env bash
 
-# See ../dot.bashrc.d/scm_prompt.post.sh
+# See also ../dot.bashrc.d/scm_prompt.post.sh
 
+# See https://github.com/git/git/blob/master/contrib/completion/git-prompt.sh
 export GIT_PS1_STATESEPARATOR=" "
 export GIT_PS1_SHOWDIRTYSTATE=1
 export GIT_PS1_SHOWSTASHSTATE=1
