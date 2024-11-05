@@ -29,13 +29,13 @@ ln_dotfile .bash_profile.d
 ln_dotfile .bashrc
 ln_dotfile .bashrc.d
 ln_dotfile .inputrc
-cp_dotfile .bashrc.local
+cp_dotfile .bashrc.local  # copy only
 #ln_dotfile .bash_logout  # maybe
 ln_dotfile .hstr_blacklist
 #
 ln_dotfile .vimrc
 ln_dotfile .vimrc.d
-cp_dotfile .vimrc.local
+cp_dotfile .vimrc.local  # copy only
 #
 #ln_dotfile .muttrc  # maybe
 
