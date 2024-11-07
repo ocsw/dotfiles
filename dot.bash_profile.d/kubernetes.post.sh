@@ -5,6 +5,9 @@
 # Can't use is_available() for gcloud because we define a function with the
 # same name later and we might be re-sourcing this
 if is_available kubectl && in_path gcloud; then
+    # Only actually necessary for old clusters (pre-1.26) but it can't hurt;
+    # see
+    # https://cloud.google.com/blog/products/containers-kubernetes/kubectl-auth-changes-in-gke
     export USE_GKE_GCLOUD_AUTH_PLUGIN=True
 fi
 
