@@ -89,13 +89,13 @@ all-up () {
     echo
 
     # See system_setup.post.sh
-    if [ -d "$SYSTEM_SETUP" ]; then
+    if [ -e "$SYSTEM_SETUP" ]; then
         _all-up-header ".gitconfig"
         git-config-refresh
         git-config-check
         echo
 
-        if [ -d "${HOME}/.vscode" ]; then
+        if [ -e "${HOME}/.vscode" ]; then
             _all-up-header "VSCode"
             vscode-check-config
             echo
