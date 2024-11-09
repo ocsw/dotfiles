@@ -3,6 +3,8 @@
 # See also ../dot.bashrc.d/hstr.post.sh
 
 if is_available hstr; then
+    # See https://github.com/dvorka/hstr/blob/master/CONFIGURATION.md
+
     HSTR_CONFIG="hicolor"
     HSTR_CONFIG="${HSTR_CONFIG},prompt-bottom"
     HSTR_CONFIG="${HSTR_CONFIG},raw-history-view"
