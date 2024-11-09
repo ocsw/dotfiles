@@ -30,6 +30,7 @@ if in_path brew; then
                 cd /opt/homebrew &&
                 find . -depth 1 -prune \! -path ./etc \! -path ./var -print0 |
                     xargs -0 chmod -R go=u-w
+                chmod -R go=u-w var/homebrew
             )
         fi
     }
