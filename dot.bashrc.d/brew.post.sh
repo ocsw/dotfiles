@@ -43,6 +43,7 @@ if in_path brew; then
         brew doctor
     }
 
+    # Requires jq
     brew-keg-only () {
         brew info --installed --json=v1 |
             jq "map(select(.keg_only == true)) | map(.name)" | grep '"' |

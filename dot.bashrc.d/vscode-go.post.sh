@@ -27,9 +27,12 @@ When overwriting an existing setting, a warning will be printed to stderr with
 the setting's previous value.  This can be suppressed with -q|--quiet.
 
 Options can appear in any order.  Later options override earlier ones.
+
+The jq utility is required.
 EOF
 }
 
+# Requires jq
 vscode-golang-settings () {
     local tags=""
     local vsc_settings_file=".vscode/settings.json"

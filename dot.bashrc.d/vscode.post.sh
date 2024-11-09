@@ -3,6 +3,7 @@
 # See also vscode-setting.post.sh, which was pulled out for ease of external
 # reference, and vscode-go.post.sh
 
+# Requires jq
 vscode-check-config () {
     # See system_setup.post.sh
     if [ -z "$SYSTEM_SETUP" ]; then

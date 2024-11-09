@@ -30,10 +30,12 @@ When overwriting an existing setting, a warning will be printed to stderr with
 the setting's previous value.  This can be suppressed with -q|--quiet.
 
 Options can appear in any order.  Later options override earlier ones.
+
+The jq utility is required.
 EOF
 }
 
-# uses jq
+# Requires jq
 vscode-setting () {
     local mode
     local jq_arg
