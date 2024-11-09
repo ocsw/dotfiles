@@ -11,9 +11,12 @@ brew () {
 if in_path brew; then
     brew-fix-perms () {
         if [ -e /usr/local/Cellar ]; then
-            # Only include directories we know are brew-related
-            for i in Caskroom Cellar Homebrew lib/node_modules \
-                    share/google-cloud-sdk var/homebrew; do
+            # Only include directories we know are Brew-related (we would have
+            # installed gcloud, node, python, and ruby via Brew, and they could
+            # have accumulated files with "incorrect" permissions as components
+            # / modules / packages / gems got installed or run)
+            for i in Caskroom Cellar Homebrew lib/node_modules lib/python* \
+                    lib/ruby share/google-cloud-sdk var/homebrew; do
                 [ -e "/usr/local/${i}" ] && chmod -R go=u-w "/usr/local/${i}"
             done
         fi
