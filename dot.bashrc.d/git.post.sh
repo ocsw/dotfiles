@@ -9,7 +9,6 @@ git-config-refresh () {
         return 1
     fi
     "${SYSTEM_SETUP}/unix-common/git-config.sh"
-
 }
 
 # See https://github.com/ocsw/system-setup/blob/main/unix-common/git-check.sh
