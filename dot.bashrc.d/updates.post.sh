@@ -26,8 +26,8 @@ _fix-homedir-perms () {
     #
     # Here, find gets just the direct contents of $HOME and ~/Library, minus
     # ~/Library and ~/Library/*Containers.  The -prune is needed because
-    # otherwise find will still descend into depth-1 directories recursively,
-    # even if nothing is done with their contents.
+    # otherwise find will still descend into the depth-1 directories
+    # recursively, even if nothing is done with their contents.
     #
     # (See also sonoma.post.sh)
     (

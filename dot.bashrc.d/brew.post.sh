@@ -21,7 +21,16 @@ if in_path brew; then
             done
         fi
         if [ -e /opt/homebrew ]; then
-            chmod -R go=u-w /opt/homebrew
+            # It's possible etc or var has something that should actually be
+            # user-only
+            # (The -prune is needed because otherwise find will still descend
+            # into the depth-1 directories recursively, even if nothing is done
+            # with their contents.)
+            (
+                cd /opt/homebrew &&
+                find . -depth 1 -prune \! -path ./etc \! -path ./var -print0 |
+                    xargs -0 chmod -R go=u-w
+            )
         fi
     }
 
