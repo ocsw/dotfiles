@@ -32,9 +32,10 @@ if [ "$(uname)" = "Darwin" ]; then
 
     if [ -n "$HOMEBREW_PREFIX" ]; then
         # man can find the Brew manpages based on the PATH, as long as the Brew
-        # bin directory is in it; see manpath(1).  We do need to make sure that
-        # if there's an explicit MANPATH, it has a leading :, meaning that the
-        # default directories are included (and are searched first).
+        # bin directory is in it; see man(1) and manpath(1) / manpath(5).  We
+        # do need to make sure that if there's an explicit MANPATH, it has a
+        # leading :, meaning that the default directories are included (and are
+        # searched first).
         [ -n "$MANPATH" ] && export MANPATH=":${MANPATH#:}"
 
         if ! [[ $INFOPATH =~ (^|:)${HOMEBREW_PREFIX}/share/info(:|$) ]] && \
