@@ -46,9 +46,25 @@ if in_path brew; then
 
     # Requires jq
     brew-keg-only () {
+        # See https://docs.brew.sh/Querying-Brew
         brew info --installed --json=v1 |
-            jq "map(select(.keg_only == true)) | map(.name)" | grep '"' |
-            sed -e 's/^ *"//' -e 's/",$//' -e 's/"$//'
+            jq -r '.[] | select(.keg_only == true) | .name'
+    }
+
+    # Requires jq
+    brew-keg-only-linked () {
+        # See https://docs.brew.sh/Querying-Brew#linked-keg-only-formulae
+        brew info --installed --json=v1 |
+            jq -r '.[] | select(.keg_only == true and .linked_keg != null) |
+                .name'
+    }
+
+    # Requires jq
+    brew-unlinked () {
+        # See https://docs.brew.sh/Querying-Brew#unlinked-normal-formulae
+        brew info --installed --json=v1 |
+            jq -r '.[] | select(.keg_only == false and .linked_keg == null) |
+                .name'
     }
 
     # Requires jq
