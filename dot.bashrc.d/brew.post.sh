@@ -80,7 +80,7 @@ if in_path brew; then
         brew info --installed --json=v1 |
             jq -r '.[] | select(.caveats != null) |
                 "\nName: \(.name)\nCaveats: \(.caveats)"'
-        brew info --installed --cask --json=v2 |
+        brew info --installed --json=v2 |
             jq -r '.casks[] | select(.caveats != null) |
                 "\nName: \(.name)\nCaveats: \(.caveats)"'
     }
