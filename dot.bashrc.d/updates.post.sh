@@ -49,7 +49,7 @@ fix-homedir-perms () {
 
 _all-up-header () {
     local color="1;36"  # bright cyan
-    printf "%s\n" $'\e'"[${color}m*** $1 ***"$'\e[0m'
+    printf '\e[%sm*** %s ***\e[0m\n' "$color" "$1"
 }
 
 all-up () {
