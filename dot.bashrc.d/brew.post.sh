@@ -51,6 +51,18 @@ if in_path brew; then
             sed -e 's/^ *"//' -e 's/",$//' -e 's/"$//'
     }
 
+    # Requires jq
+    brew-caveats () {
+        # See
+        # https://stackoverflow.com/questions/13333585/how-do-i-replay-the-caveats-section-from-a-homebrew-recipe/62022811#62022811
+        brew info --installed --json=v1 |
+            jq -r '.[] | select(.caveats != null) |
+                "\nName: \(.name)\nCaveats: \(.caveats)"'
+        brew info --installed --cask --json=v2 |
+            jq -r '.casks[] | select(.caveats != null) |
+                "\nName: \(.name)\nCaveats: \(.caveats)"'
+    }
+
     # For the brew bash-completion package
     if [ -e "$(brew --prefix)/etc/bash_completion" ]; then
         # shellcheck disable=SC1091
