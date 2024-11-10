@@ -26,8 +26,8 @@ if [ "$(uname)" = "Darwin" ]; then
         export HOMEBREW_CELLAR="/usr/local/Cellar"
         export HOMEBREW_REPOSITORY="/usr/local/Homebrew"
 
-        # /usr/local/bin will already be in the PATH, and macos_path.post.sh
-        # will add /usr/local/sbin in the proper place
+        # /usr/local/bin will already be in the PATH, and macos.post.sh will
+        # add /usr/local/sbin in the proper place
     fi
 
     if [ -n "$HOMEBREW_PREFIX" ]; then
