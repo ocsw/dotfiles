@@ -41,7 +41,8 @@ _fix-homedir-perms () {
     )
 }
 
-# wrapper for ease of overriding / adding to behavior
+# Wrapper for ease of overriding / adding to behavior
+# (See also all-up, below)
 fix-homedir-perms () {
     _fix-homedir-perms
 }
@@ -55,24 +56,28 @@ _all-up-header () {
 all-up () {
     echo
 
+    # See brew.post.sh
     if is_available brew-up; then
         _all-up-header "brew"
         brew-up
         echo
     fi
 
+    # See gcloud.post.sh
     if is_available gcloud-up; then
         _all-up-header "gcloud"
         echo "y" | gcloud-up
         echo
     fi
 
+    # Not defined; locally-specific
     if is_available kube-up; then
         _all-up-header "Kubernetes"
         kube-up
         echo
     fi
 
+    # See git.post.sh
     if [ "${#GIT_REPOS_TO_UPDATE[@]}" != "0" ]; then
         _all-up-header "repos"
         git-update-repos
@@ -90,18 +95,21 @@ all-up () {
 
     # See system_setup.post.sh
     if [ -e "$SYSTEM_SETUP" ]; then
+        # See git.post.sh
         _all-up-header ".gitconfig"
         git-config-refresh
         git-config-check
         echo
 
         if [ -e "${HOME}/.vscode" ]; then
+            # See vscode.post.sh
             _all-up-header "VSCode"
             vscode-check-config
             echo
         fi
     fi
 
+    # See above
     _all-up-header "perms"
     fix-homedir-perms
     echo

@@ -35,6 +35,7 @@ if in_path brew; then
         fi
     }
 
+    # See also all-up in updates.post.sh
     brew-up () {
         brew update
         brew upgrade

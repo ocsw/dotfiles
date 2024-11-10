@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+# See also all-up in updates.post.sh
+
 # See https://github.com/ocsw/system-setup/blob/main/unix-common/git-config.sh
 git-config-refresh () {
     # See system_setup.post.sh

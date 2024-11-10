@@ -4,6 +4,7 @@
 # reference, and vscode-go.post.sh
 
 # Requires jq
+# (See also all-up in updates.post.sh)
 vscode-check-config () {
     # See system_setup.post.sh
     if [ -z "$SYSTEM_SETUP" ]; then
