@@ -16,3 +16,14 @@ if is_available kubectl; then
     # shellcheck disable=SC2034
     KUBE_DEBUG_IMAGE="nicolaka/netshoot"
 fi
+
+# If flux was installed outside of Brew, add the bash completions
+if is_available flux; then
+    # Can't use is_available() because we defined a function with the same name
+    if ! in_path brew ||
+            ! [ -f "${HOMEBREW_PREFIX}/etc/bash_completion.d/flux" ]; then
+        # See https://fluxcd.io/flux/installation/
+        # shellcheck disable=SC1090
+        . <(flux completion bash)  # why is this not working???
+    fi
+fi
