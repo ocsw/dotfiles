@@ -96,11 +96,8 @@ if in_path brew; then
     brew-caveats () {
         # See
         # https://stackoverflow.com/questions/13333585/how-do-i-replay-the-caveats-section-from-a-homebrew-recipe/62022811#62022811
-        brew info --installed --json=v1 |
-            jq -r '.[] | select(.caveats != null) |
-                "\nName: \(.name)\nCaveats: \(.caveats)"'
         brew info --installed --json=v2 |
-            jq -r '.casks[] | select(.caveats != null) |
+            jq -r '.formulae[],.casks[] | select(.caveats != null) |
                 "\nName: \(.name)\nCaveats: \(.caveats)"'
     }
 fi
