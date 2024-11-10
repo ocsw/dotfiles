@@ -9,6 +9,12 @@ brew () {
 
 # Can't use is_available() because we defined a function with the same name
 if in_path brew; then
+    # For the brew bash-completion package
+    if [ -e "$(brew --prefix)/etc/bash_completion" ]; then
+        # shellcheck disable=SC1091
+        . "$(brew --prefix)/etc/bash_completion"
+    fi
+
     brew-fix-perms () {
         if [ -e /usr/local/Cellar ]; then
             # Only include directories we know are Brew-related (we would have
@@ -78,10 +84,4 @@ if in_path brew; then
             jq -r '.casks[] | select(.caveats != null) |
                 "\nName: \(.name)\nCaveats: \(.caveats)"'
     }
-
-    # For the brew bash-completion package
-    if [ -e "$(brew --prefix)/etc/bash_completion" ]; then
-        # shellcheck disable=SC1091
-        . "$(brew --prefix)/etc/bash_completion"
-    fi
 fi
