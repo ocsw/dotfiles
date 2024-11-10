@@ -52,18 +52,20 @@ if in_path brew; then
         brew cleanup
         brew doctor
 
-        # This doesn't seem to be caught by 'brew doctor', despite what the
-        # docs say
-        linked_keg_only_formulas=$(brew-keg-only-linked | sed 's/^/  /')
-        if [ -n "$linked_keg_only_formulas" ]; then
-            echo "There are linked keg-only formulas:"
-            printf "%s\n" "$linked_keg_only_formulas"
-        fi
+        if is_available jq; then
+            # This doesn't seem to be caught by 'brew doctor', despite what the
+            # docs say
+            linked_keg_only_formulas=$(brew-keg-only-linked | sed 's/^/  /')
+            if [ -n "$linked_keg_only_formulas" ]; then
+                echo "There are linked keg-only formulas:"
+                printf "%s\n" "$linked_keg_only_formulas"
+            fi
 
-        unlinked_formulas=$(brew-unlinked | sed 's/^/  /')
-        if [ -n "$unlinked_formulas" ]; then
-            echo "There are unlinked non-keg-only formulas:"
-            printf "%s\n" "$unlinked_formulas"
+            unlinked_formulas=$(brew-unlinked | sed 's/^/  /')
+            if [ -n "$unlinked_formulas" ]; then
+                echo "There are unlinked non-keg-only formulas:"
+                printf "%s\n" "$unlinked_formulas"
+            fi
         fi
     }
 
