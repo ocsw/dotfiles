@@ -1,5 +1,6 @@
 #!/usr/bin/env bash
 
+# If flux was installed outside of Brew, add the bash completions
 if is_available flux; then
     # Can't use is_available() because we defined a function with the same name
     if ! in_path brew ||
