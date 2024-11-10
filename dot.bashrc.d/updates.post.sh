@@ -70,13 +70,6 @@ all-up () {
         echo
     fi
 
-    # Not defined; locally-specific
-    if is_available kube-up; then
-        _all-up-header "Kubernetes"
-        kube-up
-        echo
-    fi
-
     # See git.post.sh
     if [ "${#GIT_REPOS_TO_UPDATE[@]}" != "0" ]; then
         _all-up-header "repos"
@@ -107,6 +100,14 @@ all-up () {
             vscode-check-config
             echo
         fi
+    fi
+
+    # Not defined; locally-specific
+    # (Intended for things like cluster-credential updates)
+    if is_available kube-up; then
+        _all-up-header "Kubernetes"
+        kube-up
+        echo
     fi
 
     # See above
