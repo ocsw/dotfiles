@@ -70,6 +70,13 @@ all-up () {
         echo
     fi
 
+    # See kubernetes.post.sh
+    if is_available krew-up; then
+        _all-up-header "krew"
+        krew-up
+        echo
+    fi
+
     # See git.post.sh
     if [ "${#GIT_REPOS_TO_UPDATE[@]}" != "0" ]; then
         _all-up-header "repos"
