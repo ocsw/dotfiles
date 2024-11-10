@@ -43,11 +43,28 @@ if in_path brew; then
 
     # See also all-up in updates.post.sh
     brew-up () {
+        local linked_keg_only_formulas
+        local unlinked_formulas
+
         brew update
         brew upgrade
         brew-fix-perms
         brew cleanup
         brew doctor
+
+        # This doesn't seem to be caught by 'brew doctor', despite what the
+        # docs say
+        linked_keg_only_formulas=$(brew-keg-only-linked | sed 's/^/  /')
+        if [ -n "$linked_keg_only_formulas" ]; then
+            echo "There are linked keg-only formulas:"
+            printf "%s\n" "$linked_keg_only_formulas"
+        fi
+
+        unlinked_formulas=$(brew-unlinked | sed 's/^/  /')
+        if [ -n "$unlinked_formulas" ]; then
+            echo "There are unlinked non-keg-only formulas:"
+            printf "%s\n" "$unlinked_formulas"
+        fi
     }
 
     # Requires jq
