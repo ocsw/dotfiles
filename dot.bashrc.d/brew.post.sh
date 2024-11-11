@@ -97,7 +97,12 @@ if in_path brew; then
         # See
         # https://stackoverflow.com/questions/13333585/how-do-i-replay-the-caveats-section-from-a-homebrew-recipe/62022811#62022811
         brew info --installed --json=v2 |
-            jq -r '.formulae[],.casks[] | select(.caveats != null) |
-                "\nName: \(.token // .name)\nCaveats: \(.caveats)"'
+            jq -r '
+                {header: "*** FORMULAS ***"}, .formulae[],
+                    {header: "\n*** CASKS ***"}, .casks[]
+                | .header // (
+                        select(.caveats != null) |
+                        "\nName: \(.token // .name)\nCaveats: \(.caveats)"
+                    )'
     }
 fi
