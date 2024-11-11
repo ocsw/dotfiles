@@ -94,15 +94,30 @@ if in_path brew; then
 
     # Requires jq
     brew-caveats () {
+        local header_color="1;36"  # bright cyan
+        local name_color="1;32"  # bright green
+        local HCS=""
+        local NCS=""
+        local CE=""
+
+        if [ -t 1 ]; then  # outputting to a terminal
+            HCS=$(printf '\e[%sm' "$header_color")  # 'header color start'
+            NCS=$(printf '\e[%sm' "$name_color")  # 'name color start'
+            CE=$'\e[0m'  # 'color end'
+        fi
+
         # See
         # https://stackoverflow.com/questions/13333585/how-do-i-replay-the-caveats-section-from-a-homebrew-recipe/62022811#62022811
         brew info --installed --json=v2 |
-            jq -r '
-                {header: "*** FORMULAS ***"}, .formulae[],
-                    {header: "\n*** CASKS ***"}, .casks[]
+            jq -r --arg HCS "$HCS" --arg NCS "$NCS" --arg CE "$CE" \
+                '
+                {header: "\($HCS)*** FORMULAS ***\($CE)"}, .formulae[],
+                    {header: "\n\($HCS)*** CASKS ***\($CE)"}, .casks[]
                 | .header // (
-                        select(.caveats != null) |
-                        "\nName: \(.token // .name)\nCaveats: \(.caveats)"
-                    )'
+                        select(.caveats != null)
+                        | "\nName: \($NCS + (.token // .name) + $CE)\n"
+                            + "Caveats: \(.caveats)"
+                    )
+                '
     }
 fi
