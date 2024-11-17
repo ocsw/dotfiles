@@ -66,5 +66,6 @@ done < <(compgen -G "${HOME}/.bash_profile.d/*.post.sh")
 
 
 # --- source .bashrc ---
+
 # shellcheck disable=SC1091
 [ -e "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"
