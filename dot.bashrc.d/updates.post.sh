@@ -103,7 +103,7 @@ all-up () {
 
         if [ -e "${HOME}/.vscode" ]; then
             # See vscode.post.sh
-            _all-up-header "VSCode"
+            _all-up-header "Visual Studio Code"
             vscode-check-config
             echo
         fi
@@ -118,7 +118,7 @@ all-up () {
     fi
 
     # See above
-    _all-up-header "perms"
+    _all-up-header "homedir perms"
     fix-homedir-perms
     echo
 }
