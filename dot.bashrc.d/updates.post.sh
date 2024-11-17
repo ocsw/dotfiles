@@ -90,7 +90,7 @@ all-up () {
 
     _all-up-header ".bash_profile"
     # shellcheck disable=SC1091
-    source "${HOME}/.bash_profile"
+    . "${HOME}/.bash_profile"
     echo
 
     # See system_setup.post.sh
