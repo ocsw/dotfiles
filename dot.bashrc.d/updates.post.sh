@@ -88,10 +88,12 @@ all-up () {
         echo
     fi
 
-    _all-up-header ".bash_profile"
-    # shellcheck disable=SC1091
-    . "${HOME}/.bash_profile"
-    echo
+    if [ -e "${HOME}/.bash_profile" ]; then
+        _all-up-header ".bash_profile"
+        # shellcheck disable=SC1091
+        . "${HOME}/.bash_profile"
+        echo
+    fi
 
     # See system_setup.post.sh
     if [ -e "$SYSTEM_SETUP" ]; then
