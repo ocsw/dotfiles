@@ -10,10 +10,6 @@
 OS_UNAME=$(uname)
 [ -z "$OS_UNAME" ] && OS_UNAME="unknown"
 
-# start P_C from scratch
-# also prevents duplication if we re-source the file
-unset PROMPT_COMMAND
-
 # tools needed for both main body and sub-scripts
 # shellcheck disable=SC1091
 . "${HOME}/.bashrc.d/common.sh"
@@ -34,11 +30,16 @@ HISTFILESIZE=""  # unlimited
 HISTSIZE=""  # unlimited
 HISTCONTROL="ignoredups"
 HISTIGNORE="bg:bg *:fg:fg *"
-# see h(), below
-PROMPT_COMMAND="${PROMPT_COMMAND:+$PROMPT_COMMAND ; }h -a -t"
 shopt -s cmdhist lithist  # and use C-xC-e to edit
 shopt -s histappend histverify
 #shopt -s histreedit
+#
+# see h(), below
+_PROMPT_COMMAND_RE=$'(^|\n|; *)h -a -t( *;|\n|$)'
+if ! [[ $PROMPT_COMMAND =~ $_PROMPT_COMMAND_RE ]]; then
+    PROMPT_COMMAND+=$'\nh -a -t'
+fi
+unset _PROMPT_COMMAND_RE
 
 # completion settings
 shopt -s no_empty_cmd_completion
