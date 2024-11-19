@@ -360,14 +360,14 @@ up () {
 # make bg and fg accept a bare number instead of %num
 bg () {
     if [ -n "$1" ]; then
-        builtin bg "%$1"
+        builtin bg "%${1#%}"
     else
         builtin bg
     fi
 }
 fg () {
     if [ -n "$1" ]; then
-        builtin fg "%$1"
+        builtin fg "%${1#%}"
     else
         builtin fg
     fi
