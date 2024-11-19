@@ -101,6 +101,13 @@ done
 
 # if there are jobs (stopped or running), add a symbol to the prompt
 jobs_flag () {
+    # DTKE for Done / Terminated / Killed / Exit (vs e.g. Running / Stopped)
+    # This is necessary for the iTerm2 shell integration, but it seems
+    # reasonable regardless.  It also fixes an arguable bug in which the first
+    # prompt after a command is done still has the dot.  (OTOH, it's somewhat
+    # English-specific, and it doesn't cover every possible case...)
+    local re=$'(^|\n)\[[0-9]+\][ +-]  [^DTKE]'
+
     # bash 4.0 has a bug that prevents the prompt from being printed at all
     # if there's a $() in anything run from PROMPT_COMMAND or PS1;
     # but $() in PS1 itself works, and so does ``
@@ -109,7 +116,7 @@ jobs_flag () {
     # to use echo -n or printf
     #
     # shellcheck disable=SC2006
-    [ -n "`jobs -p`" ] && echo "."
+    [[ `jobs` =~ $re ]] && echo "."
 }
 
 # prompt colors
