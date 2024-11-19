@@ -37,7 +37,12 @@ shopt -s histappend histverify
 # see h(), below
 _PROMPT_COMMAND_RE=$'(^|\n|; *)h -a -t( *;|\n|$)'
 if ! [[ $PROMPT_COMMAND =~ $_PROMPT_COMMAND_RE ]]; then
-    PROMPT_COMMAND+=$'\nh -a -t'
+    _NL=$'\n'
+    if [ -n "$PROMPT_COMMAND" ] && ! [[ $PROMPT_COMMAND =~ ${_NL}$ ]]; then
+        PROMPT_COMMAND+="; "
+    fi
+    PROMPT_COMMAND+="h -a -t"
+    unset _NL
 fi
 unset _PROMPT_COMMAND_RE
 
