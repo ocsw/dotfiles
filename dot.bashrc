@@ -26,8 +26,11 @@ done < <(compgen -G "${HOME}/.bashrc.d/*.pre.sh")
 # --- shell options ---
 
 # history settings
-HISTFILESIZE=""  # unlimited
 HISTSIZE=""  # unlimited
+HISTFILESIZE=""  # unlimited
+# Make sure this is set (even if empty) so that entries in the file will have
+# timestamps
+HISTTIMEFORMAT="${HISTTIMEFORMAT:-}"
 HISTCONTROL="ignoredups"
 HISTIGNORE="bg:bg *:fg:fg *"
 shopt -s cmdhist lithist  # and use C-xC-e to edit
