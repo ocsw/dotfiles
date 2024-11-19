@@ -468,6 +468,19 @@ while IFS= read -r file; do
 done < <(compgen -G "${HOME}/.bashrc.d/*.post.sh")
 
 
+# --- last-step sub-scripts ---
+
+# iTerm2 and Visual Studio Code, in particular, have shell integrations that
+# need to come after anything that might change PROMPT_COMMAND or PS1 (which
+# also means that neither variable should be changed in .bashrc.local or
+# anything called from it)
+
+while IFS= read -r file; do
+    # shellcheck disable=SC1090
+    . "$file"
+done < <(compgen -G "${HOME}/.bashrc.d/*.last.sh")
+
+
 # --- machine-specific settings, overrides, aliases, etc. ---
 
 # shellcheck disable=SC1091
