@@ -313,30 +313,22 @@ alias decolorize="sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g'"
 #
 h () {
     local h_args=""
-    local htf
+    local htf="$HISTTIMEFORMAT"
     local i
-
-    # local copy of HTF, including set/unset/null status
-    if [ -n "${HISTTIMEFORMAT+x}" ]; then
-        local HISTTIMEFORMAT="$HISTTIMEFORMAT"
-    else
-        local HISTTIMEFORMAT
-        unset HISTTIMEFORMAT  # will still be local if we set it later
-    fi
 
     for i in "$@"; do
         if [ "${i:0:2}" = "-t" ]; then
             htf="${i:2}"
-            HISTTIMEFORMAT="${htf:-%R  }"
+            htf="${htf:-%R  }"
         elif [ "${i:0:2}" = "+t" ]; then
-            unset HISTTIMEFORMAT
+            htf=""
         else
             h_args="$h_args $i"  # unnecessary space at the beginning (shrug)
         fi
     done
 
     # shellcheck disable=SC2086
-    builtin history ${h_args:-20}  # no quotes
+    HISTTIMEFORMAT="$htf" builtin history ${h_args:-20}  # no quotes
 }
 
 # make cd not print the target directory for "cd -";
