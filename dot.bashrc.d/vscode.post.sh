@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-# See also vscode-setting.post.sh, which was pulled out for ease of external
-# reference, and vscode-go.post.sh
+# See also vscode.pre.sh, vscode-setting.post.sh, which was pulled out for ease
+# of external reference, vscode-go.post.sh, and vscode.last.sh
 
 # Requires jq
 # (See also all-up in updates.post.sh)

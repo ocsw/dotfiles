@@ -94,7 +94,8 @@ SELF_PARENT=$(
 [ -z "$TMUX" ] && [[ $TERM =~ ^screen(\.|$) ]] && IN_SCREEN="yes"
 
 # string of marks, 1 for each level of shell nesting, with corrections
-MARKLVL="$SHLVL"
+# (can be set in .pre.sh scripts)
+MARKLVL="${MARKLVL:-$SHLVL}"
 for i in $IN_MOSH $IN_TMUX $IN_SCREEN; do  # no quotes
     MARKLVL=$((MARKLVL - 1))
 done
