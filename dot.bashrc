@@ -38,13 +38,13 @@ shopt -s histappend histverify
 #shopt -s histreedit
 #
 # see h(), below
-_PROMPT_COMMAND_RE=$'(^|\n|; *)h -a -t( *;|\n|$)'
+_PROMPT_COMMAND_RE=$'(^|\n|; *)HISTTIMEFORMAT= builtin history -a( *;|\n|$)'
 if ! [[ $PROMPT_COMMAND =~ $_PROMPT_COMMAND_RE ]]; then
     _NL=$'\n'
     if [ -n "$PROMPT_COMMAND" ] && ! [[ $PROMPT_COMMAND =~ ${_NL}$ ]]; then
         PROMPT_COMMAND+="; "
     fi
-    PROMPT_COMMAND+="h -a -t"
+    PROMPT_COMMAND+="HISTTIMEFORMAT= builtin history -a"
     unset _NL
 fi
 unset _PROMPT_COMMAND_RE
