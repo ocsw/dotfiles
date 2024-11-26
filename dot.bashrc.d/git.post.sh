@@ -484,7 +484,13 @@ git-update-repos () (  # subshell
 )
 
 git-update-repo () {
-    git-update-repos -r "$PWD" "$@"
+    local repo_root
+    if repo_root=$(git rev-parse --path-format=absolute --show-toplevel); then
+        git-update-repos -r "$repo_root" "$@"
+    else
+        # git will already have printed an error message
+        return 1
+    fi
 }
 
 
