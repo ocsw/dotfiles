@@ -344,14 +344,27 @@ cd () {
     fi
 }
 
-# move up the directory tree; partly from Simon Elmir
+# move up the directory tree; originally partly from Simon Elmir
 up () {
-    local updir
-    if [ -z "$1" ]; then
+    local levels="$1"
+    local updir=""
+
+    if [ -z "$levels" ]; then
         updir=".."
     else
-        updir=$(printf "../%.0s" $(seq 1 "$1"))
+        # This previously used seq, but it's not really portable.  And Bash
+        # doesn't accept variables in {..} expansions.
+        if ! [[ $levels =~ [0-9]+ ]] || ! [ "$levels" -ge 1 ]; then
+            echo "ERROR: Number of levels must be an integer greater than or equal to 1." 1>&2
+            return 1
+        fi
+
+        for (( i = 0; i < levels; i++ )); do
+            updir+="../"
+        done
+        updir=${updir%/}
     fi
+
     if [ -t 1 ]; then
         cd "$updir" || return $?
     else
