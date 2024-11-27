@@ -7,7 +7,10 @@ if [ "$TERM_PROGRAM" = "iTerm.app" ]; then
     #
     # Source is in
     # https://github.com/gnachman/iTerm2-shell-integration/tree/main/shell_integration
-    ITERM2_BASH_INTEGRATION_PATH="/Applications/iTerm.app/Contents/Resources/iterm2_shell_integration.bash"
+    # ITERM2_BASH_INTEGRATION_PATH="/Applications/iTerm.app/Contents/Resources/iterm2_shell_integration.bash"
+    #
+    # Until my PR is merged and released upstream, use my patched version
+    ITERM2_BASH_INTEGRATION_PATH="${DOTFILE_REPO}/iterm2_shell_integration.bash"
     #
     # ITERM_SHELL_INTEGRATION_INSTALLED is set by the integration script, at
     # least as of v18
