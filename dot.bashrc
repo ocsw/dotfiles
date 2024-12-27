@@ -306,7 +306,7 @@ alias decolorize="sed 's/\x1B\[[0-9;]\{1,\}[A-Za-z]//g'"
 #
 # 1) with no arguments, prints the last 20 history entries
 # 2) uses the existing value/state of HISTTIMEFORMAT, or accepts -t to
-#    include/change timestamps (default '%R  ')
+#    include/change timestamps (default '%m/%d %R  ')
 # 3) -t can have a format string added (e.g. '-t%a  ' or -t%a\ \ )
 # 4) +t removes timestamps, including any existing HISTTIMEFORMAT
 # 5) last -/+t sets format string
@@ -323,7 +323,7 @@ h () {
     for i in "$@"; do
         if [ "${i:0:2}" = "-t" ]; then
             htf="${i:2}"
-            htf="${htf:-%R  }"
+            htf="${htf:-%m/%d %R  }"
         elif [ "${i:0:2}" = "+t" ]; then
             htf=""
         else
