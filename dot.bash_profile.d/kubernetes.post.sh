@@ -12,8 +12,8 @@ if is_available kubectl && in_path gcloud; then
 fi
 
 if kubectl krew version > /dev/null 2>&1; then
-    if ! is_path_component "${HOME}/.krew/bin" &&
-            [ -d "${HOME}/.krew/bin" ]; then
-        export PATH="${PATH}:${HOME}/.krew/bin"
+    if ! is_path_component "${KREW_ROOT:-$HOME/.krew}/bin" &&
+            [ -d "${KREW_ROOT:-$HOME/.krew}/bin" ]; then
+        export PATH="${PATH}:${KREW_ROOT:-$HOME/.krew}/bin"
     fi
 fi
