@@ -71,6 +71,9 @@ bash:
       try to use it
     - when testing if e.g. something has been installed, use the most specific
       test, to be as sure as possible your result means what you think it means
+- which isn't portable and only sees binaries in the PATH
+- hash sees shell functions but not aliases (but the docs don't say it???)
+- command -v sees functions and aliases
 
 
 quoting
