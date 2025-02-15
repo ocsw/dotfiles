@@ -12,14 +12,11 @@
 -- ##  Config Reloading  ##
 -- ########################
 
---[[
-
--- From https://www.hammerspoon.org/go/#simplereload, tweaked
-hs.hotkey.bind({"ctrl", "option", "cmd"}, "R", function()
-    hs.reload()
-end)
-
---]]
+configDirs = {
+    hs.configdir,
+    os.getenv("HOME") .. "/repos/dotfiles/hammerspoon",
+    os.getenv("HOME") .. "/.to_back_up/.hammerspoon"
+}
 
 -- From https://www.hammerspoon.org/go/#fancyreload, tweaked
 function reloadConfig(files)
@@ -27,13 +24,25 @@ function reloadConfig(files)
     for _,file in pairs(files) do
         if file:sub(-4) == ".lua" then
             doReload = true
+            break
         end
     end
     if doReload then
         hs.reload()
     end
 end
-configWatcher = hs.pathwatcher.new(hs.configdir, reloadConfig):start()
+
+configWatchers = {}
+for _,dir in pairs(configDirs) do
+    configWatchers[dir] = hs.pathwatcher.new(dir, reloadConfig):start()
+end
+
+--[[
+-- From https://www.hammerspoon.org/go/#simplereload, tweaked
+hs.hotkey.bind({"ctrl", "option", "cmd"}, "R", function()
+    hs.reload()
+end)
+--]]
 
 -- hs.alert.show("Config loaded")
 
@@ -65,8 +74,6 @@ windowBackgroundColor():
 
 hs.console.consolePrintColor({white = 0, alpha = 1})
 
--- home/end in console, chrome
-
 
 -- #########################
 -- ##  Utility Functions  ##
@@ -87,30 +94,33 @@ end
 -- ### Calculations ###
 --
 
+-- This exists in hs.geometry, but it's handled oddly
 function aspectRatio(geom)  -- rect or size -> float
     return geom.w / geom.h
 end
 
 function aspectRatioCategory(r)  -- float (ratio) -> string
-    if r > 2.99 then  -- 3 minus rounding error
-        return "superultrawide"
-    elseif r > 1.99 then  -- 2 minus rounding error
-        return "ultrawide"
-    elseif r > 1.35 then  -- 4/3 plus rounding error
-        return "wide"
-    elseif r > 1 then
-        return "horizontal"
-    elseif r == 1 then
-        return "square"
-    elseif r < (1 / 2.99) then
-        return "superultratall"
-    elseif r < (1 / 1.99) then
-        return "ultratall"
-    elseif r < (1 / 1.35) then
-        return "tall"
-    else
-        return "vertical"
+    -- op, value, result; must be handled in order
+    local ratioCategoryDefs = {
+        {">", 2.99, "superultrawide"},  -- 3 minus rounding error
+        {">", 1.99, "ultrawide"},  -- 2 minus rounding error
+        {">", 1.35, "wide"},  -- 4/3 plus rounding error
+        {">", 1, "horizontal"},
+        {"=", 1, "square"},
+        {"<", (1 / 2.99), "superultratall"},
+        {"<", (1 / 1.99), "ultratall"},
+        {"<", (1 / 1.35), "tall"}
+        -- else "vertical"
+    }
+    local ops = {
+        [">"] = function(a, b) return a > b end,
+        ["="] = function(a, b) return a == b end,
+        ["<"] = function(a, b) return a < b end
+    }
+    for _,def in ipairs(ratioCategoryDefs) do
+        if ops[def[1]](r, def[2]) then return def[3] end
     end
+    return "vertical"
 end
 
 --
@@ -123,19 +133,32 @@ The goal here is to do the same thing as a screen's frame attribute, relative
 to fullFrame - exclude unusable area - but to count the uBar task bar as
 unusable, if it's present.
 
-Some relevant information, as of macOS 14 (Sonoma) and uBar 4.2.2:
+Below is some relevant information, as of macOS 14 (Sonoma) and uBar 4.2.2.
 
-- The Dock has no window, whether it's always on, hidden, or hidden and hovered
-- The Dock's width is only counted as unusable when it's always on (although
+The Dock:
+
+- The Dock has no window, whether it's always shown, hidden, or hidden and
+  hovered
+- The Dock's width is only counted as unusable when it's always shown (although
   the HS docs say there can be a bit of unusable space when it's hidden)
+- (These are also true of the menu bar)
+
+uBar's main window (the taskbar):
+
 - uBar has no taskbar window when it's hidden
-- The uBar taskbar window has the same properties when it's visible, whether
-  it's always on or hidden and hovered:
+- The taskbar window has the same properties when it's visible, whether it's
+  always shown or hidden and hovered:
     isMaximizable: nil; isStandard: false
     role: AXWindow; subrole: AXSystemDialog
     title: <screen_id>
 - The title matches the screen the window was first created on, not necessarily
   the screen it's currently on (e.g. if Display is set to Main)
+- If the taskbar isn't pinned, the window will be 12 pixels away from the
+  screen edge it's positioned next to (counting the bottom of the menu bar as
+  the top edge of the screen if it's always shown)
+
+uBar's other windows:
+
 - uBar's icon menu has no window
 - Hovering over a uBar item can pop up a small label; it shows up as a window
   with these properties:
@@ -146,6 +169,17 @@ Some relevant information, as of macOS 14 (Sonoma) and uBar 4.2.2:
     isMaximizable: false; isStandard: true
     role: AXWindow; subrole: AXStandardWindow
     title: Preferences
+
+The Dock and uBar together:
+
+- uBar will prevent you from setting the taskbar and the Dock to the same edge
+  of the screen, even if both are hidden, unless you check 'Allow the Dock to
+  overlap' in the Advanced preferences
+- If the Dock is on different edge than the taskbar, we don't need to worry
+  about it
+- Just in case they actually overlap, we'll make sure that we reduce the usable
+  area by whichever is taller/wider, the taskbar or the unusable area reported
+  by the system
 
 --]]
 
@@ -160,14 +194,16 @@ Some relevant information, as of macOS 14 (Sonoma) and uBar 4.2.2:
 
 ubar = {}
 
+ubar.floatMargin = 20  -- leave some extra room in case it ever changes from 12
+
 function ubar.taskbarForScreen(screen)  -- screen -> window
-    ubar = hs.application.get("ca.brawer.uBar")
-    if ubar == nil then
+    local app = hs.application.get("ca.brawer.uBar")
+    if not app then
         return nil
     end
 
-    taskbar = nil
-    for _,w in ipairs(ubar:allWindows()) do
+    local taskbar = nil
+    for _,w in ipairs(app:allWindows()) do
         if w:screen():id() == screen:id() and
             w:isStandard() == false and
             w:role() == "AXWindow" and
@@ -183,34 +219,134 @@ function ubar.taskbarForScreen(screen)  -- screen -> window
     return taskbar
 end
 
+-- Returns 'top', 'bottom', 'left', 'right', or 'unknown'
 function ubar.screenEdgeOfTaskbar(taskbar)  -- window -> string
-    ratio = aspectRatio(taskbar:frame())
-    return nil
+    local winFrame = taskbar:frame()
+    local winRatio = winFrame.w / winFrame.h  -- avoid circ dep
+
+    if winRatio == 1 then
+        return "unknown"
+    end
+
+    local screenFrame = taskbar:screen():frame()
+
+    local winEdge1
+    local winEdge2
+    local screenEdge1
+    local screenEdge2
+
+    if winRatio > 1 then
+        -- Top / bottom
+        winEdge1 = winFrame.y1
+        winEdge2 = winFrame.y2
+        screenEdge1 = screenFrame.y1
+        screenEdge2 = screenFrame.y2
+    else
+        -- Left / right
+        winEdge1 = winFrame.x1
+        winEdge2 = winFrame.x2
+        screenEdge1 = screenFrame.x1
+        screenEdge2 = screenFrame.x2
+    end
+
+    local isEdge1 = false
+    local isEdge2 = false
+
+    -- Attached to an edge?
+    if winEdge1 <= screenEdge1 and winEdge2 >= screenEdge2 then
+        return "unknown"
+    end
+    if winEdge1 <= screenEdge1 then isEdge1 = true end
+    if winEdge2 >= screenEdge2 then isEdge2 = true end
+
+    if not isEdge1 and not isEdge2 then
+        -- Floating?
+        local edge1Dist = winEdge1 - screenEdge1
+        local edge2Dist = screenEdge2 - winEdge2
+        if edge1Dist <= ubar.floatMargin and edge2Dist <= ubar.floatMargin then
+            return "unknown"
+        end
+        if edge1Dist <= ubar.floatMargin then isEdge1 = true end
+        if edge2Dist <= ubar.floatMargin then isEdge2 = true end
+    end
+
+    if winRatio > 1 then
+        -- Top / bottom
+        if isEdge1 then return "top" end
+        if isEdge2 then return "bottom" end
+    else
+        -- Left / right
+        if isEdge1 then return "left" end
+        if isEdge2 then return "right" end
+    end
+
+    return "unknown"
 end
 
+--[[
+Caveats:
+
+- If Display is set to 'Main' in uBar, whether the taskbar will be subtracted
+  from the usable area depends on which screen is currently focused (i.e. which
+  screen the taskbar is currently on)
+
+- If uBar is set to autohide, it will be subtracted from the usable area while
+  it's hovered (and therefore visible) and ignored while it's not
+--]]
 function ubar.usableScreenFrame(screen)  -- screen -> rect
-    taskbar = ubar.taskbarForScreen(screen)
-    if taskbar == nil then
+    local taskbar = ubar.taskbarForScreen(screen)
+    if not taskbar then
         return screen:frame()
     end
 
-    taskbarFrame = taskbar:frame()
-    -- taskbarEdge = ubar.screenEdgeOfTaskbar(taskbar)
+    local taskbarEdge = ubar.screenEdgeOfTaskbar(taskbar)
+    if taskbarEdge == "unknown" then
+        return screen:frame()
+    end
 
+    local taskbarFrame = taskbar:frame()
+    local screenFrame = taskbar:screen():frame()
+
+    if taskbarEdge == "top" then
+        return hs.geometry({
+            x1 = screenFrame.x1,
+            x2 = screenFrame.x2,
+            -- macOS won't actually let you put the Dock on the top edge, so
+            -- the max() isn't strictly necessary, but we might as well be safe
+            y1 = math.max(taskbarFrame.y2, screenFrame.y1),
+            y2 = screenFrame.y2
+        })
+    end
+
+    if taskbarEdge == "bottom" then
+        return hs.geometry({
+            x1 = screenFrame.x1,
+            x2 = screenFrame.x2,
+            y1 = screenFrame.y1,
+            y2 = math.min(taskbarFrame.y1, screenFrame.y2)
+        })
+    end
+
+    if taskbarEdge == "left" then
+        return hs.geometry({
+            x1 = math.max(taskbarFrame.x2, screenFrame.x1),
+            x2 = screenFrame.x2,
+            y1 = screenFrame.y1,
+            y2 = screenFrame.y2
+        })
+    end
+
+    if taskbarEdge == "right" then
+        return hs.geometry({
+            x1 = screenFrame.x1,
+            x2 = math.min(taskbarFrame.x1, screenFrame.x2),
+            y1 = screenFrame.y1,
+            y2 = screenFrame.y2
+        })
+    end
+
+    -- Should be unreachable
     return screen:frame()
---[[
-If ratio > 1, assume top or bottom
-Else lr
-If square, ignore
-Check edges, if both ignore
-Overlap with dock?
-Auto hide?
-Top - menu bar?
-If no edges, ignore
-Main screen mode
-Check against dock size
-Figure out where dock is?
---]]
 end
 
 --
@@ -244,22 +380,31 @@ function screenStringWithLabelsShortAR(sc)
 end
 
 --[[
+Some notes:
 
-- On macOS 14 (Sonoma) on Intel, the built-in screen has no serial number (the
-  field is missing); on macOS 15 (Sequoia) on Apple Silicon, getInfo() returns
-  nil for all screens
-- The UUID for the same monitor differs between machines, but stays the same
-  across reboots
-- The id isn't even the same across reboots
-- On macOS 14 (Sonoma) on Intel, the ids are large random-seeming numbers
-- On macOS 15 (Sequoia) on Apple Silicon, they seem to be a count starting with
-  1, and switching attached monitors causes numbers to be reused
+- On macOS 14 (Sonoma) on Intel:
+    - The built-in screen has no serial number (the field is missing)
+    - The screen IDs are large random-seeming numbers
+    - The ID for a screen can change without a reboot; they seem to be
+      specific to both a screen and a set of attached screens
+    - IDs seem to stay the same across reboots?
 
+- On macOS 15 (Sequoia) on Apple Silicon:
+    - getInfo() returns nil for all screens, so serial numbers are unavailable
+    - The screen IDs seem to be a count starting with 1, which is the built-in
+      display
+    - IDs may not be continuous
+    - Switching attached screens can cause IDs to be reused
+    - IDs may change across reboots
+
+- On both:
+    - The UUID for a monitor differs between machines, but stays the same
+      across reboots
 --]]
 function screenStringWithLabels(sc)
     local serial = "n/a"
     local screenInfo = sc:getInfo()
-    if screenInfo ~= nil and screenInfo.DisplaySerialNumber ~= nil then
+    if screenInfo and screenInfo.DisplaySerialNumber then
         serial = screenInfo.DisplaySerialNumber
     end
     return
@@ -304,6 +449,7 @@ function windowStringWithLabels(w)
 end
 
 hs.hotkey.bind({"ctrl", "option", "cmd"}, "I", function()
+    -- printFrontmostWindowWithScreen
     local w = hs.window.frontmostWindow()
     hs.openConsole()
     print(
@@ -315,6 +461,7 @@ hs.hotkey.bind({"ctrl", "option", "cmd"}, "I", function()
 end)
 
 hs.hotkey.bind({"shift", "ctrl", "option", "cmd"}, "I", function()
+    -- printAllScreensAndWindows
     local allScreens = hs.screen.allScreens()
     local allWindows = hs.window.allWindows()
 
@@ -374,7 +521,7 @@ end
 
 --[[
 
-func ultrawide, large, small
+func ultrawide, widelarge, widesmall
 Chrome role: AXHelpTag
 AXWindow
 AXStandardWindow
@@ -397,6 +544,7 @@ https://www.hammerspoon.org/Spoons/AppWindowSwitcher.html
 https://www.hammerspoon.org/Spoons/EjectMenu.html
 https://github.com/Hammerspoon/Spoons/blob/master/Source/EjectMenu.spoon/init.lua
 https://www.hammerspoon.org/docs/hs.notify.html#withdrawAll
+home/end in console, chrome
 
 "Snapshot Screens" => [ 0 => "{{0, 0}, {1512, 982}}" ]
 "Screen Frame" => "{{0, 0}, {1512, 982}}"
