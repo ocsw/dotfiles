@@ -38,6 +38,13 @@ ln_dotfile .vimrc.d
 cp_dotfile .vimrc.local  # copy only
 #
 #ln_dotfile .muttrc  # maybe
+#
+if [ "$(uname)" = "Darwin" ]; then
+    mkdir -p "${HOME}/.hammerspoon"
+    ln -s "${DOTFILE_REPO}/hammerspoon/init.lua" "${HOME}/.hammerspoon/"
+    ln -s "${DOTFILE_REPO}/hammerspoon/hammers" "${HOME}/.hammerspoon/"
+    cp "${DOTFILE_REPO}/hammerspoon/init-local.lua" "${HOME}/.hammerspoon/"
+fi
 
 # See https://github.com/ocsw/dotfiles/blob/main/dot.bashrc.d/to_back_up.post.sh
 # shellcheck disable=SC1091
@@ -102,6 +109,12 @@ touch .pypirc
 ln_tbu .pypirc
 touch .flake8
 ln_tbu .flake8
+#
+if [ "$(uname)" = "Darwin" ]; then
+    mkdir -p .hammerspoon
+    touch .hammerspoon/init-local.lua
+    ln_tbu .hammerspoon/init-local.lua
+fi
 #
 vscode_confdir=""
 if [ "$(uname)" = "Darwin" ]; then
