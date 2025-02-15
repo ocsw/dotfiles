@@ -12,14 +12,11 @@
 -- ##  Config Reloading  ##
 -- ########################
 
---[[
-
--- From https://www.hammerspoon.org/go/#simplereload, tweaked
-hs.hotkey.bind({"ctrl", "option", "cmd"}, "R", function()
-    hs.reload()
-end)
-
---]]
+configDirs = {
+    hs.configdir,
+    os.getenv("HOME") .. "/repos/dotfiles/hammerspoon",
+    os.getenv("HOME") .. "/.to_back_up/.hammerspoon"
+}
 
 -- From https://www.hammerspoon.org/go/#fancyreload, tweaked
 function reloadConfig(files)
@@ -27,13 +24,25 @@ function reloadConfig(files)
     for _,file in pairs(files) do
         if file:sub(-4) == ".lua" then
             doReload = true
+            break
         end
     end
     if doReload then
         hs.reload()
     end
 end
-configWatcher = hs.pathwatcher.new(hs.configdir, reloadConfig):start()
+
+configWatchers = {}
+for _,dir in pairs(configDirs) do
+    configWatchers[dir] = hs.pathwatcher.new(dir, reloadConfig):start()
+end
+
+--[[
+-- From https://www.hammerspoon.org/go/#simplereload, tweaked
+hs.hotkey.bind({"ctrl", "option", "cmd"}, "R", function()
+    hs.reload()
+end)
+--]]
 
 -- hs.alert.show("Config loaded")
 
@@ -65,6 +74,7 @@ windowBackgroundColor():
 
 hs.console.consolePrintColor({white = 0, alpha = 1})
 
+-- ***
 -- home/end in console, chrome
 
 
@@ -92,25 +102,27 @@ function aspectRatio(geom)  -- rect or size -> float
 end
 
 function aspectRatioCategory(r)  -- float (ratio) -> string
-    if r > 2.99 then  -- 3 minus rounding error
-        return "superultrawide"
-    elseif r > 1.99 then  -- 2 minus rounding error
-        return "ultrawide"
-    elseif r > 1.35 then  -- 4/3 plus rounding error
-        return "wide"
-    elseif r > 1 then
-        return "horizontal"
-    elseif r == 1 then
-        return "square"
-    elseif r < (1 / 2.99) then
-        return "superultratall"
-    elseif r < (1 / 1.99) then
-        return "ultratall"
-    elseif r < (1 / 1.35) then
-        return "tall"
-    else
-        return "vertical"
+    -- op, value, result; must be handled in order
+    local ratioCategoryDefs = {
+        {">", 2.99, "superultrawide"},  -- 3 minus rounding error
+        {">", 1.99, "ultrawide"},  -- 2 minus rounding error
+        {">", 1.35, "wide"},  -- 4/3 plus rounding error
+        {">", 1, "horizontal"},
+        {"=", 1, "square"},
+        {"<", (1 / 2.99), "superultratall"},
+        {"<", (1 / 1.99), "ultratall"},
+        {"<", (1 / 1.35), "tall"}
+        -- else "vertical"
+    }
+    local ops = {
+        [">"] = function(a, b) return a > b end,
+        ["="] = function(a, b) return a == b end,
+        ["<"] = function(a, b) return a < b end
+    }
+    for _,def in ipairs(ratioCategoryDefs) do
+        if ops[def[1]](r, def[2]) then return def[3] end
     end
+    return "vertical"
 end
 
 --
@@ -161,13 +173,13 @@ Some relevant information, as of macOS 14 (Sonoma) and uBar 4.2.2:
 ubar = {}
 
 function ubar.taskbarForScreen(screen)  -- screen -> window
-    ubar = hs.application.get("ca.brawer.uBar")
-    if ubar == nil then
+    local app = hs.application.get("ca.brawer.uBar")
+    if not app then
         return nil
     end
 
-    taskbar = nil
-    for _,w in ipairs(ubar:allWindows()) do
+    local taskbar = nil
+    for _,w in ipairs(app:allWindows()) do
         if w:screen():id() == screen:id() and
             w:isStandard() == false and
             w:role() == "AXWindow" and
@@ -184,18 +196,18 @@ function ubar.taskbarForScreen(screen)  -- screen -> window
 end
 
 function ubar.screenEdgeOfTaskbar(taskbar)  -- window -> string
-    ratio = aspectRatio(taskbar:frame())
+    local ratio = taskbar:frame().w / taskbar:frame().h  -- avoid circ dep
     return nil
 end
 
 function ubar.usableScreenFrame(screen)  -- screen -> rect
-    taskbar = ubar.taskbarForScreen(screen)
-    if taskbar == nil then
+    local taskbar = ubar.taskbarForScreen(screen)
+    if not taskbar then
         return screen:frame()
     end
 
-    taskbarFrame = taskbar:frame()
-    -- taskbarEdge = ubar.screenEdgeOfTaskbar(taskbar)
+    local taskbarFrame = taskbar:frame()
+    local taskbarEdge = ubar.screenEdgeOfTaskbar(taskbar)
 
     return screen:frame()
 --[[
@@ -259,7 +271,7 @@ end
 function screenStringWithLabels(sc)
     local serial = "n/a"
     local screenInfo = sc:getInfo()
-    if screenInfo ~= nil and screenInfo.DisplaySerialNumber ~= nil then
+    if screenInfo and screenInfo.DisplaySerialNumber then
         serial = screenInfo.DisplaySerialNumber
     end
     return
