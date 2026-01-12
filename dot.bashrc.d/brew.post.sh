@@ -29,9 +29,12 @@ if in_path brew; then
         if [ -e /opt/homebrew ]; then
             # It's possible etc or var has something that should actually be
             # user-only
+            #
             # (The -prune is needed because otherwise find will still descend
             # into the depth-1 directories recursively, even if nothing is done
-            # with their contents.)
+            # with their contents.  It seems that -maxdepth doesn't have this
+            # problem, but I'll leave the line here as an example, for
+            # reference.)
             (
                 cd /opt/homebrew &&
                 find . -depth 1 -prune \! -path ./etc \! -path ./var -print0 |
