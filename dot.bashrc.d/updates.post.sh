@@ -9,38 +9,22 @@ _fix-homedir-perms () {
         return "$?"
     fi
 
+    #
     # Annoyingly, applications sometimes install things in various places in
     # ~/Library either as root, or with deeply screwy permissions.  The safest
     # thing to do is just ignore them.  The permissions on their
     # parent/ancestor directories should be enough protection.
-    ### chmod -R go-rwx "$HOME" 2>&1 |
-    ###     grep -v \
-    ###         -e "^chmod: Unable to change file mode on ${HOME}/Library/.*: Operation not permitted\$" \
-    ###         -e "^chmod: ${HOME}/Library/.*: Permission denied\$"
-
-    # However, as of Sonoma (macOS 14), that's not enough.  There's some kind
-    # of issue with one of the protection systems that makes searching
-    # ~/Library/Containers and ~/Library/Group Containers incredibly slow.
-    # (See https://forums.developer.apple.com/forums/thread/740204 and
-    # https://forums.macrumors.com/threads/daisydisk-very-slow-to-scan-in-sonoma.2406837/.)
     #
-    # Here, find gets just the direct contents of $HOME and ~/Library, minus
-    # ~/Library and ~/Library/*Containers.  The -prune is needed because
-    # otherwise find will still descend into the depth-1 directories
-    # recursively, even if nothing is done with their contents.  (It seems that
-    # -maxdepth doesn't have this problem, but I'll leave the line here as an
-    # example, for reference.)
+    # Similarly, the itch.io app installs itself into ~/Applications, and there
+    # doesn't seem to be any way to change the permissions on its files.  And
+    # at least as of macOS 26 Tahoe, ~/.Trash is also untouchable.
     #
-    # (See also sonoma.post.sh)
-    (
-        cd "$HOME" &&
-        find . Library -depth 1 -prune \! -path ./Library \
-                \! -regex "Library/.*Containers" -print0 |
-            xargs -0 chmod -R go-rwx 2>&1 |
-            grep -v \
-                -e '^chmod: Unable to change file mode on Library/.*: Operation not permitted$' \
-                -e '^chmod: Library/.*: Permission denied$'
-    )
+    chmod -R go-rwx "$HOME" 2>&1 |
+        grep -vE \
+            -e "^chmod: Unable to change file mode on ${HOME}/(Applications|Library)/.*: Operation not permitted\$" \
+            -e "^chmod: ${HOME}/\.Trash: Operation not permitted\$" \
+            -e "^chmod: ${HOME}/Library/.*: Operation not permitted\$" \
+            -e "^chmod: ${HOME}/Library/.*: Permission denied\$"
 }
 
 # Wrapper for ease of overriding / adding to behavior
