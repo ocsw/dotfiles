@@ -131,6 +131,19 @@ ln_tbu .pypirc
 touch .flake8
 ln_tbu .flake8
 
+mkdir -p .gore
+chmod 700 .gore
+touch .gore/history
+chmod 600 .gore/history
+ln_tbu .gore
+touch .yaegi_history
+chmod 600 .yaegi_history
+ln_tbu .yaegi_history
+
+touch .psql_history
+chmod 600 .psql_history
+ln_tbu .psql_history
+
 if [ "$(uname)" = "Darwin" ]; then
     mkdir -p .hammerspoon
     touch .hammerspoon/init-local.lua
