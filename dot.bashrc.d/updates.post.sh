@@ -22,7 +22,7 @@ _fix-homedir-perms () {
     chmod -R go-rwx "$HOME" 2>&1 |
         grep -vE \
             -e "^chmod: Unable to change file mode on ${HOME}/(Applications|Library)/.*: Operation not permitted\$" \
-            -e "^chmod: ${HOME}/\.Trash: Operation not permitted\$" \
+            -e "^chmod: ${HOME}/\.Trash.*: Operation not permitted\$" \
             -e "^chmod: ${HOME}/Library/.*: Operation not permitted\$" \
             -e "^chmod: ${HOME}/Library/.*: Permission denied\$"
 }
