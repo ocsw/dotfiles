@@ -1,0 +1,40 @@
+#!/usr/bin/env bash
+
+umask 077
+
+export EDITOR="vim"
+export VISUAL="vim"
+export PAGER="less -E"
+
+# note: use of '?a .' gets around %t being broken
+export LESS='-QRX -Ps?m(%i/%m).?f?a .%f.?e?a .(END):?pB?a .%pB\%..?c?a .[Col %c].?e?x - Next\: %x.%t$'
+export LESSHISTFILE="/dev/null"
+
+export MANPAGER="less -F"
+# note: \% and \: from original prompt don't need extra \ in bash
+# shellcheck disable=SC2016
+export MANOPT='-r ?m(%i/%m).?a\ .Manual\ page\ \$MAN_PN?e?a\ .(END):?pB?a\ .%pB\%..?c?a\ .[Col\ %c].?e?x\ -\ Next\:\ %x.%t'
+
+export BASH_SILENCE_DEPRECATION_WARNING=1
+
+if [ -d "/opt/homebrew" ]; then
+    export HOMEBREW_PREFIX="/opt/homebrew"
+    export HOMEBREW_CELLAR="/opt/homebrew/Cellar"
+    export HOMEBREW_REPOSITORY="/opt/homebrew"
+
+    is_path_component () {
+        [[ $PATH =~ (^|:)${1}(:|$) ]]
+    }
+
+    if ! is_path_component "${HOMEBREW_PREFIX}/sbin" &&
+            [ -d "${HOMEBREW_PREFIX}/sbin" ]; then
+        export PATH="${HOMEBREW_PREFIX}/sbin:${PATH}"
+    fi
+    if ! is_path_component "${HOMEBREW_PREFIX}/bin" &&
+            [ -d "${HOMEBREW_PREFIX}/bin" ]; then
+        export PATH="${HOMEBREW_PREFIX}/bin:${PATH}"
+    fi
+fi
+
+# shellcheck disable=SC1091
+[ -e "${HOME}/.bashrc" ] && . "${HOME}/.bashrc"

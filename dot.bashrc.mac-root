@@ -1,0 +1,84 @@
+#!/usr/bin/env bash
+
+# --- setup ---
+
+# stop if shell is non-interactive
+[ -z "$PS1" ] && return
+
+
+# --- shell options ---
+
+# history settings
+HISTSIZE=""  # unlimited
+HISTFILESIZE=""  # unlimited
+# Make sure this is set (even if empty) so that entries in the file will have
+# timestamps
+HISTTIMEFORMAT="${HISTTIMEFORMAT:-}"
+HISTCONTROL="ignoredups"
+HISTIGNORE="bg:bg *:fg:fg *"
+shopt -s cmdhist lithist  # and use C-xC-e to edit
+shopt -s histappend histverify
+#shopt -s histreedit
+#
+_PROMPT_COMMAND_RE=$'(^|\n|; *)HISTTIMEFORMAT= builtin history -a( *;|\n|$)'
+if ! [[ $PROMPT_COMMAND =~ $_PROMPT_COMMAND_RE ]]; then
+    _NL=$'\n'
+    if [ -n "$PROMPT_COMMAND" ] && ! [[ $PROMPT_COMMAND =~ ${_NL}$ ]]; then
+        PROMPT_COMMAND+="; "
+    fi
+    PROMPT_COMMAND+="HISTTIMEFORMAT= builtin history -a"
+    unset _NL
+fi
+unset _PROMPT_COMMAND_RE
+
+# completion settings
+shopt -s no_empty_cmd_completion
+if [ -t 0 ]; then
+    bind "set mark-symlinked-directories on"
+    bind "set page-completions off"
+    bind "set show-all-if-unmodified on"
+    #bind "set completion-query-items 1000"
+    #bind "set match-hidden-files off"
+    #bind "set show-all-if-ambiguous on"
+fi
+
+# key bindings
+if [ -t 0 ]; then
+    bind '"\C-d": delete-char-or-list'
+fi
+
+# misc settings
+set -o noclobber
+shopt -s checkwinsize
+if [ -t 0 ]; then
+    bind "set bell-style none"
+fi
+
+
+# --- aliases and completion ---
+
+alias j="jobs -l"
+
+h () {
+    HISTTIMEFORMAT="%m/%d %R  " builtin history "${1:-20}"
+}
+
+alias more="less -E"
+
+alias ls="ls -G"
+
+if hash "brew" > /dev/null 2>&1; then
+    if [ -e "$(brew --prefix)/etc/bash_completion" ]; then
+        # shellcheck disable=SC1091
+        . "$(brew --prefix)/etc/bash_completion"
+    fi
+
+    if [ "$(command -v gcp)" = "$(brew --prefix)/bin/gcp" ]; then
+        alias cp="gcp"
+    fi
+    if [ "$(command -v gmv)" = "$(brew --prefix)/bin/gmv" ]; then
+        alias mv="gmv"
+    fi
+fi
+
+alias pshred="shred -u /var/spool/cups/c[0-9]* /var/spool/cups/d[0-9]*"
