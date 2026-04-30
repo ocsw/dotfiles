@@ -10,35 +10,35 @@ _add_dotfile () {
     local cmd
 
     if [ -z "$DOTFILE_REPO" ]; then
-        echo "ERROR: DOTFILE_REPO must contain the path to the 'dotfiles' repo."
+        echo "ERROR: DOTFILE_REPO must contain the path to the 'dotfiles' repo." 1>&2
         return 1
     fi
 
     if ! [ -d "$DOTFILE_REPO" ]; then
-        echo "ERROR: Dotfile repo missing."
+        echo "ERROR: Dotfile repo missing." 1>&2
         return 1
     fi
     if [ -z "$operation" ]; then
-        echo "ERROR: No operation given."
+        echo "ERROR: No operation given." 1>&2
         return 1
     fi
     if [ -z "$dotfile" ]; then
-        printf "%s\n" "Usage: ${operation}_dotfile DOTFILE TARGET_DIR"
-        echo "Specify DOTFILE without the 'dot' prefix, e.g. '.bashrc'."
-        echo "If TARGET_DIR isn't given, it defaults to \$HOME."
-        echo
-        echo "ERROR: No dotfile given."
+        printf "%s\n" "Usage: ${operation}_dotfile DOTFILE TARGET_DIR" 1>&2
+        echo "Specify DOTFILE without the 'dot' prefix, e.g. '.bashrc'." 1>&2
+        echo "If TARGET_DIR isn't given, it defaults to \$HOME." 1>&2
+        echo 1>&2
+        echo "ERROR: No dotfile given." 1>&2
         return 1
     fi
     if ! [ -e "${DOTFILE_REPO}/dot${dotfile}" ]; then
-        echo "ERROR: No such dotfile in the repo."
+        echo "ERROR: No such dotfile in the repo." 1>&2
         return 1
     fi
     if [ -z "$target_dir" ]; then
         target_dir="$HOME"
     fi
     if [ -e "${target_dir}/${dotfile}" ]; then
-        echo "ERROR: Target already exists."
+        echo "ERROR: Target already exists." 1>&2
         return 1
     fi
     case "$operation" in
@@ -49,7 +49,7 @@ _add_dotfile () {
             cmd="cp"
             ;;
         *)
-            echo "ERROR: Unknown operation."
+            echo "ERROR: Unknown operation." 1>&2
             return 1
             ;;
     esac

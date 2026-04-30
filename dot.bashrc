@@ -415,14 +415,15 @@ gc () {
     unset list
 
     if [ -z "$1" ]; then
-        echo "Usage: gc 'PATTERN'"
-        return
+        echo "Usage: gc 'PATTERN'" 1>&2
+        return 1
     fi
 
     # before we start doing anything messy or time consuming...
     if ! is_available find sed sort; then
-        echo "Error: gc requires find, sed, and sort available in the path."
-        return
+        echo "Error: gc requires find, sed, and sort available in the path." \
+            1>&2
+        return 1
     fi
 
     [[ $OS_UNAME =~ ^CYGWIN.* ]] && cygflag=1

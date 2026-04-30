@@ -3,7 +3,7 @@
 # (See also vscode-go.post.sh)
 
 _vscode-setting-usage () {
-    cat 1>&2 <<EOF
+    cat <<EOF
 Usage:
     vscode-setting -s|--set|--set-string SETTING_NAME SETTING_VALUE [OPTIONS]
     vscode-setting -j|--set-json SETTING_NAME SETTING_JSON [OPTIONS]
@@ -125,28 +125,28 @@ vscode-setting () {
                 return 0
                 ;;
             *)
-                _vscode-setting-usage
+                _vscode-setting-usage 1>&2
                 return 1
                 ;;
         esac
     done
 
     if [ -z "$mode" ]; then
-        _vscode-setting-usage
+        _vscode-setting-usage 1>&2
         echo 1>&2
         echo "ERROR: No action (set/unset/get) specified." 1>&2
         return 1
     fi
 
     if [ -z "$setting_name" ]; then
-        _vscode-setting-usage
+        _vscode-setting-usage 1>&2
         echo 1>&2
         echo "ERROR: No setting name specified." 1>&2
         return 1
     fi
     # check for unspecified value; explicit empty string is ok
     if [ "$mode" = "set" ] && [ "$missing_value" = "yes" ]; then
-        _vscode-setting-usage
+        _vscode-setting-usage 1>&2
         echo 1>&2
         echo "ERROR: No setting value specified (use \"\" for empty strings)." \
             1>&2

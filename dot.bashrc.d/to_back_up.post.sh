@@ -18,34 +18,35 @@ ln_tbu () {
     local subtree
 
     if [ -z "$TBU_DIR" ]; then
-        echo "ERROR: TBU_DIR must contain the path to the backup directory."
+        echo "ERROR: TBU_DIR must contain the path to the backup directory." \
+            1>&2
         return 1
     fi
 
     if ! [ -d "$TBU_DIR" ]; then
         if ! mkdir -p "$TBU_DIR"; then
-            echo
-            echo "ERROR: Can't create backup directory.  Stopping."
-            printf "%s\n" "    Backup directory: $TBU_DIR"
-            echo
+            echo 1>&2
+            echo "ERROR: Can't create backup directory.  Stopping." 1>&2
+            printf "%s\n" "    Backup directory: $TBU_DIR" 1>&2
+            echo 1>&2
             return 1
         fi
     fi
 
     if [ -z "$source_path" ]; then
-        _ln_tbu_usage
-        echo
-        echo "ERROR: No source path given."
+        _ln_tbu_usage 1>&2
+        echo 1>&2
+        echo "ERROR: No source path given." 1>&2
         return 1
     fi
     if [[ $source_path =~ ^\./ ]] || [[ $source_path =~ ^\.\./ ]]; then
-        _ln_tbu_usage
-        echo
-        echo "ERROR: Source path starts with './' or '../'."
+        _ln_tbu_usage 1>&2
+        echo 1>&2
+        echo "ERROR: Source path starts with './' or '../'." 1>&2
         return 1
     fi
     if ! [ -e "$source_path" ]; then
-        echo "ERROR: Source path doesn't exist."
+        echo "ERROR: Source path doesn't exist." 1>&2
         return 1
     fi
     if [[ $source_path =~ /$ ]]; then
@@ -60,24 +61,24 @@ ln_tbu () {
     fi
     if [ -n "$source_path_prefix" ]; then
         if ! mkdir -p "${TBU_DIR}/${source_path_prefix#/}"; then
-            echo
-            echo "ERROR: Can't create source path in backup directory."
-            printf "%s\n" "    Backup directory: $TBU_DIR"
-            echo
+            echo 1>&2
+            echo "ERROR: Can't create source path in backup directory." 1>&2
+            printf "%s\n" "    Backup directory: $TBU_DIR" 1>&2
+            echo 1>&2
             return 1
         fi
     fi
     if [ -e "${TBU_DIR}/${source_path#/}" ]; then
-        echo "ERROR: Source already exists in backup directory."
-        printf "%s\n" "    Backup directory: $TBU_DIR"
+        echo "ERROR: Source already exists in backup directory." 1>&2
+        printf "%s\n" "    Backup directory: $TBU_DIR" 1>&2
         return 1
     fi
 
     if ! mv "$source_path" "${TBU_DIR}/${subtree}"; then
-        echo
-        echo "ERROR: Can't move source to backup directory.  Stopping."
-        printf "%s\n" "    Backup directory: $TBU_DIR"
-        echo
+        echo 1>&2
+        echo "ERROR: Can't move source to backup directory.  Stopping." 1>&2
+        printf "%s\n" "    Backup directory: $TBU_DIR" 1>&2
+        echo 1>&2
         return 1
     fi
     ln -s "${TBU_DIR}/${source_path#/}" "$source_path"

@@ -75,7 +75,7 @@ GIT_REPOS_TO_UPDATE=(
 )
 
 _git-update-repos-usage () {
-    cat 1>&2 <<EOF
+    cat <<EOF
 Usage:
 GIT_REPOS_TO_UPDATE=(REPO REPO REPO ...)
 git-update-repos [-r REPOLIST | --repos REPOLIST]
@@ -237,7 +237,7 @@ git-update-repos () (  # subshell
                 exit 0
                 ;;
             *)
-                _git-update-repos-usage
+                _git-update-repos-usage 1>&2
                 exit 1
                 ;;
         esac

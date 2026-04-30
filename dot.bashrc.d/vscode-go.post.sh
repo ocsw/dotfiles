@@ -3,7 +3,7 @@
 # (See vscode-setting.post.sh)
 
 _vscode-golang-settings-usage () {
-    cat 1>&2 <<EOF
+    cat <<EOF
 Usage:
     vscode-golang-settings [-t|--tags TAGS] [OPTIONS]
 
@@ -70,7 +70,7 @@ vscode-golang-settings () {
                 return 0
                 ;;
             *)
-                _vscode-golang-settings-usage
+                _vscode-golang-settings-usage 1>&2
                 return 1
                 ;;
         esac
