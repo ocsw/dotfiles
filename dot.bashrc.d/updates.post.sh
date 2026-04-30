@@ -85,7 +85,6 @@ all-up () {
     if [ -e "$SYSTEM_SETUP" ]; then
         # See git.post.sh
         _all-up-header ".gitconfig"
-        git-config-refresh
         git-config-check
         echo
 
