@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
 # This repo; see https://github.com/ocsw/dotfiles
-DOTFILE_REPO="${HOME}/repos/dotfiles"
+DOTFILE_REPO="${DOTFILE_REPO:-${HOME}/repos/dotfiles}"
 
 _add_dotfile () {
     local operation="$1"

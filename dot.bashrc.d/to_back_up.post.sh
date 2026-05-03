@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 
-TBU_DIR="${HOME}/.to_back_up"
-TBUV_DIR="${HOME}/.to_back_up_volatile"
+TBU_DIR="${TBU_DIR:-${HOME}/.to_back_up}"
+TBUV_DIR="${TBUV_DIR:-${HOME}/.to_back_up_volatile}"
 
 _ln_tbu_usage () {
     cat <<EOF
