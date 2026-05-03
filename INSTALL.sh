@@ -148,13 +148,8 @@ if [ "$(uname)" = "Darwin" ]; then
     mkdir -p ~/.hammerspoon
     touch ~/.hammerspoon/init-local.lua
     ln_tbu ~/.hammerspoon/init-local.lua
-fi
 
-vscode_confdir=""
-if [ "$(uname)" = "Darwin" ]; then
     vscode_confdir="${HOME}/Library/Application Support/Code/User"
-fi
-if [ -n "$vscode_confdir" ]; then
     mkdir -p "$vscode_confdir"
     touch "$vscode_confdir/keybindings.json"
     ln_tbu "$vscode_confdir/keybindings.json"
@@ -162,5 +157,5 @@ if [ -n "$vscode_confdir" ]; then
     ln_tbu "$vscode_confdir/settings.json"
     mkdir -p "$vscode_confdir/snippets"
     ln_tbu "$vscode_confdir/snippets"
+    unset vscode_confdir
 fi
-unset vscode_confdir
