@@ -69,90 +69,89 @@ fi
 # See https://github.com/ocsw/dotfiles/blob/main/dot.bashrc.d/to_back_up.post.sh
 # shellcheck disable=SC1091
 . "${DOTFILE_REPO}/dot.bashrc.d/to_back_up.post.sh"
-cd "$HOME" || exit 1
 
-touch .bash_history
-chmod 600 .bash_history
-ln_tbu .bash_history
-touch .bashrc.local
-ln_tbu .bashrc.local
-touch .hstr_favorites
-ln_tbu .hstr_favorites
+touch ~/.bash_history
+chmod 600 ~/.bash_history
+ln_tbu ~/.bash_history
+touch ~/.bashrc.local
+ln_tbu ~/.bashrc.local
+touch ~/.hstr_favorites
+ln_tbu ~/.hstr_favorites
 
-touch .vimrc.local
-ln_tbu .vimrc.local
+touch ~/.vimrc.local
+ln_tbu ~/.vimrc.local
 
-mkdir -p .ssh
-chmod 700 .ssh
-touch .ssh/config
-chmod 600 .ssh/config
-ln_tbu .ssh/config
-touch .ssh/known_hosts
-chmod 600 .ssh/known_hosts
-ln_tbu .ssh/known_hosts
+mkdir -p ~/.ssh
+chmod 700 ~/.ssh
+touch ~/.ssh/config
+chmod 600 ~/.ssh/config
+ln_tbu ~/.ssh/config
+touch ~/.ssh/known_hosts
+chmod 600 ~/.ssh/known_hosts
+ln_tbu ~/.ssh/known_hosts
 
-mkdir -p .gnupg
-touch .gnupg/dirmngr.conf
-ln_tbu .gnupg/dirmngr.conf
-touch .gnupg/gpg-agent.conf
-ln_tbu .gnupg/gpg-agent.conf
-touch .gnupg/gpg.conf
-ln_tbu .gnupg/gpg.conf
+mkdir -p ~/.gnupg
+touch ~/.gnupg/dirmngr.conf
+ln_tbu ~/.gnupg/dirmngr.conf
+touch ~/.gnupg/gpg-agent.conf
+ln_tbu ~/.gnupg/gpg-agent.conf
+touch ~/.gnupg/gpg.conf
+ln_tbu ~/.gnupg/gpg.conf
 # if [ "$(uname)" = "Darwin" ]; then
-#     mkdir -p .gnupg_pre_2.1
-#     touch .gnupg_pre_2.1/dirmngr.conf
-#     ln_tbu .gnupg_pre_2.1/dirmngr.conf
-#     touch .gnupg_pre_2.1/gpg-agent.conf
-#     ln_tbu .gnupg_pre_2.1/gpg-agent.conf
-#     touch .gnupg_pre_2.1/gpg.conf
-#     ln_tbu .gnupg_pre_2.1/gpg.conf
+#     mkdir -p ~/.gnupg_pre_2.1
+#     touch ~/.gnupg_pre_2.1/dirmngr.conf
+#     ln_tbu ~/.gnupg_pre_2.1/dirmngr.conf
+#     touch ~/.gnupg_pre_2.1/gpg-agent.conf
+#     ln_tbu ~/.gnupg_pre_2.1/gpg-agent.conf
+#     touch ~/.gnupg_pre_2.1/gpg.conf
+#     ln_tbu ~/.gnupg_pre_2.1/gpg.conf
 # fi
 
-touch .gitconfig
-ln_tbu .gitconfig
-touch .gitconfig_rewrites
-ln_tbu .gitconfig_rewrites
+touch ~/.gitconfig
+ln_tbu ~/.gitconfig
+touch ~/.gitconfig_rewrites
+ln_tbu ~/.gitconfig_rewrites
 while IFS= read -r file; do
     ln_tbu "$file"
-done < <(compgen -G ".gitconfig_*")
-touch .gitignore_global
-ln_tbu .gitignore_global
+done < <(compgen -G "${HOME}/.gitconfig_*")
+touch ~/.gitignore_global
+ln_tbu ~/.gitignore_global
 
-mkdir -p .ipython
-chmod 700 .ipython
-ln_tbu .ipython
-touch .python_history
-chmod 600 .python_history
-ln_tbu .python_history
-mkdir -p .pip
-ln_tbu .pip
-touch .pypirc
-ln_tbu .pypirc
-touch .flake8
-ln_tbu .flake8
+mkdir -p ~/.ipython
+chmod 700 ~/.ipython
+ln_tbu ~/.ipython
+touch ~/.python_history
+chmod 600 ~/.python_history
+ln_tbu ~/.python_history
+mkdir -p ~/.pip
+ln_tbu ~/.pip
+touch ~/.pypirc
+ln_tbu ~/.pypirc
+touch ~/.flake8
+ln_tbu ~/.flake8
 
-mkdir -p .gore
-chmod 700 .gore
-touch .gore/history
-chmod 600 .gore/history
-ln_tbu .gore
-touch .yaegi_history
-chmod 600 .yaegi_history
-ln_tbu .yaegi_history
+mkdir -p ~/.gore
+chmod 700 ~/.gore
+touch ~/.gore/history
+chmod 600 ~/.gore/history
+ln_tbu ~/.gore
+touch ~/.yaegi_history
+chmod 600 ~/.yaegi_history
+ln_tbu ~/.yaegi_history
 
-touch .psql_history
-chmod 600 .psql_history
-ln_tbu .psql_history
+touch ~/.psql_history
+chmod 600 ~/.psql_history
+ln_tbu ~/.psql_history
 
 if [ "$(uname)" = "Darwin" ]; then
-    mkdir -p .hammerspoon
-    touch .hammerspoon/init-local.lua
-    ln_tbu .hammerspoon/init-local.lua
+    mkdir -p ~/.hammerspoon
+    touch ~/.hammerspoon/init-local.lua
+    ln_tbu ~/.hammerspoon/init-local.lua
 fi
 
 vscode_confdir=""
 if [ "$(uname)" = "Darwin" ]; then
-    vscode_confdir="Library/Application Support/Code/User"
+    vscode_confdir="${HOME}/Library/Application Support/Code/User"
 fi
 if [ -n "$vscode_confdir" ]; then
     mkdir -p "$vscode_confdir"
