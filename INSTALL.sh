@@ -19,6 +19,7 @@ DOTFILE_REPO="${DOTFILE_REPO:-${HOME}/repos/dotfiles}"
 PYPVUTIL_REPO="${PYPVUTIL_REPO:-${HOME}/repos/pypvutil}"
 SYSTEM_SETUP="${SYSTEM_SETUP:-${HOME}/repos/system-setup}"
 TBU_DIR="${TBU_DIR:-${HOME}/.to_back_up}"
+TBUV_DIR="${TBUV_DIR:-${HOME}/.to_back_up_volatile}"
 
 # Note: This requires setting up GitHub access first; see
 # https://github.com/ocsw/system-setup/blob/main/unix-common/git.psh.
@@ -72,11 +73,11 @@ fi
 
 touch ~/.bash_history
 chmod 600 ~/.bash_history
-ln_tbu ~/.bash_history
+ln_tbuv ~/.bash_history
 touch ~/.bashrc.local
 ln_tbu ~/.bashrc.local
 touch ~/.hstr_favorites
-ln_tbu ~/.hstr_favorites
+ln_tbuv ~/.hstr_favorites
 
 touch ~/.vimrc.local
 ln_tbu ~/.vimrc.local
@@ -119,10 +120,10 @@ ln_tbu ~/.gitignore_global
 
 mkdir -p ~/.ipython
 chmod 700 ~/.ipython
-ln_tbu ~/.ipython
+ln_tbuv ~/.ipython
 touch ~/.python_history
 chmod 600 ~/.python_history
-ln_tbu ~/.python_history
+ln_tbuv ~/.python_history
 mkdir -p ~/.pip
 ln_tbu ~/.pip
 touch ~/.pypirc
@@ -134,14 +135,14 @@ mkdir -p ~/.gore
 chmod 700 ~/.gore
 touch ~/.gore/history
 chmod 600 ~/.gore/history
-ln_tbu ~/.gore
+ln_tbuv ~/.gore/history
 touch ~/.yaegi_history
 chmod 600 ~/.yaegi_history
-ln_tbu ~/.yaegi_history
+ln_tbuv ~/.yaegi_history
 
 touch ~/.psql_history
 chmod 600 ~/.psql_history
-ln_tbu ~/.psql_history
+ln_tbuv ~/.psql_history
 
 if [ "$(uname)" = "Darwin" ]; then
     mkdir -p ~/.hammerspoon

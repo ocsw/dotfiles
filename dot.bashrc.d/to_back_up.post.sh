@@ -1,6 +1,7 @@
 #!/usr/bin/env bash
 
 TBU_DIR="${HOME}/.to_back_up"
+TBUV_DIR="${HOME}/.to_back_up_volatile"
 
 _ln_tbu_usage () {
     cat <<EOF
@@ -31,6 +32,10 @@ exist.  It defaults to the value of \$TBU_DIR.
 This function will refuse to move the source if the destination already exists,
 so it's safe to run it multiple times with the same source.
 EOF
+}
+
+ln_tbuv () {
+    ln_tbu "$1" "$TBUV_DIR"
 }
 
 ln_tbu () {
