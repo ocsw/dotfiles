@@ -50,7 +50,7 @@ if in_path brew; then
         local unlinked_formulas
 
         brew update
-        brew upgrade
+        brew upgrade -y
         brew-fix-perms
         brew cleanup
         brew doctor
